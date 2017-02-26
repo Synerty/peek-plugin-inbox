@@ -1,9 +1,7 @@
 import logging
 
+from peek_plugin_active_task._private.storage.DeclarativeBase import loadStorageTuples
 from peek_plugin_base.client.PluginClientEntryHookABC import PluginClientEntryHookABC
-from twisted.internet import reactor
-
-from peek_plugin_active_task._private.client.backend.SendDateHandler import makeSendDateHandler
 
 logger = logging.getLogger(__name__)
 
@@ -15,25 +13,18 @@ class PluginClientEntryHook(PluginClientEntryHookABC):
         self._runningHandlers = []
 
     def load(self):
+        loadStorageTuples()
         logger.debug("loaded")
 
     def start(self):
-        self._runningHandlers.append(makeSendDateHandler())
-
-        def started():
-            self._startLaterCall = None
-            logger.info("started")
-
-        self._startLaterCall = reactor.callLater(3.0, started)
-        logger.info("starting")
+        # self._runningHandlers.append(makeSendDateHandler())
+        logger.debug("started")
 
     def stop(self):
         while self._runningHandlers:
             self._runningHandlers.pop().shutdown()
 
-        if self._startLaterCall:
-            self._startLaterCall.cancel()
-        logger.info("stopped")
+        logger.debug("stopped")
 
     def unload(self):
-        logger.info("unloaded")
+        logger.debug("unloaded")

@@ -1,6 +1,7 @@
 import {PeekComponent} from "@synerty/peek-web-ns";
 import {ComponentLifecycleEventEmitter, VortexService} from "@synerty/vortexjs";
 import {activeTaskFilt} from "./plugin-active-task-names";
+import {extend} from "@synerty/vortexjs";
 
 @PeekComponent({
     selector: 'plugin-active-task-admin',

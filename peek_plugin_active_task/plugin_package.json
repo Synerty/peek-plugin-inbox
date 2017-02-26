@@ -1,91 +1,42 @@
-// This file is parsed with the jsoncfg python package
-// It supports comments like this one.
-
-// Directories are the location of plugin_package.json
 {
-  // Some details about this Peek App
   "plugin": {
-    "title": "Testing ActiveTask",
+    "title": "Active Task",
     "packageName": "peek_plugin_active_task",
-    // The name of the root python package
     "version": "0.0.1",
     "buildNumber": "#PLUGIN_BUILD#",
     "buildDate": "#BUILD_DATE#",
     "creator": "Synerty Pty Ltd",
     "website": "www.synerty.com"
   },
-  // The Peek Platform services that this plugin needs to run
   "requiresServices": [
     "server",
-    "worker",
-    "agent",
     "client",
     "storage"
   ],
-  // Settings specific to the peek_client service
   "client": {
+    "showPluginHomeLink": false,
+    "showPluginInTitleBar": true,
+    "titleBarLeft": false,
+    "titleBarText": "Tasks",
     "enableAngularFrontend": true,
-    // The directory where the angular2 route is for the client site
-    // EG "frontend/client"
     "angularFrontendDir": "_private/client_fe",
-    // (Optional)
-    // The main module for the angular2 route
-    // This must be in the "angularFrontendDir"
-    // EG "plugin-active-task.module"
-    // NOTE, This class must be the default export, "export default class ..."
     "angularMainModule": "plugin-active-task.module",
-    // (Optional)
-    // The root module for this peek plugin, relative to angularFrontendDir
-    // This module will be loaded once with the main angular app, outside of the
-    // lazy loaded plugin main module.
-    // Use this if you need to always have some code active, angular2 garbage collects
-    // angularMainModule when its' not needed.
-    // EG "plugin-active-task-root.service"
     "angularRootModule": {
       "file": "plugin-active-task-root.module",
       "class": "PluginActiveTaskClientRootModule"
     },
-    // (Optional)
-    // The root service for this peek plugin, relative to angularFrontendDir
-    // This service will be loaded once with the main angular app, outside of the
-    // lazy loaded plugin main module.
-    // Use this if you need to always have some code active, angular2 garbage collects
-    // services provided by angularMainModule when they're not needed.
-    // NOTE: You problably also want to have a "angularRootModule" which needs this
-    // service injected into it.
-    // EG "plugin-active-task-root.service"
     "angularRootService": {
       "file": "plugin-active-task-root.service",
       "class": "PluginActiveTaskClientRootService"
     },
-    // (Optional)
-    // The path for the plugin icon
-    // This must be relative to  "angularFrontendDir"
-    // EG "plugin_icon.png"
     "angularPluginIcon": "plugin_icon.png"
   },
-  // Settings specific to the peek_server service
   "server": {
     "enableAngularFrontend": true,
-    // The directory where the angular2 route is for server admin site
-    // EG "frontend/client"
     "angularFrontendDir": "_private/server_fe",
-    // The main module for the angular2 route
-    // This must be in the "angularFrontendDir"
-    // EG "plugin-active-task.module"
     "angularMainModule": "plugin-active-task.module"
   },
-  // Settings specific to the database service
-  // The database is migrated by the peek_server and used from both the server and worker
-  // services
   "storage": {
-    // The alembic directory where the database schema migration scripts are stored
     "alembicDir": "_private/alembic"
-  },
-  // Settings specific to the peek_worker service
-  "worker": {
-  },
-  // Settings specific to the peek_agent service
-  "agent": {
   }
 }
