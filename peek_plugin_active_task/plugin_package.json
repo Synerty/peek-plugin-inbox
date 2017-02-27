@@ -29,7 +29,7 @@
       "file": "plugin-active-task-root.service",
       "class": "PluginActiveTaskClientRootService"
     },
-    "angularPluginIcon": "plugin_icon.png"
+    "angularPluginIcon": null
   },
   "server": {
     "enableAngularFrontend": true,
