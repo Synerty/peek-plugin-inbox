@@ -1,20 +1,113 @@
 from abc import ABCMeta, abstractmethod
 
+from typing import Optional, List
+
+
+class NewTask:
+    """ Task
+
+    A Task represents the feature rich mechanism for notifications, alerts and messages
+     sent from initiator plugins to mobile devices.
+
+    :member uniqueId: A unique identifier provided when this task was created.
+        The initiating plugin may use this later to cancel the task.
+        HINT : Ensure you prefix the uniqueId with your plugin name.
+
+    :member userId: A string representing the unique ID of the user. This must match the
+        users plugin.
+
+    :member title: The title to display in the task.
+    :member description: The long text that is displayed under the title for this task.
+    :member iconPath: The URL for the icon, if any.
+
+    :member routePath: If this route path is defined, then selecting the task
+        will cause the peek client fe to change routes to a new page.
+    :member routeParamJson: If the route path is defined, this route param json 
+        will be passed along when the route is swtiched.
+
+    :member confirmedPayload: (Optional) The payload that will be delivered locally
+        on Peek Server when the message is confirmed.
+
+    :member confirmType: The type of confirmation required when the message is
+        delivered to the users device.
+
+    """
+
+    CONFIRM_NONE = 0
+    CONFIRM_ON_RECEIPT = 1
+    CONFIRM_ON_SELECT = 2
+    CONFIRM_ON_ACTION = 3
+
+    def __init__(self, uniqueId: str="", userId: str="", title: str="",
+                 description: Optional[str]=None, iconPath: Optional[str]=None,
+                 routePath: Optional[str]=None, routeParams: Optional[dict]=None,
+                 confirmedPayload: Optional[bytes] = None, confirmType: int = 0,
+                 actions: List['NewTaskAction'] = ()):
+        self.uniqueId = self._required(uniqueId, "uniqueId")
+        self.userId = self._required(userId, "userId")
+
+        # The display properties of the task
+        self.title = self._required(title, "title")
+        self.description = description
+        self.iconPath = iconPath
+
+        # The client_fe route to open when this task is selected
+        self.routePath = routePath
+        self.routeParamJson = routeParams
+
+        # The confirmation options
+        self.confirmedPayload = confirmedPayload
+
+        self.confirmType = confirmType
+
+        # The actions for this Task.
+        self.actions = list(actions)
+
+    def _required(self, val, desc):
+        if not val:
+            raise Exception("%s is not optional" % desc)
+
+        return val
+
+
+class NewTaskAction:
+    """ Task Action
+
+    This object represents the Task Actions.
+    Tasks have zero or more actions that can be performed by the user when they
+    receive a task.
+
+    :member title: The title of the action, this will appear as a menu option.
+    :member confirmMessage: This is the message that will be shown to confirm the action.
+    :member actionedPayload: This payload will be delivered locally on Peek Server
+        When the action is performed on the user device.
+
+    """
+
+    def __init__(self, title: str, confirmMessage: str,
+                 actionedPayload: Optional[bytes]):
+        self.title = self._required(title, "title")
+        self.confirmMessage = self._required(confirmMessage, "confirmMessage")
+        self.actionedPayload = self._required(actionedPayload, "actionedPayload")
+
+    def _required(self, val, desc):
+        if not val:
+            raise Exception("%s is not optional" % desc)
+
+        return val
+
 
 class ActiveTaskApiABC(metaclass=ABCMeta):
-    @property
     @abstractmethod
-    def addTask(self, uniqueId: str) -> None:
+    def addTask(self, task: NewTask) -> None:
         """ Add Task
 
         Add a new task to the users device.
-        :param uniqueId: A globally unique reference to this task.
-            This reference is created by the initiating plugin.
-            HINT : Ensure you prefix the uniqueId with your plugin name.
+        
+        :param task: The definition of the task to add.
         
         """
 
-    @property
     @abstractmethod
     def removeTask(self, uniqueId: str) -> None:
         """ Remove Task

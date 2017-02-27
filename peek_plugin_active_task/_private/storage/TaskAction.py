@@ -12,6 +12,7 @@ import logging
 
 from sqlalchemy import Column
 from sqlalchemy import Integer, String
+from sqlalchemy.orm import relationship
 from sqlalchemy.sql.schema import Index, ForeignKey
 
 from peek_plugin_active_task._private.PluginNames import activeTaskTuplePrefix
@@ -42,6 +43,7 @@ class TaskAction(Tuple, DeclarativeBase):
     taskId = Column(Integer,
                     ForeignKey("Task.id"),
                     nullable=False)
+    task = relationship("Task", uselist=False)
 
     title = Column(String(50))
     confirmMessage = Column(String(200))

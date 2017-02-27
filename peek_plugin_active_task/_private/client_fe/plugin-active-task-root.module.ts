@@ -1,5 +1,5 @@
 import {NgModule, OnDestroy} from "@angular/core";
-import {PluginActiveTaskClientRootService} from "./plugin-active-task-root.service";
+import {PluginActiveTaskRootService} from "./plugin-active-task-root.service";
 
 /** Client Root Module
  *
@@ -10,18 +10,18 @@ import {PluginActiveTaskClientRootService} from "./plugin-active-task-root.servi
  */
 
 @NgModule({})
-export class PluginActiveTaskClientRootModule implements OnDestroy {
+export class PluginActiveTaskRootModule implements OnDestroy {
     private static instanceCount = 0;
     private instanceIndex;
 
-    constructor(private activeTaskRootService: PluginActiveTaskClientRootService) {
-        this.instanceIndex = PluginActiveTaskClientRootModule.instanceCount++;
-        console.log("peek-plugin-active-task - PluginActiveTaskClientRootModule LOADED #"
+    constructor(private activeTaskRootService: PluginActiveTaskRootService) {
+        this.instanceIndex = PluginActiveTaskRootModule.instanceCount++;
+        console.log("peek-plugin-active-task - PluginActiveTaskRootModule LOADED #"
             + this.instanceIndex);
     }
 
     ngOnDestroy() {
-        console.log("peek-plugin-active-task - PluginActiveTaskClientRootModule DESTROYED #"
+        console.log("peek-plugin-active-task - PluginActiveTaskRootModule DESTROYED #"
             + this.instanceIndex);
     }
 }

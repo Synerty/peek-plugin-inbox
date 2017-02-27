@@ -23,11 +23,11 @@
     "angularMainModule": "plugin-active-task.module",
     "angularRootModule": {
       "file": "plugin-active-task-root.module",
-      "class": "PluginActiveTaskClientRootModule"
+      "class": "PluginActiveTaskRootModule"
     },
     "angularRootService": {
       "file": "plugin-active-task-root.service",
-      "class": "PluginActiveTaskClientRootService"
+      "class": "PluginActiveTaskRootService"
     },
     "angularPluginIcon": null
   },

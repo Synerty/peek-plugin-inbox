@@ -13,11 +13,10 @@ import logging
 from sqlalchemy import Column
 from sqlalchemy import Integer, String
 from sqlalchemy.orm import relationship
-from sqlalchemy.sql.schema import Index
-from vortex.Tuple import Tuple, addTupleType, TupleField
 
 from peek_plugin_active_task._private.PluginNames import activeTaskTuplePrefix
 from peek_plugin_active_task._private.storage.DeclarativeBase import DeclarativeBase
+from vortex.Tuple import Tuple, addTupleType
 
 logger = logging.getLogger(__name__)
 
@@ -29,23 +28,7 @@ class Task(Tuple, DeclarativeBase):
     A Task represents the feature rich messages that can be sent from initiator 
     plugins to mobile devices.
     
-    :member uniqueId: A unique identifier provided when this task was created.
-        The initiating plugin may use this later to cancel the task.
-    
-    :member title: The title to display in the task.
-    :member description: The long text that is displayed under the title for this task.
-    :member iconPath: The URL for the icon, if any.
-
-    :member routePath: If this route path is defined, then selecting the task
-        will cause the peek client fe to change routes to a new page.
-    :member routeParamJson: If the route path is defined, this route param json 
-        will be passed along when the route is swtiched.
-
-    :member confirmedPayload: (Optional) The payload that will be delivered locally
-        on Peek Server when the message is confirmed.
-        
-    :member confirmType: The type of confirmation required when the message is
-        delivered to the users device.
+    see ActiveTaskAbiABC.NewTask for documentation.
         
     """
     __tupleType__ = activeTaskTuplePrefix + 'Task'
@@ -57,6 +40,7 @@ class Task(Tuple, DeclarativeBase):
     id = Column(Integer, primary_key=True, autoincrement=True)
 
     uniqueId = Column(String(50), unique=True, nullable=False)
+    userId = Column(String(50), nullable=False)
 
     # The display properties of the task
     title = Column(String(50), nullable=False)
@@ -74,8 +58,14 @@ class Task(Tuple, DeclarativeBase):
     CONFIRM_ON_RECEIPT = 1
     CONFIRM_ON_SELECT = 2
     CONFIRM_ON_ACTION = 3
-    confirmType = Column(Integer, nullable=False)
+    confirmType = Column(Integer, nullable=False, server_default='0')
+
+    # The state of this action
+    STATE_NEW = 0
+    # STATE_RECIEVED=1
+    STATE_CONFIRMED = 1
+    STATE_ACTIONED = 2
+    state = Column(Integer, nullable=False, server_default='0')
 
     # The actions for this Task.
     actions = relationship("TaskAction")
-

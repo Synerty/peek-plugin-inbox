@@ -1,0 +1,57 @@
+<div class="panel panel-default">
+    <div class="panel-heading">Send Test Task</div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="form-group col-md-6">
+                <label for="uniqueId">uniqueId</label>
+                <input type="text" class="form-control" id="uniqueId"
+                       [(ngModel)]="formData.uniqueId">
+            </div>
+            <div class="form-group col-md-6">
+                <label for="userId">userId</label>
+                <input type="text" class="form-control" id="userId"
+                       [(ngModel)]="formData.userId">
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-6">
+                <label for="title">title</label>
+                <input type="text" class="form-control" id="title"
+                       [(ngModel)]="formData.title">
+            </div>
+            <div class="form-group col-md-6">
+                <label for="iconPath">iconPath</label>
+                <input type="text" class="form-control" id="iconPath"
+                       [(ngModel)]="formData.iconPath">
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-12">
+                <label for="description">description</label>
+                <input type="text" class="form-control" id="description"
+                       [(ngModel)]="formData.description">
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-6">
+                <label for="routePath">routePath</label>
+                <input type="text" class="form-control" id="routePath"
+                       [(ngModel)]="formData.routePath">
+            </div>
+            <div class="form-group col-md-6">
+                <label for="routeParamJson">routeParamJson</label>
+                <input type="text" class="form-control" id="routeParamJson"
+                       [(ngModel)]="formData.routeParamJson">
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-12">
+                <label for="confirmType">confirmType</label>
+                <input type="text" class="form-control" id="confirmType"
+                       [(ngModel)]="formData.confirmType">
+            </div>
+        </div>
+        <button class="btn btn-default" (click)="send()">Send</button>
+
+    </div>
+</div>

@@ -3,4 +3,34 @@
         <h1 class="text-center">Active Task Plugin</h1>
         <p>This admin page shows the status of each current task for each user device.</p>
     </div>
+
+    <div>
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs" role="tablist">
+            <li role="presentation" class="active">
+                <a href="#home" aria-controls="sent test task"
+                   role="tab" data-toggle="tab">Send Test Task</a></li>
+            <li role="presentation">
+                <a href="#profile" aria-controls="profile" role="tab"
+                   data-toggle="tab">Profile</a></li>
+            <li role="presentation">
+                <a href="#messages" aria-controls="messages"
+                   role="tab" data-toggle="tab">Messages</a></li>
+            <li role="presentation">
+                <a href="#settings" aria-controls="settings"
+                   role="tab" data-toggle="tab">Settings</a></li>
+        </ul>
+
+        <!-- Tab panes -->
+        <div class="tab-content">
+            <div role="tabpanel" class="tab-pane active" id="home">
+                <active-task-send-test-task></active-task-send-test-task>
+            </div>
+            <div role="tabpanel" class="tab-pane" id="profile">...</div>
+            <div role="tabpanel" class="tab-pane" id="messages">...</div>
+            <div role="tabpanel" class="tab-pane" id="settings">...</div>
+        </div>
+
+    </div>
+
 </div>
