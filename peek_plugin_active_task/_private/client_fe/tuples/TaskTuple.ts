@@ -86,6 +86,10 @@ export class TaskTuple extends Tuple {
         return this.state === TaskTuple.STATE_ACTIONED;
     }
 
+    isStateActionedOrAbove() {
+        return this.state >= TaskTuple.STATE_ACTIONED;
+    }
+
     isStateArchived() {
         return this.state === TaskTuple.STATE_ARCHIVED;
     }

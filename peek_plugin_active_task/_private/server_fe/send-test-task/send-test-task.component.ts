@@ -9,7 +9,9 @@ import {Ng2BalloonMsgService} from "@synerty/ng2-balloon-msg";
     styleUrls: ['send-test-task.component.css']
 })
 export class SendTestTaskComponent extends ComponentLifecycleEventEmitter {
-    formData = {};
+    task = {
+        actions: [{}]
+    };
 
     private readonly filt = {
         "plugin": "peek_plugin_active_task",
@@ -32,6 +34,6 @@ export class SendTestTaskComponent extends ComponentLifecycleEventEmitter {
     }
 
     send() {
-        this.vortexService.sendPayload(new Payload(this.filt, [this.formData]));
+        this.vortexService.sendPayload(new Payload(this.filt, [this.task]));
     }
 }

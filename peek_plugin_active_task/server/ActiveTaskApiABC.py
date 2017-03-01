@@ -38,10 +38,10 @@ class NewTask:
     CONFIRM_ON_SELECT = 2
     CONFIRM_ON_ACTION = 3
 
-    NOTIFY_BY_DEVICE_POPUP = 0x1 << 0
-    NOTIFY_BY_DEVICE_SOUND = 0x1 << 1
-    NOTIFY_BY_SMS = 0x1 << 2
-    NOTIFY_BY_EMAIL = 0x1 << 3
+    NOTIFY_BY_DEVICE_POPUP = 1
+    NOTIFY_BY_DEVICE_SOUND = 2
+    NOTIFY_BY_SMS = 4
+    NOTIFY_BY_EMAIL = 8
 
     def __init__(self, uniqueId: str, userId: str, title: str,
                  description: Optional[str] = None, iconPath: Optional[str] = None,
@@ -93,7 +93,7 @@ class NewTaskAction:
     """
 
     def __init__(self, title: str, confirmMessage: str,
-                 actionedPayload: Optional[bytes]):
+                 actionedPayload: Optional[bytes] = None):
         self.title = self._required(title, "title")
         self.confirmMessage = self._required(confirmMessage, "confirmMessage")
         self.actionedPayload = self._required(actionedPayload, "actionedPayload")

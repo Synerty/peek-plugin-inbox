@@ -56,6 +56,19 @@ class Task(Tuple, DeclarativeBase):
     # The confirmation options
     confirmedPayload = Column(String(10000))
 
+    '''
+    Here we should have 
+    * TODO, A task you can mark as done
+    * Questions to answer (Yes, No, etc)
+    * Active Task (the task you should be working on at present (EG, Issued tasks))
+    * Notifications that can be marked as "READ"
+    ---
+    Rename CONFIRM to READ
+    ---
+    * Activity history (probably in a separate tab to the tasks)
+    ---
+    The services need to be global, so fix that (remove zones from vortex)
+    '''
     CONFIRM_NONE = 0
     CONFIRM_ON_RECEIPT = 1
     CONFIRM_ON_SELECT = 2

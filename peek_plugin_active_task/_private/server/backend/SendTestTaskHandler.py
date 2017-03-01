@@ -1,4 +1,6 @@
-from peek_plugin_active_task.server.ActiveTaskApiABC import NewTask, ActiveTaskApiABC
+from peek_plugin_active_task.server.ActiveTaskApiABC import NewTask, ActiveTaskApiABC, \
+    NewTaskAction
+from vortex.Payload import Payload
 from vortex.handler.ModelHandler import ModelHandler
 
 
@@ -15,8 +17,10 @@ class _SendTestTaskHandler(ModelHandler):
     def buildModel(self, payload, **kwargs):
         formData = payload.tuples[0]
 
-        newTask = NewTask(**formData)
+        vmsg = Payload().toVortexMsg()
 
+        newTask = NewTask(**formData)
+        newTask.actions = [NewTaskAction(actionedPayload=vmsg, **a) for a in formData['actions']]
         self._thisPluginsApi.addTask(newTask)
 
         return []

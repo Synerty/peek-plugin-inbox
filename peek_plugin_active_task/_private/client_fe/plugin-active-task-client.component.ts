@@ -3,14 +3,15 @@ import {
     ComponentLifecycleEventEmitter,
     TupleActionPushOfflineService,
     TupleDataOfflineObserverService,
-    TupleSelector
+    TupleSelector,
+    TupleGenericAction
 } from "@synerty/vortexjs";
 import {Router} from "@angular/router";
 import {TaskTuple} from "./tuples/TaskTuple";
+import {TaskActionTuple} from "./tuples/TaskActionTuple";
 import {Ng2BalloonMsgService} from "@synerty/ng2-balloon-msg";
 import {TitleService} from "@synerty/peek-client-fe-util";
 import {UserService} from "peek_plugin_user";
-import {TupleGenericAction} from "../../../../peek-client-fe/peek_client_fe/node_modules/@synerty/vortexjs/src/vortex/TupleAction";
 
 
 // MomentJS is declared globally, because the datetime picker needs it
@@ -59,6 +60,9 @@ export class PluginActiveTaskClientComponent extends ComponentLifecycleEventEmit
             if (task.isStateNew()) {
                 let desc = task.description ? task.description : "";
                 if (task.isNotifyBySound()) {
+                    // let audio = document.createElement('audio');
+                    // audio.src = '/assets/peek_plugin_active_task/alert.mp3';
+                    // audio.play();
                     let audio = new Audio('/assets/peek_plugin_active_task/alert.mp3');
                     audio.play();
                 }
@@ -71,7 +75,7 @@ export class PluginActiveTaskClientComponent extends ComponentLifecycleEventEmit
         }
     }
 
-    private sendStateUpdate(task: TaskTuple, newState: number) {
+    private sendStateUpdate(task: TaskTuple, newState: number | null) {
         let action = new TupleGenericAction();
         action.key = TaskTuple.tupleName;
         action.data = {
@@ -87,7 +91,7 @@ export class PluginActiveTaskClientComponent extends ComponentLifecycleEventEmit
 
     // Display methods
 
-    timePast(task:TaskTuple) {
+    timePast(task: TaskTuple) {
         return moment.duration(new Date().getTime() - task.dateTime.getTime()).humanize();
     }
 
@@ -99,6 +103,21 @@ export class PluginActiveTaskClientComponent extends ComponentLifecycleEventEmit
 
         // if (task.isConfirmOnSelect())
         this.sendStateUpdate(task, TaskTuple.STATE_CONFIRMED);
+    }
+
+    actionClicked(task: TaskTuple, taskAction: TaskActionTuple) {
+        if (taskAction.confirmMessage) {
+            if (! confirm(taskAction.confirmMessage))
+                return;
+            }
+
+        this.sendStateUpdate(task, TaskTuple.STATE_ACTIONED);
+
+        let action = new TupleGenericAction();
+        action.key = TaskActionTuple.tupleName;
+        action.data = { id: taskAction.id };
+        this.tupleOfflineAction.pushAction(action)
+            .catch(err => alert(err));
     }
 
 }

@@ -29,7 +29,7 @@ class ActiveTaskApi(ActiveTaskApiABC):
         # Create the database task from the parameter
         dbTask = Task()
         for name in dbTask.tupleFieldNames():
-            if getattr(task, name, None):
+            if getattr(task, name, None) and name is not "actions":
                 setattr(dbTask, name, getattr(task, name))
 
         # Set the time of the message
@@ -39,6 +39,7 @@ class ActiveTaskApi(ActiveTaskApiABC):
         for action in task.actions:
             dbAction = TaskAction()
             dbAction.task = dbTask
+            dbTask.actions.append(dbAction)
 
             for name in dbAction.tupleFieldNames():
                 if getattr(action, name, None):
@@ -47,6 +48,8 @@ class ActiveTaskApi(ActiveTaskApiABC):
         session = self._ormSessionCreator()
         try:
             session.add(dbTask)
+            for dbAction in dbTask.actions:
+                session.add(dbAction)
             session.commit()
             taskId, userId = dbTask.id, dbTask.userId
         finally:
