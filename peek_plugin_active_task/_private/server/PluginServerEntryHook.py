@@ -1,16 +1,21 @@
 import logging
 
+from peek_plugin_active_task._private.server.MainController import \
+    MainController
 from typing import Optional
 
 from peek_plugin_active_task._private.server.ActiveTaskApi import ActiveTaskApi
-from peek_plugin_active_task._private.server.ActiveTaskProcessor import \
-    ActiveTaskProcessor
+from peek_plugin_active_task._private.server.ClientTupleActionProcessor import \
+    makeTupleActionProcessorHandler
+from peek_plugin_active_task._private.server.ClientTupleDataObservable import \
+    makeTupleDataObservableHandler
 from peek_plugin_active_task._private.server.backend.SendTestTaskHandler import \
     createSendTestTaskHander
 from peek_plugin_active_task._private.storage.DeclarativeBase import loadStorageTuples
 from peek_plugin_base.server.PluginServerEntryHookABC import PluginServerEntryHookABC
 from peek_plugin_base.server.PluginServerStorageEntryHookABC import \
     PluginServerStorageEntryHookABC
+from peek_plugin_user.server.UserDbServerApiABC import UserDbServerApiABC
 
 logger = logging.getLogger(__name__)
 
@@ -20,9 +25,9 @@ class PluginServerEntryHook(PluginServerEntryHookABC,
     def __init__(self, *args, **kwargs):
         PluginServerEntryHookABC.__init__(self, *args, **kwargs)
         self._api = None
-        self._taskProc = None
+        self._mainController = None
 
-        self._shutdowns = []
+        self._runningHandlers = []
 
     def load(self) -> None:
         loadStorageTuples()
@@ -31,24 +36,43 @@ class PluginServerEntryHook(PluginServerEntryHookABC,
 
     def start(self):
         userPluginApi = self.platform.getOtherPluginApi("peek_plugin_user")
-        self._taskProc = ActiveTaskProcessor(self.dbSessionCreator,userPluginApi)
-        self._api = ActiveTaskApi(self.dbSessionCreator,userPluginApi, self._taskProc)
 
-        self._shutdowns.append(self._taskProc)
-        self._shutdowns.append(self._api)
-        self._shutdowns.append(createSendTestTaskHander(self._api))
+        assert isinstance(userPluginApi,
+                          UserDbServerApiABC), "Expected UserDbServerApiABC"
 
+        # Create the observable
+        tupleObserver = makeTupleDataObservableHandler(self.dbSessionCreator)
+        self._runningHandlers.append(tupleObserver)
+
+        # Create the main controller
+        self._mainController = MainController(self.dbSessionCreator, userPluginApi,
+                                              tupleObserver)
+        self._runningHandlers.append(self._mainController)
+
+        # Create the endpoing that listens for TupleActions
+        actionProcessor = makeTupleActionProcessorHandler(self._mainController)
+        self._runningHandlers.append(actionProcessor)
+
+        # Create the API that other plugins will use
+        self._api = ActiveTaskApi(self.dbSessionCreator, userPluginApi,
+                                  self._mainController)
+        self._runningHandlers.append(self._api)
+
+        # Add the handlers for the Admin UI
+        self._runningHandlers.append(createSendTestTaskHander(self._api))
+
+        # self._mainController.start()
 
         logger.debug("started")
 
     def stop(self):
-        while self._shutdowns:
-            self._shutdowns.pop().shutdown()
+        while self._runningHandlers:
+            self._runningHandlers.pop().shutdown()
 
         logger.debug("stopped")
 
     def unload(self):
-        self._taskProc = None
+        self._mainController = None
         self._api = None
         logger.debug("unloaded")
 

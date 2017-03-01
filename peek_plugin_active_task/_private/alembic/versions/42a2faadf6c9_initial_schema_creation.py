@@ -1,15 +1,15 @@
-"""Added initial task tables
+"""Initial schema creation
 
 Peek Plugin Database Migration Script
 
-Revision ID: 1d51d57d8ede
+Revision ID: 42a2faadf6c9
 Revises: 
-Create Date: 2017-02-26 21:19:47.326115
+Create Date: 2017-03-01 18:08:33.035242
 
 """
 
 # revision identifiers, used by Alembic.
-revision = '1d51d57d8ede'
+revision = '42a2faadf6c9'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -24,13 +24,18 @@ def upgrade():
     op.create_table('Task',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('uniqueId', sa.String(length=50), nullable=False),
+    sa.Column('userId', sa.String(length=50), nullable=False),
+    sa.Column('dateTime', sa.DateTime(), nullable=False),
     sa.Column('title', sa.String(length=50), nullable=False),
     sa.Column('description', sa.String(length=200), nullable=True),
     sa.Column('iconPath', sa.String(length=200), nullable=True),
     sa.Column('routePath', sa.String(length=200), nullable=True),
     sa.Column('routeParamJson', sa.String(length=200), nullable=True),
     sa.Column('confirmedPayload', sa.String(length=10000), nullable=True),
-    sa.Column('confirmType', sa.Integer(), nullable=False),
+    sa.Column('confirmType', sa.Integer(), server_default='0', nullable=False),
+    sa.Column('state', sa.Integer(), server_default='0', nullable=False),
+    sa.Column('notificationType', sa.Integer(), server_default='0', nullable=False),
+    sa.Column('notificationsSent', sa.Integer(), server_default='0', nullable=False),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('uniqueId'),
     schema='pl_active_task'

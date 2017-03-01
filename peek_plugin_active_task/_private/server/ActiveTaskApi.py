@@ -1,5 +1,7 @@
-from peek_plugin_active_task._private.server.ActiveTaskProcessor import \
-    ActiveTaskProcessor
+from datetime import datetime
+
+from peek_plugin_active_task._private.server.MainController import \
+    MainController
 from peek_plugin_active_task._private.storage.Task import Task
 from peek_plugin_active_task._private.storage.TaskAction import TaskAction
 from peek_plugin_active_task.server.ActiveTaskApiABC import ActiveTaskApiABC, NewTask
@@ -8,7 +10,7 @@ from peek_plugin_user.server.UserDbServerApiABC import UserDbServerApiABC
 
 class ActiveTaskApi(ActiveTaskApiABC):
     def __init__(self, ormSessionCreator, userPluginApi: UserDbServerApiABC
-                 , taskProc: ActiveTaskProcessor):
+                 , taskProc: MainController):
         self._ormSessionCreator = ormSessionCreator
         self._userPluginApi = userPluginApi
         self._taskProc = taskProc
@@ -17,7 +19,7 @@ class ActiveTaskApi(ActiveTaskApiABC):
         pass
 
     def addTask(self, task: NewTask) -> None:
-        """ Add Task
+        """ Add TaskTuple
 
         Add a new task to the users device.
         
@@ -29,6 +31,9 @@ class ActiveTaskApi(ActiveTaskApiABC):
         for name in dbTask.tupleFieldNames():
             if getattr(task, name, None):
                 setattr(dbTask, name, getattr(task, name))
+
+        # Set the time of the message
+        dbTask.dateTime = datetime.utcnow()
 
         dbTask.actions = []
         for action in task.actions:
@@ -50,7 +55,7 @@ class ActiveTaskApi(ActiveTaskApiABC):
         self._taskProc.taskAdded(taskId, userId)
 
     def removeTask(self, uniqueId: str) -> None:
-        """ Remove Task
+        """ Remove TaskTuple
         
         Remove a task from the users device.
         
@@ -68,7 +73,7 @@ class ActiveTaskApi(ActiveTaskApiABC):
         session.close()
 
         if not tasks:
-            raise ValueError("Task does not exist")
+            raise ValueError("TaskTuple does not exist")
 
         session = self._ormSessionCreator()
         (session.query(Task)

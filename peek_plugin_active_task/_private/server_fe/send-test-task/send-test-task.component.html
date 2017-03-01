@@ -45,10 +45,15 @@
             </div>
         </div>
         <div class="row">
-            <div class="form-group col-md-12">
+            <div class="form-group col-md-6">
                 <label for="confirmType">confirmType</label>
-                <input type="text" class="form-control" id="confirmType"
+                <input type="number" class="form-control" id="confirmType"
                        [(ngModel)]="formData.confirmType">
+            </div>
+            <div class="form-group col-md-6">
+                <label for="notificationType">notificationType</label>
+                <input type="number" class="form-control" id="notificationType"
+                       [(ngModel)]="formData.notificationType">
             </div>
         </div>
         <button class="btn btn-default" (click)="send()">Send</button>

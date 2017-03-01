@@ -16,6 +16,7 @@ from sqlalchemy.schema import MetaData
 metadata = MetaData(schema="pl_active_task")
 DeclarativeBase = declarative_base(metadata=metadata)
 
+
 def loadStorageTuples():
     from . import Task
     Task.__unused = False

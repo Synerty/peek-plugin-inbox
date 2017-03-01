@@ -13,10 +13,11 @@ import logging
 from sqlalchemy import Column
 from sqlalchemy import Integer, String
 from sqlalchemy.orm import relationship
+from sqlalchemy.sql.sqltypes import DateTime
+from vortex.Tuple import Tuple, addTupleType
 
 from peek_plugin_active_task._private.PluginNames import activeTaskTuplePrefix
 from peek_plugin_active_task._private.storage.DeclarativeBase import DeclarativeBase
-from vortex.Tuple import Tuple, addTupleType
 
 logger = logging.getLogger(__name__)
 
@@ -41,6 +42,7 @@ class Task(Tuple, DeclarativeBase):
 
     uniqueId = Column(String(50), unique=True, nullable=False)
     userId = Column(String(50), nullable=False)
+    dateTime = Column(DateTime, nullable=False)
 
     # The display properties of the task
     title = Column(String(50), nullable=False)
@@ -62,10 +64,18 @@ class Task(Tuple, DeclarativeBase):
 
     # The state of this action
     STATE_NEW = 0
-    # STATE_RECIEVED=1
-    STATE_CONFIRMED = 1
-    STATE_ACTIONED = 2
+    STATE_RECEIVED = 1
+    STATE_CONFIRMED = 2
+    STATE_ACTIONED = 3
+    STATE_ARCHIVED = 4
     state = Column(Integer, nullable=False, server_default='0')
+
+    NOTIFY_BY_DEVICE_POPUP = 1
+    NOTIFY_BY_DEVICE_SOUND = 2
+    NOTIFY_BY_SMS = 4
+    NOTIFY_BY_EMAIL = 8
+    notificationType = Column(Integer, nullable=False, server_default='0')
+    notificationsSent = Column(Integer, nullable=False, server_default='0')
 
     # The actions for this Task.
     actions = relationship("TaskAction")

@@ -22,7 +22,7 @@ Functionality
 
     -   Selected, this will open a screen.
 
-    -   Actioned, actions will be delievered back to the initiating plugin back on the peek server.
+    -   Actioned, actions will be delivered back to the initiating plugin back on the peek server.
 
 *   All tasks and the state of tasks are viewable from an administrators page.
 

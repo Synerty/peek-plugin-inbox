@@ -4,9 +4,9 @@ from typing import Optional, List
 
 
 class NewTask:
-    """ Task
+    """ TaskTuple
 
-    A Task represents the feature rich mechanism for notifications, alerts and messages
+    A TaskTuple represents the feature rich mechanism for notifications, alerts and messages
      sent from initiator plugins to mobile devices.
 
     :member uniqueId: A unique identifier provided when this task was created.
@@ -38,10 +38,16 @@ class NewTask:
     CONFIRM_ON_SELECT = 2
     CONFIRM_ON_ACTION = 3
 
-    def __init__(self, uniqueId: str="", userId: str="", title: str="",
-                 description: Optional[str]=None, iconPath: Optional[str]=None,
-                 routePath: Optional[str]=None, routeParams: Optional[dict]=None,
+    NOTIFY_BY_DEVICE_POPUP = 0x1 << 0
+    NOTIFY_BY_DEVICE_SOUND = 0x1 << 1
+    NOTIFY_BY_SMS = 0x1 << 2
+    NOTIFY_BY_EMAIL = 0x1 << 3
+
+    def __init__(self, uniqueId: str, userId: str, title: str,
+                 description: Optional[str] = None, iconPath: Optional[str] = None,
+                 routePath: Optional[str] = None, routeParams: Optional[dict] = None,
                  confirmedPayload: Optional[bytes] = None, confirmType: int = 0,
+                 notificationType: int = 0,
                  actions: List['NewTaskAction'] = ()):
         self.uniqueId = self._required(uniqueId, "uniqueId")
         self.userId = self._required(userId, "userId")
@@ -60,7 +66,9 @@ class NewTask:
 
         self.confirmType = confirmType
 
-        # The actions for this Task.
+        self.notificationType = notificationType
+
+        # The actions for this TaskTuple.
         self.actions = list(actions)
 
     def _required(self, val, desc):
@@ -71,9 +79,9 @@ class NewTask:
 
 
 class NewTaskAction:
-    """ Task Action
+    """ TaskTuple Action
 
-    This object represents the Task Actions.
+    This object represents the TaskTuple Actions.
     Tasks have zero or more actions that can be performed by the user when they
     receive a task.
 
@@ -100,7 +108,7 @@ class NewTaskAction:
 class ActiveTaskApiABC(metaclass=ABCMeta):
     @abstractmethod
     def addTask(self, task: NewTask) -> None:
-        """ Add Task
+        """ Add TaskTuple
 
         Add a new task to the users device.
         
@@ -110,7 +118,7 @@ class ActiveTaskApiABC(metaclass=ABCMeta):
 
     @abstractmethod
     def removeTask(self, uniqueId: str) -> None:
-        """ Remove Task
+        """ Remove TaskTuple
         
         Remove a task from the users device.
         

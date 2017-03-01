@@ -1,7 +1,9 @@
 import logging
 
-from peek_plugin_active_task._private.client.ActionToClientProxy import \
-    ActionToClientProxy
+from peek_plugin_active_task._private.client.ClientFeTupleActionProcessorProxy import \
+    makeTupleActionProcessorProxy
+from peek_plugin_active_task._private.client.ClientFeTupleDataObservableProxy import \
+    makeTupleDataObservableProxy
 from peek_plugin_active_task._private.storage.DeclarativeBase import loadStorageTuples
 from peek_plugin_base.client.PluginClientEntryHookABC import PluginClientEntryHookABC
 
@@ -19,7 +21,8 @@ class PluginClientEntryHook(PluginClientEntryHookABC):
         logger.debug("loaded")
 
     def start(self):
-        self._runningHandlers.append(ActionToClientProxy())
+        self._runningHandlers.append(makeTupleActionProcessorProxy())
+        self._runningHandlers.append(makeTupleDataObservableProxy())
         logger.debug("started")
 
     def stop(self):

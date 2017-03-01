@@ -1,3 +1,4 @@
+'''
 import json
 import logging
 from copy import copy
@@ -108,3 +109,5 @@ class ActionToClientProxy:
         d = VortexFactory.sendVortexMsg(vortexMsgs=payload.toVortexMsg(),
                                         destVortexUuid=clientVortexUuid)
         d.addErrback(vortexLogFailure, logger)
+        
+'''
