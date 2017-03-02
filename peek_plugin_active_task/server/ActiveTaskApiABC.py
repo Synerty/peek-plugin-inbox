@@ -1,4 +1,5 @@
 from abc import ABCMeta, abstractmethod
+from datetime import datetime
 
 from typing import Optional, List
 
@@ -105,10 +106,58 @@ class NewTaskAction:
         return val
 
 
+class NewActivity:
+    """ TaskTuple
+
+    A TaskTuple represents the feature rich mechanism for notifications, alerts and messages
+     sent from initiator plugins to mobile devices.
+
+    :member uniqueId: A unique identifier provided when this task was created.
+        The initiating plugin may use this later to cancel the task.
+        HINT : Ensure you prefix the uniqueId with your plugin name.
+
+    :member userId: A string representing the unique ID of the user. This must match the
+        users plugin.
+
+    :member title: The title to display in the task.
+    :member description: The long text that is displayed under the title for this task.
+    :member iconPath: The URL for the icon, if any.
+
+    :member routePath: If this route path is defined, then selecting the task
+        will cause the peek client fe to change routes to a new page.
+    :member routeParamJson: If the route path is defined, this route param json 
+        will be passed along when the route is swtiched.
+
+    """
+
+    def __init__(self, uniqueId: str, userId: str, title: str,
+                 dateTime: Optional[datetime] = None,
+                 description: Optional[str] = None, iconPath: Optional[str] = None,
+                 routePath: Optional[str] = None, routeParams: Optional[dict] = None):
+        self.uniqueId = self._required(uniqueId, "uniqueId")
+        self.userId = self._required(userId, "userId")
+        self.dateTime = dateTime if dateTime else datetime.utcnow()
+
+        # The display properties of the task
+        self.title = self._required(title, "title")
+        self.description = description
+        self.iconPath = iconPath
+
+        # The client_fe route to open when this item is selected
+        self.routePath = routePath
+        self.routeParamJson = routeParams
+
+    def _required(self, val, desc):
+        if not val:
+            raise Exception("%s is not optional" % desc)
+
+        return val
+
+
 class ActiveTaskApiABC(metaclass=ABCMeta):
     @abstractmethod
     def addTask(self, task: NewTask) -> None:
-        """ Add TaskTuple
+        """ Add a New Task
 
         Add a new task to the users device.
         
@@ -118,9 +167,28 @@ class ActiveTaskApiABC(metaclass=ABCMeta):
 
     @abstractmethod
     def removeTask(self, uniqueId: str) -> None:
-        """ Remove TaskTuple
+        """ Remove a Task
         
         Remove a task from the users device.
         
         :param uniqueId: The uniqueId provided when the task was created.
+        """
+
+    @abstractmethod
+    def addActivity(self, activity: NewActivity) -> None:
+        """ Add a new Activity item
+
+        Add a new Activity to the users device.
+
+        :param activity: The definition of the activity to add.
+
+        """
+
+    @abstractmethod
+    def removeActivity(self, uniqueId: str) -> None:
+        """ Remove an Activity item
+
+        Remove an Activity from the users device.
+
+        :param uniqueId: The uniqueId provided when the activity was created.
         """

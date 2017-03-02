@@ -8,11 +8,11 @@
         <!-- Nav tabs -->
         <ul class="nav nav-tabs" role="tablist">
             <li role="presentation" class="active">
-                <a href="#home" aria-controls="sent test task"
-                   role="tab" data-toggle="tab">Send Test TaskTuple</a></li>
+                <a href="#sendTask" aria-controls="send test task"
+                   role="tab" data-toggle="tab">Send Test Task</a></li>
             <li role="presentation">
-                <a href="#profile" aria-controls="profile" role="tab"
-                   data-toggle="tab">Profile</a></li>
+                <a href="#sendActivity" aria-controls="send test activity" role="tab"
+                   data-toggle="tab">Send Test Activity</a></li>
             <li role="presentation">
                 <a href="#messages" aria-controls="messages"
                    role="tab" data-toggle="tab">Messages</a></li>
@@ -23,10 +23,12 @@
 
         <!-- Tab panes -->
         <div class="tab-content">
-            <div role="tabpanel" class="tab-pane active" id="home">
+            <div role="tabpanel" class="tab-pane active" id="sendTask">
                 <active-task-send-test-task></active-task-send-test-task>
             </div>
-            <div role="tabpanel" class="tab-pane" id="profile">...</div>
+            <div role="tabpanel" class="tab-pane" id="sendActivity">
+                <active-task-send-test-activity></active-task-send-test-activity>
+            </div>
             <div role="tabpanel" class="tab-pane" id="messages">...</div>
             <div role="tabpanel" class="tab-pane" id="settings">...</div>
         </div>

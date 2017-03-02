@@ -9,6 +9,8 @@ from peek_plugin_active_task._private.server.ClientTupleActionProcessor import \
     makeTupleActionProcessorHandler
 from peek_plugin_active_task._private.server.ClientTupleDataObservable import \
     makeTupleDataObservableHandler
+from peek_plugin_active_task._private.server.backend.SendTestActivityHandler import \
+    createSendTestActivityHander
 from peek_plugin_active_task._private.server.backend.SendTestTaskHandler import \
     createSendTestTaskHander
 from peek_plugin_active_task._private.storage.DeclarativeBase import loadStorageTuples
@@ -59,6 +61,7 @@ class PluginServerEntryHook(PluginServerEntryHookABC,
         self._runningHandlers.append(self._api)
 
         # Add the handlers for the Admin UI
+        self._runningHandlers.append(createSendTestActivityHander(self._api))
         self._runningHandlers.append(createSendTestTaskHander(self._api))
 
         # self._mainController.start()

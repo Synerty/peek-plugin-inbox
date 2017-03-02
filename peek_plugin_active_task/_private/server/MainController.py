@@ -2,17 +2,14 @@ import logging
 
 from twisted.internet.defer import Deferred
 from txhttputil.util.DeferUtil import deferToThreadWrap
-from vortex.TupleAction import TupleActionABC, TupleGenericAction
-from vortex.handler.TupleActionProcessor import TupleActionProcessorDelegateABC
-
-from peek_plugin_active_task.server.ActiveTaskApiABC import NewTask
-from peek_plugin_user.server.UserDbServerApiABC import UserDbServerApiABC
-from twisted.internet.task import LoopingCall
-from vortex.DeferUtil import vortexLogFailure
+from vortex.TupleAction import TupleGenericAction
 from vortex.TupleSelector import TupleSelector
+from vortex.handler.TupleActionProcessor import TupleActionProcessorDelegateABC
 from vortex.handler.TupleDataObservableHandler import TupleDataObservableHandler
 
+from peek_plugin_active_task._private.storage.Activity import Activity
 from peek_plugin_active_task._private.storage.Task import Task
+from peek_plugin_user.server.UserDbServerApiABC import UserDbServerApiABC
 
 logger = logging.getLogger(__name__)
 
@@ -37,15 +34,22 @@ class MainController(TupleActionProcessorDelegateABC):
         pass
         # self._processLoopingCall.stop()
 
-    def _notifyObserver(self, userId:str) -> None:
+    def _notifyObserver(self, tupleName: str, userId: str) -> None:
         self._tupleObserver.notifyOfTupleUpdate(
-            TupleSelector(Task.tupleName(), {"userId": userId}))
+            TupleSelector(tupleName, {"userId": userId})
+        )
 
     def taskAdded(self, taskId: int, userId: str):
-        self._notifyObserver(userId)
+        self._notifyObserver(Task.tupleName(), userId)
 
     def taskRemoved(self, taskId: int, userId: str):
-        self._notifyObserver(userId)
+        self._notifyObserver(Task.tupleName(), userId)
+
+    def activityRemoved(self, activityId, userId):
+        self._notifyObserver(Activity.tupleName(), userId)
+
+    def activityAdded(self, taskId, userId):
+        self._notifyObserver(Activity.tupleName(), userId)
 
     @deferToThreadWrap
     def processTupleAction(self, tupleAction: TupleGenericAction) -> Deferred:
@@ -71,35 +75,35 @@ class MainController(TupleActionProcessorDelegateABC):
 
 
 
-    # def _process(self):
-    #     pass
-    #
-    # def _dispatchTask(self, task: NewTask) -> None:
-    #     logger.debug("Talking to mobile device %s" % action.__class__)
-    #
-    #     if not userId:
-    #         raise Exception("userId |%s| is not valid" % userId)
-    #
-    #     peekClientToken = yield self._userPluginApi.peekDeviceTokenForUser(userId)
-    #
-    #     if not peekClientToken:
-    #         raise Exception("peekClientToken |%s| for userId |%s| is not valid"
-    #                         % (peekClientToken, userId))
-    #
-    #     resultTuple = yield self._sendAction(action, peekClientToken)
-    #
-    #     defer.returnValue(resultTuple)
-    #
-    # def _dispatchTaskToDevice(
-    #         self):  # , tupleAction: TupleActionABC, peekClientToken: str) -> Deferred:
-    #     filt = dict(name=actionToClientActionProcessorName,
-    #                 key="tupleActionProcessorName",
-    #                 peekClientToken=peekClientToken)
-    #     filt.update(actionToClientPluginFilt)
-    #
-    #     payload = Payload(filt=filt, tuples=[tupleAction])
-    #     payloadResponse = PayloadResponse(payload, destVortexName=peekClientName)
-    #
-    #     # Convert the data to TupleAction
-    #     payloadResponse.addCallback(lambda payload_: payload_.tuples[0])
-    #     return payloadResponse
+            # def _process(self):
+            #     pass
+            #
+            # def _dispatchTask(self, task: NewTask) -> None:
+            #     logger.debug("Talking to mobile device %s" % action.__class__)
+            #
+            #     if not userId:
+            #         raise Exception("userId |%s| is not valid" % userId)
+            #
+            #     peekClientToken = yield self._userPluginApi.peekDeviceTokenForUser(userId)
+            #
+            #     if not peekClientToken:
+            #         raise Exception("peekClientToken |%s| for userId |%s| is not valid"
+            #                         % (peekClientToken, userId))
+            #
+            #     resultTuple = yield self._sendAction(action, peekClientToken)
+            #
+            #     defer.returnValue(resultTuple)
+            #
+            # def _dispatchTaskToDevice(
+            #         self):  # , tupleAction: TupleActionABC, peekClientToken: str) -> Deferred:
+            #     filt = dict(name=actionToClientActionProcessorName,
+            #                 key="tupleActionProcessorName",
+            #                 peekClientToken=peekClientToken)
+            #     filt.update(actionToClientPluginFilt)
+            #
+            #     payload = Payload(filt=filt, tuples=[tupleAction])
+            #     payloadResponse = PayloadResponse(payload, destVortexName=peekClientName)
+            #
+            #     # Convert the data to TupleAction
+            #     payloadResponse.addCallback(lambda payload_: payload_.tuples[0])
+            #     return payloadResponse

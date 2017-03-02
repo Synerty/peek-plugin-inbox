@@ -27,6 +27,8 @@ import {
     activeTaskObservableName,
     activeTaskTupleOfflineServiceName
 } from "./plugin-active-task-names";
+import {ActivityListComponent} from "./activity-list/activity-list.component";
+import {TaskListComponent} from "./task-list/task-list.component";
 
 
 export const pluginRoutes: Routes = [
@@ -67,8 +69,10 @@ export const pluginRoutes: Routes = [
 
         // User Providers
         UserService, ProfileService, LoggedInGuard, LoggedOutGuard],
-    declarations: [PluginActiveTaskClientComponent]
+    declarations: [PluginActiveTaskClientComponent,
+        TaskListComponent,
+        ActivityListComponent
+    ]
 })
-export default class PluginActiveTaskClientModule
-{
+export default class PluginActiveTaskClientModule {
 }

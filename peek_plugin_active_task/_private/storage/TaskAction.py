@@ -41,7 +41,7 @@ class TaskAction(Tuple, DeclarativeBase):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     taskId = Column(Integer,
-                    ForeignKey("Task.id"),
+                    ForeignKey("Task.id", ondelete="CASCADE"),
                     nullable=False)
     task = relationship("Task", uselist=False)
 

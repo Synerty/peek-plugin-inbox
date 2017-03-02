@@ -1,25 +1,26 @@
-<h1 *ngIf="tasks.length === 0">There are no tasks :-)</h1>
+<div>
 
+    <!-- Nav tabs -->
+    <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active">
+            <a href="#activeTaskTasks"
+               aria-controls="home" role="tab"
+               data-toggle="tab">Tasks</a>
+        </li>
+        <li role="presentation">
+            <a href="#activeTaskActivity" aria-controls="profile"
+               role="tab" data-toggle="tab">Activity</a>
+        </li>
+    </ul>
 
-<table class="table table-striped">
-    <tbody>
-    <tr *ngFor="let task of tasks" (click)="taskClicked(task)">
-        <td>
-            <div [class.bg-danger]="task.isStateNew()"
-                 [class.bg-success]="task.isStateReceived()">
-                <h4>{{task.title}}</h4>
-                <p>{{task.description}}</p>
+    <!-- Tab panes -->
+    <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="activeTaskTasks">
+            <plugin-active-task-task-list></plugin-active-task-task-list>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="activeTaskActivity">
+            <plugin-active-task-activity-list></plugin-active-task-activity-list>
+        </div>
+    </div>
 
-
-                <p class="pull-right">{{timePast(task)}} ago</p>
-                <span *ngIf="!task.isStateActionedOrAbove()">
-                    <button *ngFor="let action of task.actions"
-                        (click)="actionClicked(task, action)"
-                        class="btn btn-default btn-sm">{{action.title}}</button>
-                    </span>
-
-            </div>
-        </td>
-    </tr>
-    </tbody>
-</table>
+</div>

@@ -23,3 +23,6 @@ def loadStorageTuples():
 
     from . import TaskAction
     TaskAction.__unused = False
+
+    from . import Activity
+    Activity.__unused = False

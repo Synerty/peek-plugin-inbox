@@ -2,9 +2,11 @@ from datetime import datetime
 
 from peek_plugin_active_task._private.server.MainController import \
     MainController
+from peek_plugin_active_task._private.storage.Activity import Activity
 from peek_plugin_active_task._private.storage.Task import Task
 from peek_plugin_active_task._private.storage.TaskAction import TaskAction
-from peek_plugin_active_task.server.ActiveTaskApiABC import ActiveTaskApiABC, NewTask
+from peek_plugin_active_task.server.ActiveTaskApiABC import ActiveTaskApiABC, NewTask, \
+    NewActivity
 from peek_plugin_user.server.UserDbServerApiABC import UserDbServerApiABC
 
 
@@ -19,13 +21,6 @@ class ActiveTaskApi(ActiveTaskApiABC):
         pass
 
     def addTask(self, task: NewTask) -> None:
-        """ Add TaskTuple
-
-        Add a new task to the users device.
-        
-        :param task: The definition of the task to add.
-        
-        """
         # Create the database task from the parameter
         dbTask = Task()
         for name in dbTask.tupleFieldNames():
@@ -58,12 +53,6 @@ class ActiveTaskApi(ActiveTaskApiABC):
         self._taskProc.taskAdded(taskId, userId)
 
     def removeTask(self, uniqueId: str) -> None:
-        """ Remove TaskTuple
-        
-        Remove a task from the users device.
-        
-        :param uniqueId: The uniqueId provided when the task was created.
-        """
 
         session = self._ormSessionCreator()
         tasks = session.query(Task).filter(Task.uniqueId == uniqueId).all()
@@ -76,7 +65,7 @@ class ActiveTaskApi(ActiveTaskApiABC):
         session.close()
 
         if not tasks:
-            raise ValueError("TaskTuple does not exist")
+            raise ValueError("Task does not exist" % uniqueId)
 
         session = self._ormSessionCreator()
         (session.query(Task)
@@ -85,3 +74,43 @@ class ActiveTaskApi(ActiveTaskApiABC):
         session.close()
 
         self._taskProc.taskRemoved(taskId, userId)
+
+    def addActivity(self, activity: NewActivity) -> None:
+        # Create the database task from the parameter
+        dbActivity = Activity()
+        for name in dbActivity.tupleFieldNames():
+            if getattr(activity, name, None):
+                setattr(dbActivity, name, getattr(activity, name))
+
+        session = self._ormSessionCreator()
+        try:
+            session.add(dbActivity)
+            session.commit()
+            taskId, userId = dbActivity.id, dbActivity.userId
+        finally:
+            session.close()
+
+        self._taskProc.activityAdded(taskId, userId)
+
+    def removeActivity(self, uniqueId: str) -> None:
+
+        session = self._ormSessionCreator()
+        activities = session.query(Activity).filter(Activity.uniqueId == uniqueId).all()
+
+        if activities:
+            activity = activities[0]
+            activityId, userId = activity.id, activity.userId
+
+        session.expunge_all()
+        session.close()
+
+        if not activities:
+            raise ValueError("Activity %s does not exist" % uniqueId)
+
+        session = self._ormSessionCreator()
+        (session.query(Activity)
+         .filter(Activity.uniqueId == uniqueId)
+         .delete(synchronize_session=False))
+        session.close()
+
+        self._taskProc.activityRemoved(activityId, userId)
