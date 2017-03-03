@@ -4,51 +4,53 @@ from distutils.core import setup
 
 from setuptools import find_packages
 
-package_name = "peek-plugin-active-task"
+pip_package_name = "peek-plugin-active-task"
+py_package_name = "peek_plugin_active_task"
 package_version = '0.0.1'
 
-egg_info = "%s.egg-info" % package_name
+egg_info = "%s.egg-info" % pip_package_name
 if os.path.isdir(egg_info):
     shutil.rmtree(egg_info)
 
+if os.path.isfile('MANIFEST'):
+    os.remove('MANIFEST')
 
-def package_files(startDir,
-                  excludeDirs=('__pycache__',),
-                  excludeFiles=('.pyc', '.js', '.js.map')):
-    startDir = os.path.join(package_name, startDir)
+excludePathContains = ('__pycache__', 'node_modules', 'platforms', 'dist')
+excludeFilesEndWith = ('.pyc', '.js', '.js.map', '.lastHash')
+excludeFilesStartWith = ()
 
+
+def find_package_files():
     paths = []
-    for (path, directories, filenames) in os.walk(startDir):
-        if [e for e in excludeDirs if e in path]:
+    for (path, directories, filenames) in os.walk(py_package_name):
+        if [e for e in excludePathContains if e in path]:
             continue
 
         for filename in filenames:
-            if [e for e in excludeFiles if e in filename]:
+            if [e for e in excludeFilesEndWith if filename.endswith(e)]:
                 continue
 
-            paths.append(os.path.join(path[len(package_name)+1:], filename))
+            if [e for e in excludeFilesStartWith if filename.startswith(e)]:
+                continue
+
+            paths.append(os.path.join(path[len(py_package_name) + 1:], filename))
 
     return paths
 
-
-package_data = package_files("_private/server_fe")
-package_data += package_files("_private/client_fe")
-package_data += package_files("_private/alembic")
-package_data.append("plugin_changelog.json")
-package_data.append("plugin_package.json")
+package_files = find_package_files()
 
 setup(
-    name=package_name,
+    name=pip_package_name,
     packages=find_packages(exclude=["*.tests", "*.tests.*", "tests.*", "tests"]),
-    package_data={'': package_data},
+    package_data={'': package_files},
     install_requires=['peek-plugin-base'],
     version=package_version,
     description='Peek Plugin - ActiveTask - This is the No Operation test/example plugin',
     author='Synerty',
     author_email='contact@synerty.com',
-    url='https://github.com/Synerty/%s' % package_version,
+    url='https://github.com/Synerty/%s' % py_package_name,
     download_url='https://github.com/Synerty/%s/tarball/%s' % (
-    package_name, package_version),
+        pip_package_name, package_version),
     keywords=['Peek', 'Python', 'Platform', 'synerty'],
     classifiers=[],
 )

@@ -19,14 +19,14 @@ import {
     LoggedOutGuard,
     ProfileService,
     UserService
-} from "peek_plugin_user";
+} from "peek-client/peek_plugin_user";
 
 import {
     activeTaskActionProcessorName,
     activeTaskFilt,
     activeTaskObservableName,
     activeTaskTupleOfflineServiceName
-} from "./plugin-active-task-names";
+} from "peek-client/peek_plugin_active_task";
 import {ActivityListComponent} from "./activity-list/activity-list.component";
 import {TaskListComponent} from "./task-list/task-list.component";
 

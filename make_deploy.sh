@@ -92,8 +92,8 @@ popd
 #echo "Removing non worker source files"
 #pushd $DIR/pypy
 #rm -rf $PLUGIN_NAME/agent
-#rm -rf $PLUGIN_NAME/client_fe
-#rm -rf $PLUGIN_NAME/server_fe
+#rm -rf $PLUGIN_NAME/client_fe_app
+#rm -rf $PLUGIN_NAME/server_fe_app
 #rm -rf alembic
 #popd
 

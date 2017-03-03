@@ -49,7 +49,7 @@ class Task(Tuple, DeclarativeBase):
     description = Column(String(200))
     iconPath = Column(String(200))
 
-    # The client_fe route to open when this task is selected
+    # The client_fe_app route to open when this task is selected
     routePath = Column(String(200))
     routeParamJson = Column(String(200))
 

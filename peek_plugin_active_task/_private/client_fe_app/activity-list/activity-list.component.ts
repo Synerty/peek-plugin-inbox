@@ -7,9 +7,9 @@ import {
     TupleGenericAction
 } from "@synerty/vortexjs";
 import {Router} from "@angular/router";
-import {ActivityTuple} from "../tuples/ActivityTuple";
+import {ActivityTuple} from "peek-client/peek_plugin_active_task";
 import {Ng2BalloonMsgService} from "@synerty/ng2-balloon-msg";
-import {UserService} from "peek_plugin_user";
+import {UserService} from "peek-client/peek_plugin_user";
 
 
 // MomentJS is declared globally, because the datetime picker needs it

@@ -58,7 +58,7 @@ class NewTask:
         self.description = description
         self.iconPath = iconPath
 
-        # The client_fe route to open when this task is selected
+        # The client_fe_app route to open when this task is selected
         self.routePath = routePath
         self.routeParamJson = routeParams
 
@@ -143,7 +143,7 @@ class NewActivity:
         self.description = description
         self.iconPath = iconPath
 
-        # The client_fe route to open when this item is selected
+        # The client_fe_app route to open when this item is selected
         self.routePath = routePath
         self.routeParamJson = routeParams
 

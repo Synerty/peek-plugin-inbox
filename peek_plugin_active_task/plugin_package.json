@@ -19,7 +19,9 @@
     "titleBarLeft": false,
     "titleBarText": "Tasks",
     "enableAngularFrontend": true,
-    "angularFrontendDir": "_private/client_fe",
+    "angularFrontendAppDir": "_private/client_fe_app",
+    "angularFrontendModuleDir": "_private/client_fe_module",
+    "angularFrontendAssetsDir": "_private/client_fe_assets",
     "angularMainModule": "plugin-active-task.module",
     "angularRootModule": {
       "file": "plugin-active-task-root.module",
@@ -33,7 +35,7 @@
   },
   "server": {
     "enableAngularFrontend": true,
-    "angularFrontendDir": "_private/server_fe",
+    "angularFrontendAppDir": "_private/server_fe_app",
     "angularMainModule": "plugin-active-task.module"
   },
   "storage": {

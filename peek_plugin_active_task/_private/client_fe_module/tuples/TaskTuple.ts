@@ -19,7 +19,7 @@ export class TaskTuple extends Tuple {
     description: string;
     iconPath: string;
 
-    // The client_fe route to open when this task is selected
+    // The client_fe_app route to open when this task is selected
     routePath: string;
     routeParamJson: {};
 
