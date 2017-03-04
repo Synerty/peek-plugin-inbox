@@ -2,13 +2,14 @@ import {PeekComponent} from "@synerty/peek-web-ns";
 import {
     ComponentLifecycleEventEmitter,
     TupleActionPushOfflineService,
-    TupleDataOfflineObserverService,
-    TupleSelector,
     TupleGenericAction
 } from "@synerty/vortexjs";
 import {Router} from "@angular/router";
-import {TaskTuple,TaskActionTuple} from "peek-client/peek_plugin_active_task";
-import {Ng2BalloonMsgService} from "@synerty/ng2-balloon-msg";
+import {
+    PluginActiveTaskRootService,
+    TaskActionTuple,
+    TaskTuple
+} from "peek-client/peek_plugin_active_task";
 import {UserService} from "peek-client/peek_plugin_user";
 
 
@@ -23,53 +24,29 @@ declare let moment: any;
 export class TaskListComponent extends ComponentLifecycleEventEmitter {
 
     tasks: TaskTuple[] = [];
+    private tupleOfflineAction: TupleActionPushOfflineService;
 
-    constructor(private userService: UserService,
-                private userMsgService: Ng2BalloonMsgService,
-                private tupleDataOfflineObserver: TupleDataOfflineObserverService,
-                private tupleOfflineAction: TupleActionPushOfflineService,
+    constructor(private rootService: PluginActiveTaskRootService,
                 private router: Router) {
 
         super();
 
+        this.tupleOfflineAction = rootService.tupleActionService;
+
         // Load Tasks ------------------
 
-        let tupleSelector = new TupleSelector(TaskTuple.tupleName, {
-            userId: userService.loggedInUserDetails.userId
-        });
-
-        let sup = this.tupleDataOfflineObserver.subscribeToTupleSelector(tupleSelector)
+        let sup = rootService.tupleObserverService
+            .subscribeToTupleSelector(rootService.taskTupleSelector)
             .subscribe((tuples: TaskTuple[]) => {
                 this.tasks = tuples.sort(
                     (o1, o2) => o2.dateTime.getTime() - o1.dateTime.getTime()
                 );
-                this.processReceives();
             });
         this.onDestroyEvent.subscribe(() => sup.unsubscribe());
 
     }
 
     // Logic for the tasks
-
-    private processReceives() {
-        for (let task of this.tasks) {
-            if (task.isStateNew()) {
-                let desc = task.description ? task.description : "";
-                if (task.isNotifyBySound()) {
-                    // let audio = document.createElement('audio');
-                    // audio.src = '/assets/peek_plugin_active_task/alert.mp3';
-                    // audio.play();
-                    let audio = new Audio('/assets/peek_plugin_active_task/alert.mp3');
-                    audio.play();
-                }
-
-                if (task.isNotifyByPopup())
-                    alert(`${task.title}\n\n${desc}`);
-
-                this.sendStateUpdate(task, TaskTuple.STATE_RECEIVED);
-            }
-        }
-    }
 
     private sendStateUpdate(task: TaskTuple, newState: number | null) {
         let action = new TupleGenericAction();
@@ -103,15 +80,15 @@ export class TaskListComponent extends ComponentLifecycleEventEmitter {
 
     actionClicked(task: TaskTuple, taskAction: TaskActionTuple) {
         if (taskAction.confirmMessage) {
-            if (! confirm(taskAction.confirmMessage))
+            if (!confirm(taskAction.confirmMessage))
                 return;
-            }
+        }
 
         this.sendStateUpdate(task, TaskTuple.STATE_ACTIONED);
 
         let action = new TupleGenericAction();
         action.key = TaskActionTuple.tupleName;
-        action.data = { id: taskAction.id };
+        action.data = {id: taskAction.id};
         this.tupleOfflineAction.pushAction(action)
             .catch(err => alert(err));
     }

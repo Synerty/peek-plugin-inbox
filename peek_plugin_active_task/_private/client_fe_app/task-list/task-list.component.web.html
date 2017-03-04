@@ -1,13 +1,13 @@
 <h1 *ngIf="tasks.length === 0">There are no tasks :-)</h1>
 
-
 <table class="table table-striped">
     <tbody>
     <tr *ngFor="let task of tasks" (click)="taskClicked(task)">
         <td>
             <div [class.bg-danger]="task.isStateNew()"
                  [class.bg-success]="task.isStateReceived()">
-                <h4>{{task.title}}<span *ngIf="activity.routePath" class="glyphicon glyphicon-link"></span></h4>
+
+                <h4>{{task.title}}<span *ngIf="task.routePath" class="glyphicon glyphicon-link"></span></h4>
                 <p>{{task.description}}</p>
 
 

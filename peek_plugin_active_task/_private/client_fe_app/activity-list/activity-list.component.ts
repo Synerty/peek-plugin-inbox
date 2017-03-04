@@ -3,12 +3,13 @@ import {
     ComponentLifecycleEventEmitter,
     TupleActionPushOfflineService,
     TupleDataOfflineObserverService,
-    TupleSelector,
-    TupleGenericAction
+    TupleSelector
 } from "@synerty/vortexjs";
 import {Router} from "@angular/router";
-import {ActivityTuple} from "peek-client/peek_plugin_active_task";
-import {Ng2BalloonMsgService} from "@synerty/ng2-balloon-msg";
+import {
+    ActivityTuple,
+    PluginActiveTaskRootService
+} from "peek-client/peek_plugin_active_task";
 import {UserService} from "peek-client/peek_plugin_user";
 
 
@@ -24,21 +25,21 @@ export class ActivityListComponent extends ComponentLifecycleEventEmitter {
 
     activities: ActivityTuple[] = [];
 
-    constructor(private userService: UserService,
-                private userMsgService: Ng2BalloonMsgService,
-                private tupleDataOfflineObserver: TupleDataOfflineObserverService,
-                private tupleOfflineAction: TupleActionPushOfflineService,
+    private tupleDataOfflineObserver: TupleDataOfflineObserverService;
+    private tupleOfflineAction: TupleActionPushOfflineService;
+
+    constructor(private rootService: PluginActiveTaskRootService,
                 private router: Router) {
 
         super();
-        
+
+        this.tupleDataOfflineObserver = rootService.tupleObserverService;
+        this.tupleOfflineAction = rootService.tupleActionService;
+
         // Load Activities ------------------
 
-        let tupleSelector = new TupleSelector(ActivityTuple.tupleName, {
-            userId: userService.loggedInUserDetails.userId
-        });
-
-        let sup = this.tupleDataOfflineObserver.subscribeToTupleSelector(tupleSelector)
+        let sup = this.tupleDataOfflineObserver
+            .subscribeToTupleSelector(rootService.activityTupleSelector)
             .subscribe((tuples: ActivityTuple[]) => {
                 this.activities = tuples.sort(
                     (o1, o2) => o2.dateTime.getTime() - o1.dateTime.getTime()

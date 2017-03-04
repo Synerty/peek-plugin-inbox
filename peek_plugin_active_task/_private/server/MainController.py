@@ -56,54 +56,24 @@ class MainController(TupleActionProcessorDelegateABC):
         if not tupleAction.key == Task.tupleName():
             raise Exception("Unhandled tuple action key=%s" % tupleAction.key)
 
-        if "state" in tupleAction.data:
-            newState = tupleAction.data["state"]
-            taskId = tupleAction.data["id"]
+        taskId = tupleAction.data["id"]
+        session = self._ormSessionCreator()
+        try:
+            task = session.query(Task).filter(Task.id == taskId).one()
+            userId = task.userId
 
-            session = self._ormSessionCreator()
-            try:
-                task = session.query(Task).filter(Task.id == taskId).one()
-                userId = task.userId
+            if "state" in tupleAction.data:
+                newState = tupleAction.data["state"]
                 task.state = newState
 
-                session.commit()
+            if "notificationsSentMask" in tupleAction.data:
+                mask = tupleAction.data["notificationsSentMask"]
+                task.notificationsSent |= mask
 
-            finally:
-                session.close()
+            session.commit()
 
-            self._notifyObserver(userId)
+        finally:
+            session.close()
 
+        self._notifyObserver(Task.tupleName(), userId)
 
-
-            # def _process(self):
-            #     pass
-            #
-            # def _dispatchTask(self, task: NewTask) -> None:
-            #     logger.debug("Talking to mobile device %s" % action.__class__)
-            #
-            #     if not userId:
-            #         raise Exception("userId |%s| is not valid" % userId)
-            #
-            #     peekClientToken = yield self._userPluginApi.peekDeviceTokenForUser(userId)
-            #
-            #     if not peekClientToken:
-            #         raise Exception("peekClientToken |%s| for userId |%s| is not valid"
-            #                         % (peekClientToken, userId))
-            #
-            #     resultTuple = yield self._sendAction(action, peekClientToken)
-            #
-            #     defer.returnValue(resultTuple)
-            #
-            # def _dispatchTaskToDevice(
-            #         self):  # , tupleAction: TupleActionABC, peekClientToken: str) -> Deferred:
-            #     filt = dict(name=actionToClientActionProcessorName,
-            #                 key="tupleActionProcessorName",
-            #                 peekClientToken=peekClientToken)
-            #     filt.update(actionToClientPluginFilt)
-            #
-            #     payload = Payload(filt=filt, tuples=[tupleAction])
-            #     payloadResponse = PayloadResponse(payload, destVortexName=peekClientName)
-            #
-            #     # Convert the data to TupleAction
-            #     payloadResponse.addCallback(lambda payload_: payload_.tuples[0])
-            #     return payloadResponse

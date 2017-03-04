@@ -1,14 +1,10 @@
 import {PeekComponent} from "@synerty/peek-web-ns";
+import {ComponentLifecycleEventEmitter} from "@synerty/vortexjs";
 import {
-    ComponentLifecycleEventEmitter,
-    TupleActionPushOfflineService,
-    TupleDataOfflineObserverService,
-    TupleSelector,
-    TupleGenericAction
-} from "@synerty/vortexjs";
-import {Router} from "@angular/router";
-import {TaskTuple, TaskActionTuple} from "peek-client/peek_plugin_active_task";
-import {Ng2BalloonMsgService} from "@synerty/ng2-balloon-msg";
+    PluginActiveTaskRootService,
+    TaskActionTuple,
+    TaskTuple
+} from "peek-client/peek_plugin_active_task";
 import {TitleService} from "@synerty/peek-client-fe-util";
 import {UserService} from "peek-client/peek_plugin_user";
 
@@ -23,17 +19,20 @@ declare let moment: any;
 })
 export class PluginActiveTaskClientComponent extends ComponentLifecycleEventEmitter {
 
-    tasks: TaskTuple[] = [];
-
-    constructor(private userService: UserService,
-                private userMsgService: Ng2BalloonMsgService,
-                private tupleDataOfflineObserver: TupleDataOfflineObserverService,
-                private tupleOfflineAction: TupleActionPushOfflineService,
-                private router: Router,
+    constructor(rootService: PluginActiveTaskRootService,
                 titleService: TitleService) {
 
         super();
         titleService.setTitle("My Tasks");
+
+        // Load Tasks ------------------
+
+        let sup = rootService.tupleObserverService
+            .subscribeToTupleSelector(rootService.taskTupleSelector)
+            .subscribe((tuples: TaskTuple[]) => {
+
+            });
+        this.onDestroyEvent.subscribe(() => sup.unsubscribe());
 
 
     }
