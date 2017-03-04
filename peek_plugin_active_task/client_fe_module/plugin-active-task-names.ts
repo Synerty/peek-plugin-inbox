@@ -7,3 +7,5 @@ export let activeTaskObservableName = "peekPluginActiveTask";
 export let activeTaskActionProcessorName = "peekPluginActiveTask";
 
 export let activeTaskBaseUrl = "peek_plugin_active_task";
+
+export let activeTaskPluginName = "peek_plugin_active_task";

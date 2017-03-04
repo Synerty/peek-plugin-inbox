@@ -20,7 +20,7 @@
     "titleBarText": "Tasks",
     "enableAngularFrontend": true,
     "angularFrontendAppDir": "_private/client_fe_app",
-    "angularFrontendModuleDir": "_private/client_fe_module",
+    "angularFrontendModuleDir": "client_fe_module",
     "angularFrontendAssetsDir": "_private/client_fe_assets",
     "angularMainModule": "plugin-active-task.module",
     "angularRootModule": {

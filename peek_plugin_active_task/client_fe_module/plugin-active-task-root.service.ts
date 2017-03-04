@@ -17,8 +17,10 @@ import {TaskTuple} from "./tuples/TaskTuple";
 import {ActivityTuple} from "./tuples/ActivityTuple";
 import {Ng2BalloonMsgService} from "@synerty/ng2-balloon-msg";
 import {UserService} from "peek-client/peek_plugin_user";
+import {TitleService} from "@synerty/peek-client-fe-util";
 
 import {
+    activeTaskPluginName,
     activeTaskActionProcessorName,
     activeTaskFilt,
     activeTaskObservableName,
@@ -48,6 +50,7 @@ export class PluginActiveTaskRootService extends ComponentLifecycleEventEmitter 
 
     constructor(private userService: UserService,
                 private userMsgService: Ng2BalloonMsgService,
+                private titleService: TitleService,
                 vortexService: VortexService,
                 vortexStatusService: VortexStatusService,
                 webSqlFactory: WebSqlFactoryService,
@@ -109,6 +112,8 @@ export class PluginActiveTaskRootService extends ComponentLifecycleEventEmitter 
             .subscribeToTupleSelector(this.taskTupleSelector)
             .subscribe((tuples: TaskTuple[]) => {
                 this.tasks = tuples;
+                this.titleService.updateButtonBadgeCount(activeTaskPluginName,
+                    tuples.length == 0 ? null : tuples.length);
                 this.processReceives();
                 console.log("PluginActiveTaskRootService Tasks received");
             });
