@@ -35,6 +35,7 @@
   },
   "server": {
     "enableAngularFrontend": true,
+    "angularFrontendModuleDir": "client_fe_module",
     "angularFrontendAppDir": "_private/server_fe_app",
     "angularMainModule": "plugin-active-task.module"
   },

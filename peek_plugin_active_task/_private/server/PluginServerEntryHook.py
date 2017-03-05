@@ -2,6 +2,8 @@ import logging
 
 from peek_plugin_active_task._private.server.MainController import \
     MainController
+from peek_plugin_active_task._private.server.backend.PeekAdmSettingHandler import \
+    createAdminSettingsHandler
 from typing import Optional
 
 from peek_plugin_active_task._private.server.ActiveTaskApi import ActiveTaskApi
@@ -63,6 +65,7 @@ class PluginServerEntryHook(PluginServerEntryHookABC,
         # Add the handlers for the Admin UI
         self._runningHandlers.append(createSendTestActivityHander(self._api))
         self._runningHandlers.append(createSendTestTaskHander(self._api))
+        self._runningHandlers.append(createAdminSettingsHandler(self.dbSessionCreator))
 
         # self._mainController.start()
 

@@ -10,6 +10,26 @@ import {SendTestActivityComponent} from "./send-test-activity/send-test-activity
  *
  */
 
+import {
+    TupleActionPushNameService,
+    TupleActionPushOfflineService,
+    TupleActionPushService,
+    TupleDataObservableNameService,
+    TupleDataObserverService,
+    TupleDataOfflineObserverService,
+    TupleOfflineStorageNameService,
+    TupleOfflineStorageService
+} from "@synerty/vortexjs";
+
+import {activeTaskObservableName,
+activeTaskActionProcessorName,
+activeTaskFilt,
+} from "peek-server/peek_plugin_active_task/plugin-active-task-names";
+import {AdminSettingListComponent} from "./setting_list/admin-setting-list.component";
+import {AdminTaskListComponent} from "./task-list/admin-task-list.component";
+import {AdminActivityListComponent} from "./activity-list/admin-activity-list.component";
+
+
 export const pluginRoutes: Routes = [
     {
         path: '',
@@ -24,10 +44,24 @@ export const pluginRoutes: Routes = [
         FormsModule,
         RouterModule.forChild(pluginRoutes)],
     exports: [],
-    providers: [],
+    providers: [
+        TupleDataObserverService, {
+            provide: TupleDataObservableNameService,
+            useValue: new TupleDataObservableNameService(
+                activeTaskObservableName, activeTaskFilt)
+        }, TupleActionPushService, {
+            provide: TupleActionPushNameService,
+            useValue: new TupleActionPushNameService(
+                activeTaskActionProcessorName, activeTaskFilt)
+        }
+        ],
     declarations: [PluginActiveTaskAdminComponent,
         SendTestTaskComponent,
-        SendTestActivityComponent]
+        SendTestActivityComponent,
+        AdminSettingListComponent,
+        AdminTaskListComponent,
+        AdminActivityListComponent
+    ]
 })
 export default class PluginActiveTaskAdminModule {
 

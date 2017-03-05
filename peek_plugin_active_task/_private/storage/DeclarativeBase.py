@@ -26,3 +26,6 @@ def loadStorageTuples():
 
     from . import Activity
     Activity.__unused = False
+
+    from . import Setting
+    Setting.__unused = False
