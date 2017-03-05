@@ -52,6 +52,14 @@ export class ActivityListComponent extends ComponentLifecycleEventEmitter {
 
     // Display methods
 
+    hasRoute(activity: ActivityTuple) {
+        return activity.routePath != null && activity.routePath.length;
+    }
+
+    dateTime(activity: ActivityTuple) {
+        return moment(activity.dateTime).format('HH:MM DD-MMM');
+    }
+
     timePast(activity: ActivityTuple) {
         return moment.duration(new Date().getTime() - activity.dateTime.getTime()).humanize();
     }
@@ -59,7 +67,7 @@ export class ActivityListComponent extends ComponentLifecycleEventEmitter {
     // User Actions
 
     activityClicked(activity: ActivityTuple) {
-        if (activity.routePath)
+        if (this.hasRoute(activity))
             this.router.navigate([activity.routePath]);
 
     }

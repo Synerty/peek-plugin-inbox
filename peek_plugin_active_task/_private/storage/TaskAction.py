@@ -10,13 +10,13 @@
 """
 import logging
 
+from peek_plugin_active_task._private.PluginNames import activeTaskTuplePrefix
+from peek_plugin_active_task._private.storage.DeclarativeBase import DeclarativeBase
 from sqlalchemy import Column
 from sqlalchemy import Integer, String
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.schema import Index, ForeignKey
-
-from peek_plugin_active_task._private.PluginNames import activeTaskTuplePrefix
-from peek_plugin_active_task._private.storage.DeclarativeBase import DeclarativeBase
+from sqlalchemy.sql.sqltypes import LargeBinary
 from vortex.Tuple import Tuple, addTupleType
 
 logger = logging.getLogger(__name__)
@@ -47,7 +47,7 @@ class TaskAction(Tuple, DeclarativeBase):
 
     title = Column(String(50))
     confirmMessage = Column(String(200))
-    actionedPayload = Column(String(10000))
+    onActionPayload = Column(LargeBinary)
 
     __table_args__ = (
         Index("idx_TaskAction_taskId", taskId, unique=False),

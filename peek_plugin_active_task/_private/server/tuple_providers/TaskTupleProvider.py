@@ -25,9 +25,11 @@ class TaskTupleProvider(TuplesProviderABC):
 
             # Remove the data we don't want in the UI
             for task in tasks:
-                task.confirmedPayload = None
+                task.onDeliveredPayload = None
+                task.onCompletedPayload = None
+                task.onDeletedPayload = None
                 for action in task.actions:
-                    action.actionedPayload = None
+                    action.onActionPayload = None
 
             # Create the vortex message
             msg = Payload(filt, tuples=tasks).toVortexMsg()

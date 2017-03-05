@@ -10,14 +10,13 @@
 """
 import logging
 
+from peek_plugin_active_task._private.PluginNames import activeTaskTuplePrefix
+from peek_plugin_active_task._private.storage.DeclarativeBase import DeclarativeBase
 from sqlalchemy import Column
 from sqlalchemy import Integer, String
 from sqlalchemy.orm import relationship
-from sqlalchemy.sql.sqltypes import DateTime
+from sqlalchemy.sql.sqltypes import DateTime, LargeBinary
 from vortex.Tuple import Tuple, addTupleType
-
-from peek_plugin_active_task._private.PluginNames import activeTaskTuplePrefix
-from peek_plugin_active_task._private.storage.DeclarativeBase import DeclarativeBase
 
 logger = logging.getLogger(__name__)
 
@@ -54,7 +53,9 @@ class Task(Tuple, DeclarativeBase):
     routeParamJson = Column(String(200))
 
     # The confirmation options
-    confirmedPayload = Column(String(10000))
+    onDeliveredPayload = Column(LargeBinary)
+    onCompletedPayload = Column(LargeBinary)
+    onDeletedPayload = Column(LargeBinary)
 
     '''
     Here we should have 
@@ -62,33 +63,37 @@ class Task(Tuple, DeclarativeBase):
     * Questions to answer (Yes, No, etc)
     * Active Task (the task you should be working on at present (EG, Issued tasks))
     * Notifications that can be marked as "READ"
-    ---
-    Rename CONFIRM to READ
-    ---
-    * Activity history (probably in a separate tab to the tasks)
-    ---
-    The services need to be global, so fix that (remove zones from vortex)
     '''
-    CONFIRM_NONE = 0
-    CONFIRM_ON_RECEIPT = 1
-    CONFIRM_ON_SELECT = 2
-    CONFIRM_ON_ACTION = 3
-    confirmType = Column(Integer, nullable=False, server_default='0')
+    AUTO_COMPLETE_OFF = 0
+    AUTO_COMPLETE_ON_DELIVER = 1
+    AUTO_COMPLETE_ON_SELECT = 2
+    AUTO_COMPLETE_ON_ACTION = 4
+    autoComplete = Column(Integer, nullable=False, server_default='0')
+
+    AUTO_DELETE_OFF = 0
+    AUTO_DELETE_ON_DELIVER = 1
+    AUTO_DELETE_ON_SELECT = 2
+    AUTO_DELETE_ON_ACTION = 4
+    AUTO_DELETE_ON_COMPLETE = 8
+    autoDelete = Column(Integer, nullable=False, server_default='0')
 
     # The state of this action
-    STATE_NEW = 0
-    STATE_RECEIVED = 1
-    STATE_CONFIRMED = 2
-    STATE_ACTIONED = 3
-    STATE_ARCHIVED = 4
-    state = Column(Integer, nullable=False, server_default='0')
+    STATE_DELIVERED = 1
+    STATE_SELECTED = 2
+    STATE_ACTIONED = 4
+    STATE_COMPLETED = 8
+    stateFlags = Column(Integer, nullable=False, server_default='0')
 
     NOTIFY_BY_DEVICE_POPUP = 1
     NOTIFY_BY_DEVICE_SOUND = 2
     NOTIFY_BY_SMS = 4
     NOTIFY_BY_EMAIL = 8
-    notificationType = Column(Integer, nullable=False, server_default='0')
-    notificationsSent = Column(Integer, nullable=False, server_default='0')
+    notificationRequiredFlags = Column(Integer, nullable=False, server_default='0')
+    notificationSentFlags = Column(Integer, nullable=False, server_default='0')
+
+    DISPLAY_AS_TASK = 0
+    DISPLAY_AS_MESSAGE = 1
+    displayAs = Column(Integer, nullable=False, server_default='0')
 
     # The actions for this Task.
     actions = relationship("TaskAction")

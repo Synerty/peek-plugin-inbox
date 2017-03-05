@@ -3,13 +3,18 @@ import {ComponentLifecycleEventEmitter, Payload, VortexService} from "@synerty/v
 import {Ng2BalloonMsgService} from "@synerty/ng2-balloon-msg";
 
 
+// MomentJS is declared globally, because the datetime picker needs it
+declare let moment: any;
+
 @Component({
     selector: 'active-task-send-test-activity',
     templateUrl: 'send-test-activity.component.html',
     styleUrls: ['send-test-activity.component.css']
 })
 export class SendTestActivityComponent extends ComponentLifecycleEventEmitter {
-    activity = {    };
+    activity = {
+        autoDeleteDateTime: moment(new Date()).add(1, 'D').toDate()
+    };
 
     private readonly filt = {
         "plugin": "peek_plugin_active_task",

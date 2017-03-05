@@ -44,6 +44,13 @@
                        [(ngModel)]="activity.routeParamJson">
             </div>
         </div>
+        <div class="row">
+            <div class="form-group col-md-6">
+                <label for="autoDeleteDateTime">autoDeleteDateTime</label>
+                <input type="datetime-local" class="form-control" id="autoDeleteDateTime"
+                       [(ngModel)]="activity.autoDeleteDateTime">
+            </div>
+        </div>
 
         <button class="btn btn-default" (click)="send()">Send</button>
 

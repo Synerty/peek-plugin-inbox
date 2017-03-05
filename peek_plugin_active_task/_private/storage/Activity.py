@@ -51,3 +51,5 @@ class Activity(Tuple, DeclarativeBase):
     routePath = Column(String(200))
     routeParamJson = Column(String(200))
 
+    # Auto Delete on Time
+    autoDeleteDateTime = Column(DateTime, nullable=False)

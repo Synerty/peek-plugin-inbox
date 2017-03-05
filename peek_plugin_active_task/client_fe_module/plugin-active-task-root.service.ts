@@ -20,10 +20,10 @@ import {UserService} from "peek-client/peek_plugin_user";
 import {TitleService} from "@synerty/peek-client-fe-util";
 
 import {
-    activeTaskPluginName,
     activeTaskActionProcessorName,
     activeTaskFilt,
     activeTaskObservableName,
+    activeTaskPluginName,
     activeTaskTupleOfflineServiceName
 } from "./plugin-active-task-names";
 
@@ -112,10 +112,23 @@ export class PluginActiveTaskRootService extends ComponentLifecycleEventEmitter 
             .subscribeToTupleSelector(this.taskTupleSelector)
             .subscribe((tuples: TaskTuple[]) => {
                 this.tasks = tuples;
+
+                let notCompletedCount = 0;
+                for (let task of this.tasks) {
+                    notCompletedCount += task.isCompleted() ? 0 : 1;
+                }
+
                 this.titleService.updateButtonBadgeCount(activeTaskPluginName,
-                    tuples.length == 0 ? null : tuples.length);
-                this.processReceives();
-                console.log("PluginActiveTaskRootService Tasks received");
+                    notCompletedCount === 0 ? null : notCompletedCount);
+
+                let updateApplied = this.processNotifications()
+                    || this.processDeletesAndCompletes();
+
+                if (updateApplied) {
+                    // Update the cached data
+                    this.tupleDataOfflineObserver.updateOfflineState(
+                        this.taskTupleSelector, this.tasks);
+                }
             });
 
         // Load Activities ------------------
@@ -161,60 +174,120 @@ export class PluginActiveTaskRootService extends ComponentLifecycleEventEmitter 
 
 
     // -------------------------
-    // Logic for the tasks
+    // State update methods from UI
+    public taskSelected(taskId: number) {
+        this.addTaskStateFlag(taskId, TaskTuple.STATE_SELECTED);
+    }
 
-    private processReceives() {
+    public taskActioned(taskId: number) {
+        this.addTaskStateFlag(taskId, TaskTuple.STATE_ACTIONED);
+    }
+
+    private addTaskStateFlag(taskId: number, stateFlag: number) {
+        let filtered = this.tasks.filter(t => t.id === taskId);
+        if (filtered.length === 0) {
+            // This should never happen
+            return;
+        }
+
+        let thisTask = filtered[0];
+        this.sendStateUpdate(thisTask, stateFlag, null);
+        this.processDeletesAndCompletes();
+
+        // Update the cached data
+        this.tupleDataOfflineObserver.updateOfflineState(
+            this.taskTupleSelector, this.tasks);
+    }
+
+    /** Process Delegates and Complete
+     *
+     * This method updates the local data only.
+     * Server side will apply these updates when it gets state flag updates.
+     */
+    private processDeletesAndCompletes(): boolean {
+        let updateApplied = false;
+
+        let tasksSnapshot = this.tasks.slice();
+        for (let task of tasksSnapshot) {
+
+            let autoComplete = task.autoComplete & task.stateFlags;
+            let isAlreadyCompleted = TaskTuple.STATE_COMPLETED & task.stateFlags
+            if (autoComplete && !isAlreadyCompleted) {
+                task.stateFlags = (TaskTuple.STATE_COMPLETED | task.stateFlags);
+                updateApplied = true
+            }
+
+            // If we're in the state where we should delete, then remove it
+            // from our tasks.
+            if (task.autoDelete & task.stateFlags) {
+                let index = this.tasks.indexOf(task);
+                if (index > -1) {
+                    this.tasks.splice(index, 1);
+                }
+                updateApplied = true;
+            }
+        }
+
+        return updateApplied;
+    }
+
+    private processNotifications(): boolean {
+        let updateApplied = false;
+
         for (let task of this.tasks) {
-            if (task.isStateNew()) {
+            let notificationSentFlags = 0;
+
+            if (task.isNotifyBySound() && !task.isNotifiedBySound()) {
+                let audio = new Audio('/assets/peek_plugin_active_task/alert.mp3');
+                audio.play();
+                notificationSentFlags = (
+                notificationSentFlags | TaskTuple.NOTIFY_BY_DEVICE_SOUND);
+            }
+
+            if (task.isNotifyByPopup() && !task.isNotifiedByPopup()) {
                 let desc = task.description ? task.description : "";
-                let soundDone = task.notificationsSent & TaskTuple.NOTIFY_BY_DEVICE_SOUND;
-                let popupDone = task.notificationsSent & TaskTuple.NOTIFY_BY_DEVICE_POPUP;
+                this.userMsgService.showInfo(`${task.title}\n\n${desc}`);
+                notificationSentFlags = (
+                notificationSentFlags | TaskTuple.NOTIFY_BY_DEVICE_POPUP);
+            }
 
-                let notificationsSentMask = 0;
-
-                if (task.isNotifyBySound() && !soundDone) {
-                    let audio = new Audio('/assets/peek_plugin_active_task/alert.mp3');
-                    audio.play();
-                    notificationsSentMask |= TaskTuple.NOTIFY_BY_DEVICE_SOUND;
-                }
-
-                if (task.isNotifyByPopup() && !popupDone) {
-                    this.userMsgService.showInfo(`${task.title}\n\n${desc}`);
-                    notificationsSentMask |= TaskTuple.NOTIFY_BY_DEVICE_POPUP;
-                }
+            if (notificationSentFlags) {
+                updateApplied = true;
+                let newStateMask = TaskTuple.STATE_DELIVERED;
 
                 this.sendStateUpdate(task,
-                    TaskTuple.STATE_RECEIVED,
-                    notificationsSentMask
+                    newStateMask,
+                    notificationSentFlags
                 );
             }
         }
+
+        return updateApplied;
     }
 
+
     private sendStateUpdate(task: TaskTuple,
-                            newState: number | null,
-                            notificationsSentMask: number | null) {
+                            stateFlags: number | null,
+                            notificationSentFlags: number | null) {
         let action = new TupleGenericAction();
         action.key = TaskTuple.tupleName;
         action.data = {
             id: task.id,
-            state: newState,
-            notificationsSentMask: notificationsSentMask
+            stateFlags: stateFlags,
+            notificationSentFlags: notificationSentFlags
         };
         this.tupleOfflineAction.pushAction(action)
-            .then(() => {
-                if (newState != null)
-                    task.state = newState;
-
-                if (notificationsSentMask != null)
-                    task.notificationsSent |= notificationsSentMask;
-
-                // Update the cached data
-                this.tupleDataOfflineObserver.updateOfflineState(
-                    this.taskTupleSelector, this.tasks);
-
-            })
             .catch(err => alert(err));
+
+
+        if (stateFlags != null) {
+            task.stateFlags = (task.stateFlags | stateFlags);
+        }
+
+        if (notificationSentFlags != null) {
+            task.notificationSentFlags =
+                (task.notificationSentFlags | notificationSentFlags);
+        }
     }
 
 

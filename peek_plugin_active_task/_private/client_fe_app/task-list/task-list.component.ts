@@ -46,23 +46,16 @@ export class TaskListComponent extends ComponentLifecycleEventEmitter {
 
     }
 
-    // Logic for the tasks
-
-    private sendStateUpdate(task: TaskTuple, newState: number | null) {
-        let action = new TupleGenericAction();
-        action.key = TaskTuple.tupleName;
-        action.data = {
-            id: task.id,
-            state: newState
-        };
-        this.tupleOfflineAction.pushAction(action)
-            .then(() => {
-                task.state = newState;
-            })
-            .catch(err => alert(err));
-    }
 
     // Display methods
+
+    hasRoute(task: TaskTuple) {
+        return task.routePath != null && task.routePath.length;
+    }
+
+    dateTime(task: TaskTuple) {
+        return moment(task.dateTime).format('HH:MM DD-MMM');
+    }
 
     timePast(task: TaskTuple) {
         return moment.duration(new Date().getTime() - task.dateTime.getTime()).humanize();
@@ -71,11 +64,11 @@ export class TaskListComponent extends ComponentLifecycleEventEmitter {
     // User Actions
 
     taskClicked(task: TaskTuple) {
-        if (task.routePath)
+        if (this.hasRoute(task))
             this.router.navigate([task.routePath]);
 
-        // if (task.isConfirmOnSelect())
-        this.sendStateUpdate(task, TaskTuple.STATE_CONFIRMED);
+        this.rootService.taskSelected(task.id);
+
     }
 
     actionClicked(task: TaskTuple, taskAction: TaskActionTuple) {
@@ -84,13 +77,13 @@ export class TaskListComponent extends ComponentLifecycleEventEmitter {
                 return;
         }
 
-        this.sendStateUpdate(task, TaskTuple.STATE_ACTIONED);
-
         let action = new TupleGenericAction();
         action.key = TaskActionTuple.tupleName;
         action.data = {id: taskAction.id};
         this.tupleOfflineAction.pushAction(action)
             .catch(err => alert(err));
+
+        this.rootService.taskActioned(task.id);
     }
 
 }

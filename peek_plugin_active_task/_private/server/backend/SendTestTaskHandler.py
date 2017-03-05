@@ -20,7 +20,7 @@ class _SendTestTaskHandler(ModelHandler):
         vmsg = Payload().toVortexMsg()
 
         newTask = NewTask(**formData)
-        newTask.actions = [NewTaskAction(actionedPayload=vmsg, **a) for a in formData['actions']]
+        newTask.actions = [NewTaskAction(onActionPayload=vmsg, **a) for a in formData['actions']]
         self._thisPluginsApi.addTask(newTask)
 
         return []

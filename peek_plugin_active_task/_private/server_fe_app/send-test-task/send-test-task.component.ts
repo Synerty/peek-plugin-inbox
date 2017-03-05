@@ -1,5 +1,5 @@
 import {Component} from "@angular/core";
-import {ComponentLifecycleEventEmitter, Payload, VortexService} from "@synerty/vortexjs";
+import {ComponentLifecycleEventEmitter, Payload, VortexService, extend} from "@synerty/vortexjs";
 import {Ng2BalloonMsgService} from "@synerty/ng2-balloon-msg";
 
 
@@ -10,7 +10,15 @@ import {Ng2BalloonMsgService} from "@synerty/ng2-balloon-msg";
 })
 export class SendTestTaskComponent extends ComponentLifecycleEventEmitter {
     task = {
-        actions: [{}]
+        notificationRequiredFlags: 0,
+        notifyByPopup:false,
+        notifyBySound:false,
+        notifyBySms:false,
+        notifyByEmail:false,
+        displayAs:0,
+        autoComplete:0,
+        autoDelete:0,
+        actions: []
     };
 
     private readonly filt = {
@@ -30,10 +38,30 @@ export class SendTestTaskComponent extends ComponentLifecycleEventEmitter {
                 }
             });
 
+    }
 
+    addAction() {
+        this.task.actions.push({});
     }
 
     send() {
-        this.vortexService.sendPayload(new Payload(this.filt, [this.task]));
+        this.task.notificationRequiredFlags = 0;
+        if (this.task.notifyByPopup)
+            this.task.notificationRequiredFlags += 1;
+        if (this.task.notifyBySound)
+            this.task.notificationRequiredFlags += 2;
+        if (this.task.notifyBySms)
+            this.task.notificationRequiredFlags += 4;
+        if (this.task.notifyByEmail)
+            this.task.notificationRequiredFlags += 8;
+
+        let taskCopy = extend({},this.task);
+        delete taskCopy.notifyByPopup;
+        delete taskCopy.notifyBySound;
+        delete taskCopy.notifyBySms;
+        delete taskCopy.notifyByEmail;
+
+
+        this.vortexService.sendPayload(new Payload(this.filt, [taskCopy]));
     }
 }

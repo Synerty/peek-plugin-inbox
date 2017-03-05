@@ -23,27 +23,36 @@ export class TaskTuple extends Tuple {
     routePath: string;
     routeParamJson: {};
 
+    static readonly AUTO_COMPLETE_OFF = 0;
+    static readonly AUTO_COMPLETE_ON_DELIVER = 1;
+    static readonly AUTO_COMPLETE_ON_SELECT = 2;
+    static readonly AUTO_COMPLETE_ON_ACTION = 4;
+    autoComplete: number;
 
-    static readonly CONFIRM_NONE = 0;
-    static readonly CONFIRM_ON_RECEIPT = 1;
-    static readonly CONFIRM_ON_SELECT = 2;
-    static readonly CONFIRM_ON_ACTION = 3;
-    confirmType: number;
+    static readonly AUTO_DELETE_OFF = 0;
+    static readonly AUTO_DELETE_ON_DELIVER = 1;
+    static readonly AUTO_DELETE_ON_SELECT = 2;
+    static readonly AUTO_DELETE_ON_ACTION = 4;
+    static readonly AUTO_DELETE_ON_COMPLETE = 8;
+    autoDelete: number;
 
     // The state of this action
-    static readonly STATE_NEW = 0;
-    static readonly STATE_RECEIVED = 1;
-    static readonly STATE_CONFIRMED = 2;
-    static readonly STATE_ACTIONED = 3;
-    static readonly STATE_ARCHIVED = 4;
-    state: number;
+    static readonly STATE_DELIVERED = 1;
+    static readonly STATE_SELECTED = 2;
+    static readonly STATE_ACTIONED = 4;
+    static readonly STATE_COMPLETED = 8;
+    stateFlags: number;
 
     static readonly NOTIFY_BY_DEVICE_POPUP = 1;
     static readonly NOTIFY_BY_DEVICE_SOUND = 2;
     static readonly NOTIFY_BY_SMS = 4;
     static readonly NOTIFY_BY_EMAIL = 8;
-    notificationType: number;
-    notificationsSent: number;
+    notificationRequiredFlags: number;
+    notificationSentFlags: number;
+
+    static readonly DISPLAY_AS_TASK = 0;
+    static readonly DISPLAY_AS_MESSAGE = 1;
+    displayAs: number;
 
     // The actions for this TaskTuple.
     actions: TaskActionTuple[];
@@ -52,55 +61,48 @@ export class TaskTuple extends Tuple {
         super(TaskTuple.tupleName);
     }
 
+    // ------------------------------
     // State properties
-    isConfirmNone() {
-        return this.confirmType === TaskTuple.CONFIRM_NONE;
+    isCompleted() {
+        return !!(this.stateFlags & TaskTuple.STATE_COMPLETED);
     }
 
-    isConfirmOnReceipt() {
-        return this.confirmType === TaskTuple.CONFIRM_ON_RECEIPT;
+    isActioned() {
+        return !!(this.stateFlags & TaskTuple.STATE_ACTIONED);
     }
 
-    isConfirmOnSelect() {
-        return this.confirmType === TaskTuple.CONFIRM_ON_SELECT;
+    isDelivered() {
+        return !!(this.stateFlags & TaskTuple.STATE_DELIVERED);
     }
 
-    isConfirmOnAction() {
-        return this.confirmType === TaskTuple.CONFIRM_ON_ACTION;
-    }
-
-    // State properties
-    isStateNew() {
-        return this.state === TaskTuple.STATE_NEW;
-    }
-
-    isStateReceived() {
-        return this.state === TaskTuple.STATE_RECEIVED;
-    }
-
-    isStateConfirmed() {
-        return this.state === TaskTuple.STATE_CONFIRMED;
-    }
-
-    isStateActioned() {
-        return this.state === TaskTuple.STATE_ACTIONED;
-    }
-
-    isStateActionedOrAbove() {
-        return this.state >= TaskTuple.STATE_ACTIONED;
-    }
-
-    isStateArchived() {
-        return this.state === TaskTuple.STATE_ARCHIVED;
-    }
-
-    // State properties
+    // ------------------------------
+    // Notifications Required properties
     isNotifyBySound() {
-        return this.notificationType & TaskTuple.NOTIFY_BY_DEVICE_SOUND;
+        return !!(this.notificationRequiredFlags & TaskTuple.NOTIFY_BY_DEVICE_SOUND);
     }
 
     isNotifyByPopup() {
-        return this.notificationType & TaskTuple.NOTIFY_BY_DEVICE_POPUP;
+        return !!(this.notificationRequiredFlags & TaskTuple.NOTIFY_BY_DEVICE_POPUP);
+    }
+
+    // ------------------------------
+    // Notifications Sent properties
+    isNotifiedBySound() {
+        return !!(this.notificationSentFlags & TaskTuple.NOTIFY_BY_DEVICE_SOUND);
+    }
+
+    isNotifiedByPopup() {
+        return !!(this.notificationSentFlags & TaskTuple.NOTIFY_BY_DEVICE_POPUP);
+    }
+
+    // ------------------------------
+    // Notification properties
+    isTask() {
+        return this.displayAs == TaskTuple.DISPLAY_AS_TASK;
+    }
+
+    isMessage() {
+        return this.displayAs == TaskTuple.DISPLAY_AS_MESSAGE;
     }
 
 }

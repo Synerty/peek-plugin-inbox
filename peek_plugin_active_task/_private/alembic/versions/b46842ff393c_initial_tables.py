@@ -1,15 +1,15 @@
-"""Initial schema creatio
+"""Initial tables
 
 Peek Plugin Database Migration Script
 
-Revision ID: a0d63f627b19
+Revision ID: b46842ff393c
 Revises: 
-Create Date: 2017-03-02 11:35:26.464851
+Create Date: 2017-03-05 16:33:32.282535
 
 """
 
 # revision identifiers, used by Alembic.
-revision = 'a0d63f627b19'
+revision = 'b46842ff393c'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -31,6 +31,7 @@ def upgrade():
     sa.Column('iconPath', sa.String(length=200), nullable=True),
     sa.Column('routePath', sa.String(length=200), nullable=True),
     sa.Column('routeParamJson', sa.String(length=200), nullable=True),
+    sa.Column('autoDeleteDateTime', sa.DateTime(), nullable=False),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('uniqueId'),
     schema='pl_active_task'
@@ -45,11 +46,15 @@ def upgrade():
     sa.Column('iconPath', sa.String(length=200), nullable=True),
     sa.Column('routePath', sa.String(length=200), nullable=True),
     sa.Column('routeParamJson', sa.String(length=200), nullable=True),
-    sa.Column('confirmedPayload', sa.String(length=10000), nullable=True),
-    sa.Column('confirmType', sa.Integer(), server_default='0', nullable=False),
-    sa.Column('state', sa.Integer(), server_default='0', nullable=False),
-    sa.Column('notificationType', sa.Integer(), server_default='0', nullable=False),
-    sa.Column('notificationsSent', sa.Integer(), server_default='0', nullable=False),
+    sa.Column('onDeliveredPayload', sa.LargeBinary(), nullable=True),
+    sa.Column('onCompletedPayload', sa.LargeBinary(), nullable=True),
+    sa.Column('onDeletedPayload', sa.LargeBinary(), nullable=True),
+    sa.Column('autoComplete', sa.Integer(), server_default='0', nullable=False),
+    sa.Column('autoDelete', sa.Integer(), server_default='0', nullable=False),
+    sa.Column('stateFlags', sa.Integer(), server_default='0', nullable=False),
+    sa.Column('notificationRequiredFlags', sa.Integer(), server_default='0', nullable=False),
+    sa.Column('notificationSentFlags', sa.Integer(), server_default='0', nullable=False),
+    sa.Column('displayAs', sa.Integer(), server_default='0', nullable=False),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('uniqueId'),
     schema='pl_active_task'
@@ -59,7 +64,7 @@ def upgrade():
     sa.Column('taskId', sa.Integer(), nullable=False),
     sa.Column('title', sa.String(length=50), nullable=True),
     sa.Column('confirmMessage', sa.String(length=200), nullable=True),
-    sa.Column('actionedPayload', sa.String(length=10000), nullable=True),
+    sa.Column('onActionPayload', sa.LargeBinary(), nullable=True),
     sa.ForeignKeyConstraint(['taskId'], ['pl_active_task.Task.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id'),
     schema='pl_active_task'

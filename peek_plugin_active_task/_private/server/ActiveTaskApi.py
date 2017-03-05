@@ -47,10 +47,28 @@ class ActiveTaskApi(ActiveTaskApiABC):
                 session.add(dbAction)
             session.commit()
             taskId, userId = dbTask.id, dbTask.userId
+
         finally:
             session.close()
 
         self._taskProc.taskAdded(taskId, userId)
+
+    def completeTask(self, uniqueId: str) -> None:
+        session = self._ormSessionCreator()
+        try:
+            task = session.query(Task).filter(Task.uniqueId == uniqueId).one()
+            task.stateFlags = task.stateFlags | Task.STATE_COMPLETED
+            taskId, userId = task.id, task.userId
+            session.commit()
+
+            self._taskProc.taskUpdated(taskId, userId)
+
+        except NoResultFound:
+            logger.debug("Task %s has been deleted" % taskId)
+
+        finally:
+            session.close()
+
 
     def removeTask(self, uniqueId: str) -> None:
 
