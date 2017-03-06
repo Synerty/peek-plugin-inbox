@@ -1,22 +1,30 @@
 import logging
+from datetime import datetime
 
-from peek_plugin_active_task._private.storage.Activity import Activity
-from peek_plugin_active_task._private.storage.Task import Task
-from peek_plugin_active_task._private.storage.TaskAction import TaskAction
-from peek_plugin_user.server.UserDbServerApiABC import UserDbServerApiABC
 from sqlalchemy.orm.exc import NoResultFound
+from twisted.internet.defer import inlineCallbacks
+from twisted.internet.task import LoopingCall
 from txhttputil.util.DeferUtil import deferToThreadWrap
+from vortex.DeferUtil import vortexLogFailure, deferToThreadWrapWithLogger
 from vortex.TupleAction import TupleGenericAction
 from vortex.TupleSelector import TupleSelector
 from vortex.VortexFactory import VortexFactory
 from vortex.handler.TupleActionProcessor import TupleActionProcessorDelegateABC
 from vortex.handler.TupleDataObservableHandler import TupleDataObservableHandler
 
+from peek_plugin_active_task._private.server.EmailUtil import SendEmail
+from peek_plugin_active_task._private.storage import Setting
+from peek_plugin_active_task._private.storage.Activity import Activity
+from peek_plugin_active_task._private.storage.Setting import globalSetting
+from peek_plugin_active_task._private.storage.Task import Task
+from peek_plugin_active_task._private.storage.TaskAction import TaskAction
+from peek_plugin_user.server.UserDbServerApiABC import UserDbServerApiABC
+
 logger = logging.getLogger(__name__)
 
 
 class MainController(TupleActionProcessorDelegateABC):
-    PROCESS_PERIOD = 0.5
+    PROCESS_PERIOD = 5.0
 
     def __init__(self, ormSessionCreator,
                  userPluginApi: UserDbServerApiABC,
@@ -25,15 +33,14 @@ class MainController(TupleActionProcessorDelegateABC):
         self._userPluginApi = userPluginApi
         self._tupleObserver = tupleObserver
 
-        # self._processLoopingCall = LoopingCall(self._process)
+        self._processLoopingCall = LoopingCall(self._deleteActivities)
 
-    # def start(self):
-    #     d = self._processLoopingCall.start(self.PROCESS_PERIOD, now=False)
-    #     d.addErrback(vortexLogFailure, logger)
+    def start(self):
+        d = self._processLoopingCall.start(self.PROCESS_PERIOD, now=False)
+        d.addErrback(vortexLogFailure, logger)
 
     def shutdown(self):
-        pass
-        # self._processLoopingCall.stop()
+        self._processLoopingCall.stop()
 
     def _notifyObserver(self, tupleName: str, userId: str) -> None:
         self._tupleObserver.notifyOfTupleUpdate(
@@ -41,6 +48,12 @@ class MainController(TupleActionProcessorDelegateABC):
         )
 
     def taskAdded(self, taskId: int, userId: str):
+        d = self._sendSmsNotification(taskId)
+        d.addErrback(vortexLogFailure, logger, consumeError=True)
+
+        d = self._sendEmailNotification(taskId)
+        d.addErrback(vortexLogFailure, logger, consumeError=True)
+
         self._notifyObserver(Task.tupleName(), userId)
 
     def taskUpdated(self, taskId: int, userId: str):
@@ -135,7 +148,101 @@ class MainController(TupleActionProcessorDelegateABC):
             self._notifyObserver(Task.tupleName(), userId)
 
         except NoResultFound:
-            logger.debug("Task %s has already been deleted" % taskId)
+            logger.debug("_processTaskUpdate Task %s has already been deleted" % taskId)
+
+        finally:
+            session.close()
+
+    @deferToThreadWrap
+    def _deleteActivities(self):
+        session = self._ormSessionCreator()
+        usersToNotify = set()
+
+        try:
+            activitiesToExpire = (
+                session
+                    .query(Activity)
+                    .filter(Activity.autoDeleteDateTime < datetime.utcnow())
+            )
+
+            for activity in activitiesToExpire:
+                usersToNotify.add(activity.userId)
+                session.delete(activity)
+
+            session.commit()
+
+        finally:
+            session.close()
+
+        for userId in usersToNotify:
+            self._notifyObserver(Activity.tupleName(), userId)
+
+    deferToThreadWrapWithLogger(logger)
+
+    @deferToThreadWrap
+    def _sendSmsNotification(self, taskId: int):
+        session = self._ormSessionCreator()
+
+        try:
+            task = session.query(Task).filter(Task.id == taskId).one()
+
+            if not (task.notificationRequiredFlags & Task.NOTIFY_BY_SMS):
+                return
+
+            settings = globalSetting(session)
+            smsEmailPostfix = settings[Setting.SMS_NUMBER_EMAIL_POSTFIX]
+
+            user = self._userPluginApi.userDetailsForUserIdBlocking(task.userId)
+            email = user.phone + smsEmailPostfix
+            email = email.replace("+", "")
+
+            desc = task.description if task.description else ""
+            title = task.title
+
+            emailer = SendEmail(self._ormSessionCreator)
+            emailer.sendBlocking(
+                message="%s\n%s" % (title, desc),
+                subject="",
+                recipients=[email]
+            )
+
+            task.notificationSentFlags = task.notificationSentFlags & Task.NOTIFY_BY_SMS
+            session.commit()
+
+        except NoResultFound:
+            logger.debug("_processTaskUpdate Task %s has already been deleted" % taskId)
+
+        finally:
+            session.close()
+
+    @deferToThreadWrap
+    def _sendEmailNotification(self, taskId: int):
+        session = self._ormSessionCreator()
+
+        try:
+            task = session.query(Task).filter(Task.id == taskId).one()
+
+            if not (task.notificationRequiredFlags & Task.NOTIFY_BY_EMAIL):
+                return
+
+            user = self._userPluginApi.userDetailsForUserIdBlocking(task.userId)
+            email = user.email
+            desc = task.description if task.description else ""
+            title = task.title
+
+            emailer = SendEmail(self._ormSessionCreator)
+
+            emailer.sendBlocking(
+                message="%s\n%s" % (title, desc),
+                subject=title,
+                recipients=[email]
+            )
+
+            task.notificationSentFlags = task.notificationSentFlags & Task.NOTIFY_BY_EMAIL
+            session.commit()
+
+        except NoResultFound:
+            logger.debug("_processTaskUpdate Task %s has already been deleted" % taskId)
 
         finally:
             session.close()

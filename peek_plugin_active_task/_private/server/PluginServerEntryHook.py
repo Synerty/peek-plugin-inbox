@@ -67,7 +67,7 @@ class PluginServerEntryHook(PluginServerEntryHookABC,
         self._runningHandlers.append(createSendTestTaskHander(self._api))
         self._runningHandlers.append(createAdminSettingsHandler(self.dbSessionCreator))
 
-        # self._mainController.start()
+        self._mainController.start()
 
         logger.debug("started")
 

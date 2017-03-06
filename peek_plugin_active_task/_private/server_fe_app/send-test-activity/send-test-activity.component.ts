@@ -1,5 +1,10 @@
 import {Component} from "@angular/core";
-import {ComponentLifecycleEventEmitter, Payload, VortexService} from "@synerty/vortexjs";
+import {
+    extend,
+    ComponentLifecycleEventEmitter,
+    Payload,
+    VortexService
+} from "@synerty/vortexjs";
 import {Ng2BalloonMsgService} from "@synerty/ng2-balloon-msg";
 
 
@@ -13,7 +18,7 @@ declare let moment: any;
 })
 export class SendTestActivityComponent extends ComponentLifecycleEventEmitter {
     activity = {
-        autoDeleteDateTime: moment(new Date()).add(1, 'D').toDate()
+        autoDeleteDateTime: moment().add(1, 'days').format('YYYY-MM-DDTHH:mm')
     };
 
     private readonly filt = {
@@ -33,10 +38,12 @@ export class SendTestActivityComponent extends ComponentLifecycleEventEmitter {
                 }
             });
 
-
     }
 
     send() {
-        this.vortexService.sendPayload(new Payload(this.filt, [this.activity]));
+        let activityCopy = extend({}, this.activity);
+        activityCopy.autoDeleteDateTime = moment(activityCopy.autoDeleteDateTime).toDate();
+
+        this.vortexService.sendPayload(new Payload(this.filt, [activityCopy]));
     }
 }
