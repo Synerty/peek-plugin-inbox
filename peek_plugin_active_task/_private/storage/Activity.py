@@ -38,12 +38,12 @@ class Activity(Tuple, DeclarativeBase):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
 
-    uniqueId = Column(String(50), unique=True, nullable=False)
+    uniqueId = Column(String(100), unique=True, nullable=False)
     userId = Column(String(50), nullable=False)
     dateTime = Column(DateTime, nullable=False)
 
     # The display properties of the task
-    title = Column(String(50), nullable=False)
+    title = Column(String(100), nullable=False)
     description = Column(String(200))
     iconPath = Column(String(200))
 

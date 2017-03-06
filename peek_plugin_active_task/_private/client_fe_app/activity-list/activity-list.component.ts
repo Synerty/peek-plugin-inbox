@@ -9,8 +9,8 @@ import {Router} from "@angular/router";
 import {
     ActivityTuple,
     PluginActiveTaskRootService
-} from "peek-client/peek_plugin_active_task";
-import {UserService} from "peek-client/peek_plugin_user";
+} from "@peek-client/peek_plugin_active_task";
+import {UserService} from "@peek-client/peek_plugin_user";
 
 
 // MomentJS is declared globally, because the datetime picker needs it

@@ -24,7 +24,7 @@ import {
 import {activeTaskObservableName,
 activeTaskActionProcessorName,
 activeTaskFilt,
-} from "peek-server/peek_plugin_active_task/plugin-active-task-names";
+} from "@peek-server/peek_plugin_active_task/plugin-active-task-names";
 import {AdminSettingListComponent} from "./setting-list/admin-setting-list.component";
 import {AdminTaskListComponent} from "./task-list/admin-task-list.component";
 import {AdminActivityListComponent} from "./activity-list/admin-activity-list.component";

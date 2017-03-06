@@ -16,7 +16,7 @@ import {
 import {TaskTuple} from "./tuples/TaskTuple";
 import {ActivityTuple} from "./tuples/ActivityTuple";
 import {Ng2BalloonMsgService} from "@synerty/ng2-balloon-msg";
-import {UserService} from "peek-client/peek_plugin_user";
+import {UserService} from "@peek-client/peek_plugin_user";
 import {TitleService} from "@synerty/peek-client-fe-util";
 
 import {
@@ -236,6 +236,7 @@ export class PluginActiveTaskRootService extends ComponentLifecycleEventEmitter 
 
         for (let task of this.tasks) {
             let notificationSentFlags = 0;
+            let newStateMask = 0;
 
             if (task.isNotifyBySound() && !task.isNotifiedBySound()) {
                 let audio = new Audio('/assets/peek_plugin_active_task/alert.mp3');
@@ -251,9 +252,13 @@ export class PluginActiveTaskRootService extends ComponentLifecycleEventEmitter 
                 notificationSentFlags | TaskTuple.NOTIFY_BY_DEVICE_POPUP);
             }
 
-            if (notificationSentFlags) {
+            if (!task.isDelivered()) {
+                newStateMask = (newStateMask | TaskTuple.STATE_DELIVERED);
+            }
+
+
+            if (notificationSentFlags || newStateMask) {
                 updateApplied = true;
-                let newStateMask = TaskTuple.STATE_DELIVERED;
 
                 this.sendStateUpdate(task,
                     newStateMask,

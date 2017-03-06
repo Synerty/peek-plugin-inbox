@@ -5,7 +5,7 @@ import {
 } from "@synerty/vortexjs";
 import {
     TaskTuple
-} from "peek-server/peek_plugin_active_task/tuples/TaskTuple";
+} from "@peek-server/peek_plugin_active_task/tuples/TaskTuple";
 import {Component} from "@angular/core";
 
 
