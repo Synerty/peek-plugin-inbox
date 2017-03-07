@@ -1,4 +1,7 @@
+import logging
 from datetime import datetime
+
+from sqlalchemy.orm.exc import NoResultFound
 
 from peek_plugin_active_task._private.server.MainController import \
     MainController
@@ -8,6 +11,8 @@ from peek_plugin_active_task._private.storage.TaskAction import TaskAction
 from peek_plugin_active_task.server.ActiveTaskApiABC import ActiveTaskApiABC, NewTask, \
     NewActivity
 from peek_plugin_user.server.UserDbServerApiABC import UserDbServerApiABC
+
+logger = logging.getLogger(__name__)
 
 
 class ActiveTaskApi(ActiveTaskApiABC):
@@ -69,27 +74,23 @@ class ActiveTaskApi(ActiveTaskApiABC):
         finally:
             session.close()
 
-
     def removeTask(self, uniqueId: str) -> None:
 
         session = self._ormSessionCreator()
-        tasks = session.query(Task).filter(Task.uniqueId == uniqueId).all()
+        try:
+            tasks = session.query(Task).filter(Task.uniqueId == uniqueId).all()
 
-        if tasks:
-            task = tasks[0]
-            taskId, userId = task.id, task.userId
+            if tasks:
+                task = tasks[0]
+                taskId, userId = task.id, task.userId
+                session.delete(task)
+                session.commit()
 
-        session.expunge_all()
-        session.close()
+            else:
+                raise ValueError("Task does not exist" % uniqueId)
 
-        if not tasks:
-            raise ValueError("Task does not exist" % uniqueId)
-
-        session = self._ormSessionCreator()
-        (session.query(Task)
-         .filter(Task.uniqueId == uniqueId)
-         .delete(synchronize_session=False))
-        session.close()
+        finally:
+            session.close()
 
         self._taskProc.taskRemoved(taskId, userId)
 
@@ -105,6 +106,7 @@ class ActiveTaskApi(ActiveTaskApiABC):
             session.add(dbActivity)
             session.commit()
             taskId, userId = dbActivity.id, dbActivity.userId
+
         finally:
             session.close()
 
@@ -113,22 +115,20 @@ class ActiveTaskApi(ActiveTaskApiABC):
     def removeActivity(self, uniqueId: str) -> None:
 
         session = self._ormSessionCreator()
-        activities = session.query(Activity).filter(Activity.uniqueId == uniqueId).all()
+        try:
+            activities = session.query(Activity).filter(
+                Activity.uniqueId == uniqueId).all()
 
-        if activities:
-            activity = activities[0]
-            activityId, userId = activity.id, activity.userId
+            if activities:
+                activity = activities[0]
+                activityId, userId = activity.id, activity.userId
+                session.delete(activity)
+                session.commit()
 
-        session.expunge_all()
-        session.close()
+            else:
+                raise ValueError("Activity %s does not exist" % uniqueId)
 
-        if not activities:
-            raise ValueError("Activity %s does not exist" % uniqueId)
-
-        session = self._ormSessionCreator()
-        (session.query(Activity)
-         .filter(Activity.uniqueId == uniqueId)
-         .delete(synchronize_session=False))
-        session.close()
+        finally:
+            session.close()
 
         self._taskProc.activityRemoved(activityId, userId)
