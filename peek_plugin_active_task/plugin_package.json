@@ -22,7 +22,7 @@
     "angularFrontendAppDir": "_private/client_fe_app",
     "angularFrontendModuleDir": "client_fe_module",
     "angularFrontendAssetsDir": "_private/client_fe_assets",
-    "angularMainModule": "plugin-active-task.module",
+    "angularMainModule": "plugin-active-task.module#PluginActiveTaskClientModule",
     "angularRootModule": {
       "file": "plugin-active-task-root.module",
       "class": "PluginActiveTaskRootModule"
@@ -37,7 +37,7 @@
     "enableAngularFrontend": true,
     "angularFrontendModuleDir": "client_fe_module",
     "angularFrontendAppDir": "_private/server_fe_app",
-    "angularMainModule": "plugin-active-task.module"
+    "angularMainModule": "plugin-active-task.module#PluginActiveTaskAdminModule"
   },
   "storage": {
     "alembicDir": "_private/alembic"

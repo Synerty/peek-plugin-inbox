@@ -63,6 +63,6 @@ export const pluginRoutes: Routes = [
         AdminActivityListComponent
     ]
 })
-export default class PluginActiveTaskAdminModule {
+export class PluginActiveTaskAdminModule {
 
 }

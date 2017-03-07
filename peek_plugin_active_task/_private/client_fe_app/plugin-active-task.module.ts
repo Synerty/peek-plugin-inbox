@@ -45,5 +45,5 @@ export const pluginRoutes: Routes = [
         ActivityListComponent
     ]
 })
-export default class PluginActiveTaskClientModule {
+export class PluginActiveTaskClientModule {
 }
