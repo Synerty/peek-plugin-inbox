@@ -5,29 +5,25 @@ import {PluginActiveTaskAdminComponent} from "./plugin-active-task-admin.compone
 import {RouterModule, Routes} from "@angular/router";
 import {SendTestTaskComponent} from "./send-test-task/send-test-task.component";
 import {SendTestActivityComponent} from "./send-test-activity/send-test-activity.component";
-/**
- * Created by peek on 5/12/16.
- *
- */
-
 import {
     TupleActionPushNameService,
-    TupleActionPushOfflineService,
     TupleActionPushService,
     TupleDataObservableNameService,
-    TupleDataObserverService,
-    TupleDataOfflineObserverService,
-    TupleOfflineStorageNameService,
-    TupleOfflineStorageService
+    TupleDataObserverService
 } from "@synerty/vortexjs";
 
-import {activeTaskObservableName,
-activeTaskActionProcessorName,
-activeTaskFilt,
+import {
+    activeTaskActionProcessorName,
+    activeTaskFilt,
+    activeTaskObservableName
 } from "@peek-server/peek_plugin_active_task/plugin-active-task-names";
 import {AdminSettingListComponent} from "./setting-list/admin-setting-list.component";
 import {AdminTaskListComponent} from "./task-list/admin-task-list.component";
 import {AdminActivityListComponent} from "./activity-list/admin-activity-list.component";
+/**
+ * Created by peek on 5/12/16.
+ *
+ */
 
 
 export const pluginRoutes: Routes = [
@@ -38,6 +34,17 @@ export const pluginRoutes: Routes = [
 
 ];
 
+
+export function tupleDataObservableNameServiceFactory() {
+    return new TupleDataObservableNameService(
+        activeTaskObservableName, activeTaskFilt);
+}
+
+export function tupleActionPushNameServiceFactory() {
+    return new TupleActionPushNameService(
+        activeTaskActionProcessorName, activeTaskFilt);
+}
+
 @NgModule({
     imports: [
         CommonModule,
@@ -47,14 +54,12 @@ export const pluginRoutes: Routes = [
     providers: [
         TupleDataObserverService, {
             provide: TupleDataObservableNameService,
-            useValue: new TupleDataObservableNameService(
-                activeTaskObservableName, activeTaskFilt)
+            useFactory: tupleDataObservableNameServiceFactory
         }, TupleActionPushService, {
             provide: TupleActionPushNameService,
-            useValue: new TupleActionPushNameService(
-                activeTaskActionProcessorName, activeTaskFilt)
+            useFactory: tupleActionPushNameServiceFactory
         }
-        ],
+    ],
     declarations: [PluginActiveTaskAdminComponent,
         SendTestTaskComponent,
         SendTestActivityComponent,

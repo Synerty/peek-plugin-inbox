@@ -1,4 +1,4 @@
-import {PeekComponent} from "@synerty/peek-web-ns";
+import {Component} from "@angular/core";
 import {
     ComponentLifecycleEventEmitter,
     TupleActionPushOfflineService,
@@ -16,10 +16,10 @@ import {UserService} from "@peek-client/peek_plugin_user";
 // MomentJS is declared globally, because the datetime picker needs it
 declare let moment: any;
 
-@PeekComponent({
+@Component({
     selector: 'plugin-active-task-task-list',
     templateUrl: 'task-list.component.web.html',
-    moduleFilename: module.filename
+    moduleId: module.id
 })
 export class TaskListComponent extends ComponentLifecycleEventEmitter {
 
