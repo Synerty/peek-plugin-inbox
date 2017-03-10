@@ -1,4 +1,10 @@
-<StackLayout class="p-20">
-    <Label text="Tasks" class="h1 text-center"></Label>
-    <Label text="Some task contents"></Label>
-</StackLayout>
+<label *ngIf="activities.length === 0" text="There is no recent activity"></label>
+
+<ScrollView>
+    <ListView [items]="activities">
+        <template let-item="item" let-i="index" let-odd="odd" let-even="even">
+            <label class="h1 peek-field-data-text" [text]="item.title"></label>
+        </template>
+    </ListView>
+</ScrollView>
+

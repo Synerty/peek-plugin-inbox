@@ -1,4 +1,9 @@
-<StackLayout class="p-20">
-    <Label text="Tasks" class="h1 text-center"></Label>
-    <Label text="Some task contents"></Label>
-</StackLayout>
+<label *ngIf="tasks.length === 0" text="There are no tasks :-)"></label>
+<ScrollView>
+    <ListView [items]="tasks">
+        <template let-item="item" let-i="index" let-odd="odd" let-even="even">
+            <label text="item.title"></label>
+        </template>
+    </ListView>
+</ScrollView>
+

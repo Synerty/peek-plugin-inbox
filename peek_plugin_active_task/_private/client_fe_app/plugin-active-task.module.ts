@@ -2,7 +2,7 @@ import {CommonModule} from "@angular/common";
 import {NgModule} from "@angular/core";
 import {PluginActiveTaskClientComponent} from "./plugin-active-task-client.component";
 import {Routes} from "@angular/router";
-import {PeekModuleFactory} from "@synerty/peek-web-ns";
+import {PeekModuleFactory} from "@synerty/peek-web-ns/index.web";
 
 import {
     LoggedInGuard,
@@ -11,7 +11,6 @@ import {
     UserService
 } from "@peek-client/peek_plugin_user";
 
-import {PluginActiveTaskRootService} from "@peek-client/peek_plugin_active_task";
 import {ActivityListComponent} from "./activity-list/activity-list.component";
 import {TaskListComponent} from "./task-list/task-list.component";
 
@@ -33,11 +32,11 @@ export const pluginRoutes: Routes = [
 @NgModule({
     imports: [
         CommonModule,
-        PeekModuleFactory.RouterModule.forChild(pluginRoutes)],
+        PeekModuleFactory.RouterModule.forChild(pluginRoutes),
+        ...PeekModuleFactory.FormsModules
+    ],
     exports: [],
     providers: [
-        PluginActiveTaskRootService,
-
         // User Providers
         UserService, ProfileService, LoggedInGuard, LoggedOutGuard],
     declarations: [PluginActiveTaskClientComponent,
