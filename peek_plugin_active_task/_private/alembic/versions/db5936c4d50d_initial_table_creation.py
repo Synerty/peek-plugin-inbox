@@ -74,7 +74,7 @@ def upgrade():
     sa.Column('char_value', sa.String(), nullable=True),
     sa.Column('boolean_value', sa.Boolean(), nullable=True),
     sa.ForeignKeyConstraint(['settingId'], ['pl_active_task.Setting.id'], ),
-    sa.PrimaryKeyConstraint('id', 'settingId'),
+    sa.PrimaryKeyConstraint('id'),
     schema='pl_active_task'
     )
     op.create_index('idx_SettingProperty_settingId', 'SettingProperty', ['settingId'], unique=False, schema='pl_active_task')

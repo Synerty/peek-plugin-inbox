@@ -141,7 +141,7 @@ class SettingProperty(PolymorphicVerticalProperty, Tuple, DeclarativeBase):
     __tupleType__ = activeTaskTuplePrefix + __tablename__
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    settingId = Column(ForeignKey('Setting.id'), primary_key=True, nullable=False)
+    settingId = Column(ForeignKey('Setting.id'), nullable=False)
     key = Column(String(50), nullable=False)
     type = Column(String(16))
 
