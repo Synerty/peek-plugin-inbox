@@ -13,6 +13,7 @@ import {
     VortexStatusService,
     WebSqlFactoryService
 } from "@synerty/vortexjs";
+import {PeekModuleFactory, Sound} from "@synerty/peek-web-ns/index.web";
 import {TaskTuple} from "./tuples/TaskTuple";
 import {ActivityTuple} from "./tuples/ActivityTuple";
 import {Ng2BalloonMsgService} from "@synerty/ng2-balloon-msg";
@@ -48,6 +49,8 @@ export class PluginActiveTaskRootService extends ComponentLifecycleEventEmitter 
     private taskSubscription: any | null;
     private activitiesSubscription: any | null;
 
+    private alertSound: Sound;
+
     constructor(private userService: UserService,
                 private userMsgService: Ng2BalloonMsgService,
                 private titleService: TitleService,
@@ -56,6 +59,10 @@ export class PluginActiveTaskRootService extends ComponentLifecycleEventEmitter 
                 webSqlFactory: WebSqlFactoryService,
                 zone: NgZone) {
         super();
+
+        this.alertSound = PeekModuleFactory
+            .createSound('/assets/peek_plugin_active_task/alert.mp3');
+
 
         let tupleDataObservableName = new TupleDataObservableNameService(
             activeTaskObservableName, activeTaskFilt);
@@ -238,34 +245,11 @@ export class PluginActiveTaskRootService extends ComponentLifecycleEventEmitter 
             let notificationSentFlags = 0;
             let newStateMask = 0;
 
-            /*
             if (task.isNotifyBySound() && !task.isNotifiedBySound()) {
-
-                if (Audio != null) {
-                    let audio = new Audio('/assets/peek_plugin_active_task/alert.mp3');
-                    audio.play();
-                    notificationSentFlags = (
-                    notificationSentFlags | TaskTuple.NOTIFY_BY_DEVICE_SOUND);
-
-                // } else {
-                //     try {
-                //         let TNSPlayer = require('nativescript-audio')['TNSPlayer'];
-                //         let player = new TNSPlayer();
-                //         player.playFromFile({
-                //             audioFile: '/assets/peek_plugin_active_task/alert.mp3',
-                //         }).then(() => {
-                //             player.dispose();
-                //         }, (err) => {
-                //             alert(`Error occurred during playback. ${JSON.stringify(err)}`);
-                //         });
-                //
-                //     } catch (ex) {
-                //         alert(ex);
-                //     }
-
-                }
+                this.alertSound.play();
+                notificationSentFlags = (
+                notificationSentFlags | TaskTuple.NOTIFY_BY_DEVICE_SOUND);
             }
-            */
 
 
             if (task.isNotifyByPopup() && !task.isNotifiedByPopup()) {
