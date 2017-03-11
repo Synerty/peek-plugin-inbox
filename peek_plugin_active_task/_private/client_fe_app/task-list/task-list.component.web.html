@@ -7,17 +7,17 @@
             <div>
 
                 <h4><!-- Task checked/unchecked display -->
-                <span *ngIf="task.isTask() && !task.isCompleted()"
-                      class="glyphicon glyphicon-unchecked"></span>
-                <span *ngIf="task.isTask() && task.isCompleted()"
-                      class="glyphicon glyphicon-check"></span>
+                <fa *ngIf="task.isTask() && !task.isCompleted()"
+                      name="square-o"></fa>
+                <fa *ngIf="task.isTask() && task.isCompleted()"
+                      name="check-square-o"></fa>
 
                 <!-- Message checked/unchecked display -->
-                <span *ngIf="task.isMessage() && !task.isCompleted()"
-                      class="glyphicon glyphicon-comment"></span>
+                <fa *ngIf="task.isMessage() && !task.isCompleted()"
+                      name="comment-o"></fa>
                     {{task.title}}
-                    <span *ngIf="hasRoute(task)"
-                          class="pull-right glyphicon glyphicon-menu-right"></span></h4>
+                    <fa *ngIf="hasRoute(task)" name="angle-right"
+                        class="pull-right"></fa></h4>
 
                 <div class="pull-right align-right">
                     {{timePast(task)}} ago<br/>

@@ -6,13 +6,17 @@
     <tr *ngFor="let activity of activities" (click)="activityClicked(activity)">
         <td>
             <div>
-                <h4>{{activity.title}}
-                    <span *ngIf="hasRoute(activity)"
-                          class="pull-right glyphicon glyphicon-menu-right"></span></h4>
+
+                <h4>
+                    {{activity.title}}
+                    <fa *ngIf="hasRoute(activity)" name="angle-right"
+                        class="pull-right"></fa>
+                </h4>
 
                 <div class="pull-right align-right">
                     {{timePast(activity)}} ago<br/>
-                    {{dateTime(activity)}}</div>
+                    {{dateTime(activity)}}
+                </div>
 
                 <img *ngIf="activity.imagePath" [src]="activity.imagePath">
                 {{activity.description}}

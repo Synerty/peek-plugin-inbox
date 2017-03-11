@@ -44,7 +44,7 @@ class Activity(Tuple, DeclarativeBase):
 
     # The display properties of the task
     title = Column(String(100), nullable=False)
-    description = Column(String(200))
+    description = Column(String(2000))
     iconPath = Column(String(200))
 
     # The client_fe_app route to open when this task is selected

@@ -12,9 +12,7 @@ import {
 } from "@peek-client/peek_plugin_active_task";
 import {UserService} from "@peek-client/peek_plugin_user";
 
-
-// MomentJS is declared globally, because the datetime picker needs it
-declare let moment: any;
+import * as moment from "moment";
 
 @Component({
     selector: 'plugin-active-task-task-list',

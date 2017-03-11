@@ -1,10 +1,21 @@
 <label *ngIf="activities.length === 0" text="There is no recent activity"></label>
 
-<ScrollView>
-    <ListView [items]="activities">
-        <template let-item="item" let-i="index" let-odd="odd" let-even="even">
-            <label class="h1 peek-field-data-text" [text]="item.title"></label>
-        </template>
-    </ListView>
-</ScrollView>
+<ListView [items]="activities" (tap)="activityClicked(activity)">
+    <template let-item="item" let-i="index" let-odd="odd" let-even="even">
+        <StackLayout [class.odd]="odd" [class.even]="even"
+                     (tap)="activityClicked(item)">
+            <GridLayout columns="*,auto" rows="*">
+                <label row="0" col="0" class="h3 peek-field-data-text"
+                       [text]="item.title" textWrap="true"></label>
+                <Label row="0" col="1" *ngIf="hasRoute(item)"
+                       class="fa h2 pull-right"
+                       [text]="'fa-angle-right' | fonticon"></Label>
+            </GridLayout>
+
+            <label class="" [text]="item.description" textWrap="true"></label>
+            <label class="text-right"
+                   [text]="timePast(item) + ' ago, ' + dateTime(item)"></label>
+        </StackLayout>
+    </template>
+</ListView>
 

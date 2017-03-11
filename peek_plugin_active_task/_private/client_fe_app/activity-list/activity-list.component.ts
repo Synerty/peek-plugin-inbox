@@ -2,19 +2,16 @@ import {Component} from "@angular/core";
 import {
     ComponentLifecycleEventEmitter,
     TupleActionPushOfflineService,
-    TupleDataOfflineObserverService,
-    TupleSelector
+    TupleDataOfflineObserverService
 } from "@synerty/vortexjs";
 import {Router} from "@angular/router";
 import {
     ActivityTuple,
     PluginActiveTaskRootService
 } from "@peek-client/peek_plugin_active_task";
-import {UserService} from "@peek-client/peek_plugin_user";
 
 
-// MomentJS is declared globally, because the datetime picker needs it
-declare let moment: any;
+import * as moment from "moment";
 
 @Component({
     selector: 'plugin-active-task-activity-list',
@@ -62,6 +59,10 @@ export class ActivityListComponent extends ComponentLifecycleEventEmitter {
 
     timePast(activity: ActivityTuple) {
         return moment.duration(new Date().getTime() - activity.dateTime.getTime()).humanize();
+    }
+
+    nsTimeStr(activity) {
+        return `${this.dateTime(activity)}, ${this.timePast(activity)} ago`;
     }
 
     // User Actions

@@ -1,9 +1,40 @@
 <label *ngIf="tasks.length === 0" text="There are no tasks :-)"></label>
-<ScrollView>
-    <ListView [items]="tasks">
-        <template let-item="item" let-i="index" let-odd="odd" let-even="even">
-            <label text="item.title"></label>
-        </template>
-    </ListView>
-</ScrollView>
+
+<ListView [items]="tasks">
+
+    <template let-item="item" let-i="index" let-odd="odd" let-even="even">
+        <StackLayout [class.odd]="odd" [class.even]="even"
+                     (tap)="taskClicked(item)">
+            <GridLayout columns="auto,*,auto" rows="*">
+                <Label row="0" col="0" *ngIf="item.isTask() && !item.isCompleted()"
+                       class="fa h2 " [text]="'fa-square-o' | fonticon"></Label>
+
+                <Label row="0" col="0" *ngIf="item.isTask() && item.isCompleted()"
+                       class="fa h2" [text]="'fa-check-square-o' | fonticon"></Label>
+
+                <Label row="0" col="0" *ngIf="item.isMessage() && !item.isCompleted()"
+                       class="fa h2" [text]="'fa-comment-o' | fonticon"></Label>
+
+                <Label row="0" col="1" class="h3 peek-field-data-text"
+                       [text]="' ' + item.title" textWrap="true"></Label>
+
+                <Label row="0" col="2" *ngIf="hasRoute(item)"
+                       class="fa h2 pull-right"
+                       [text]="'fa-angle-right' | fonticon"></Label>
+
+            </GridLayout>
+
+            <label class="" [text]="item.description" textWrap="true"></label>
+            <label class="text-right"
+                   [text]="timePast(item) + ' ago, ' + dateTime(item)"></label>
+
+            <WrapLayout *ngIf="!item.isActioned()">
+                <Button *ngFor="let action of item.actions"
+                        [text]="action.title"
+                        (tap)="actionClicked(item, action)"></Button>
+            </WrapLayout>
+        </StackLayout>
+    </template>
+
+</ListView>
 

@@ -238,12 +238,35 @@ export class PluginActiveTaskRootService extends ComponentLifecycleEventEmitter 
             let notificationSentFlags = 0;
             let newStateMask = 0;
 
+            /*
             if (task.isNotifyBySound() && !task.isNotifiedBySound()) {
-                let audio = new Audio('/assets/peek_plugin_active_task/alert.mp3');
-                audio.play();
-                notificationSentFlags = (
-                notificationSentFlags | TaskTuple.NOTIFY_BY_DEVICE_SOUND);
+
+                if (Audio != null) {
+                    let audio = new Audio('/assets/peek_plugin_active_task/alert.mp3');
+                    audio.play();
+                    notificationSentFlags = (
+                    notificationSentFlags | TaskTuple.NOTIFY_BY_DEVICE_SOUND);
+
+                // } else {
+                //     try {
+                //         let TNSPlayer = require('nativescript-audio')['TNSPlayer'];
+                //         let player = new TNSPlayer();
+                //         player.playFromFile({
+                //             audioFile: '/assets/peek_plugin_active_task/alert.mp3',
+                //         }).then(() => {
+                //             player.dispose();
+                //         }, (err) => {
+                //             alert(`Error occurred during playback. ${JSON.stringify(err)}`);
+                //         });
+                //
+                //     } catch (ex) {
+                //         alert(ex);
+                //     }
+
+                }
             }
+            */
+
 
             if (task.isNotifyByPopup() && !task.isNotifiedByPopup()) {
                 let desc = task.description ? task.description : "";
