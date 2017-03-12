@@ -3,6 +3,8 @@ import {ComponentLifecycleEventEmitter, Payload, VortexService, extend} from "@s
 import {Ng2BalloonMsgService} from "@synerty/ng2-balloon-msg";
 
 
+import * as moment from "moment";
+
 @Component({
     selector: 'active-task-send-test-task',
     templateUrl: 'send-test-task.component.html',
@@ -18,7 +20,8 @@ export class SendTestTaskComponent extends ComponentLifecycleEventEmitter {
         displayAs:0,
         autoComplete:0,
         autoDelete:0,
-        actions: []
+        actions: [],
+        autoDeleteDateTime: moment().add(1, 'days').format('YYYY-MM-DDTHH:mm')
     };
 
     private readonly filt = {

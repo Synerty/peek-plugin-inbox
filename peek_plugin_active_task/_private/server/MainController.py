@@ -33,7 +33,7 @@ class MainController(TupleActionProcessorDelegateABC):
         self._userPluginApi = userPluginApi
         self._tupleObserver = tupleObserver
 
-        self._processLoopingCall = LoopingCall(self._deleteActivities)
+        self._processLoopingCall = LoopingCall(self._deleteOnDateTime)
 
     def start(self):
         d = self._processLoopingCall.start(self.PROCESS_PERIOD, now=False)
@@ -154,7 +154,7 @@ class MainController(TupleActionProcessorDelegateABC):
             session.close()
 
     @deferToThreadWrap
-    def _deleteActivities(self):
+    def _deleteOnDateTime(self):
         session = self._ormSessionCreator()
         usersToNotify = set()
 
@@ -168,6 +168,16 @@ class MainController(TupleActionProcessorDelegateABC):
             for activity in activitiesToExpire:
                 usersToNotify.add(activity.userId)
                 session.delete(activity)
+
+            tasksToExpire = (
+                session
+                    .query(Task)
+                    .filter(Task.autoDeleteDateTime < datetime.utcnow())
+            )
+
+            for task in tasksToExpire:
+                usersToNotify.add(task.userId)
+                session.delete(task)
 
             session.commit()
 

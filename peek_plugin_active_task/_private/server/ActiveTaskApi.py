@@ -47,6 +47,25 @@ class ActiveTaskApi(ActiveTaskApiABC):
 
         session = self._ormSessionCreator()
         try:
+            try:
+                oldTask = (
+                    session
+                        .query(Task)
+                        .filter(Task.uniqueId == task.uniqueId)
+                        .one()
+                )
+
+                if task.overwriteExisting:
+                    session.delete(oldTask)
+                    session.commit()
+
+                else:
+                    raise Exception("Activity with uniqueId %s already exists"
+                                    % task.uniqueId)
+
+            except NoResultFound:
+                pass
+
             session.add(dbTask)
             for dbAction in dbTask.actions:
                 session.add(dbAction)
@@ -87,7 +106,7 @@ class ActiveTaskApi(ActiveTaskApiABC):
                 session.commit()
 
             else:
-                raise ValueError("Task does not exist" % uniqueId)
+                raise ValueError("Task does not exist, %s " % uniqueId)
 
         finally:
             session.close()
@@ -103,6 +122,25 @@ class ActiveTaskApi(ActiveTaskApiABC):
 
         session = self._ormSessionCreator()
         try:
+            try:
+                oldActivity = (
+                    session
+                        .query(Activity)
+                        .filter(Activity.uniqueId == activity.uniqueId)
+                        .one()
+                )
+
+                if activity.overwriteExisting:
+                    session.delete(oldActivity)
+                    session.commit()
+
+                else:
+                    raise Exception("Task with uniqueId %s already exists"
+                                    % activity.uniqueId)
+
+            except NoResultFound:
+                pass
+
             session.add(dbActivity)
             session.commit()
             taskId, userId = dbActivity.id, dbActivity.userId

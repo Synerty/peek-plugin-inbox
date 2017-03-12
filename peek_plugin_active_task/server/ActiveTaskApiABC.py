@@ -39,12 +39,15 @@ class NewTask:
                  description: Optional[str] = None, iconPath: Optional[str] = None,
                  displayAs:int = 0,
                  routePath: Optional[str] = None, routeParamJson: Optional[dict] = None,
-                 autoComplete: int = 0, autoDelete: int = 0,
+                 autoComplete: int = 0,
+                 autoDelete: int = 0,
+                 autoDeleteDateTime: Optional[datetime] = None,
                  onDeliveredPayload: Optional[bytes] = None,
                  onCompletedPayload: Optional[bytes] = None,
                  onDeletedPayload: Optional[bytes] = None,
                  notificationRequiredFlags: int = 0,
-                 actions: List['NewTaskAction'] = ()):
+                 actions: List['NewTaskAction'] = (),
+                 overwriteExisting=False):
         """
         :param uniqueId: A unique identifier provided when this task was created.
             The initiating plugin may use this later to cancel the task.
@@ -69,6 +72,8 @@ class NewTask:
         :param autoDelete: Should this task auto delete?
                 This parameter defines what state it will auto delete in.
                 See the AUTO_DELETE... class constants
+        :param autoDeleteDateTime: The datetime when this task should automatically
+                be deleted it if still exists.
     
         :param onDeliveredPayload: (Optional) The payload that will be delivered locally
             on Peek Server when the task is delivered.
@@ -76,6 +81,9 @@ class NewTask:
             on Peek Server when the task is completed (auto, or otherwise)
         :param onDeletedPayload: (Optional) The payload that will be delivered locally
             on Peek Server when the task is deleted (auto, or otherwise)
+            
+        :param overwriteExisting: If a task with that uniqueId already exists, it will be
+            deleted.
         """
         self.uniqueId = self._required(uniqueId, "uniqueId")
         self.userId = self._required(userId, "userId")
@@ -98,6 +106,8 @@ class NewTask:
 
         self.autoComplete = autoComplete
         self.autoDelete = autoDelete
+        self.autoDeleteDateTime = autoDeleteDateTime
+        self.overwriteExisting = overwriteExisting
 
         self.notificationRequiredFlags = notificationRequiredFlags
 
@@ -148,10 +158,11 @@ class NewActivity:
     """
 
     def __init__(self, uniqueId: str, userId: str, title: str,
+                 autoDeleteDateTime: datetime,
                  dateTime: Optional[datetime] = None,
                  description: Optional[str] = None, iconPath: Optional[str] = None,
                  routePath: Optional[str] = None, routeParamJson: Optional[dict] = None,
-                 autoDeleteDateTime: Optional[datetime] = None):
+                 overwriteExisting=False):
         """
 
         :param uniqueId: A unique identifier provided when this task was created.
@@ -171,6 +182,9 @@ class NewActivity:
             will be passed along when the route is swtiched.
             
         :param autoDeleteDateTime: The time and date when this activity will be deleted.
+            
+        :param overwriteExisting: If an activity with that uniqueId already exists,
+            it will be deleted.
         
         """
         self.uniqueId = self._required(uniqueId, "uniqueId")
@@ -188,6 +202,8 @@ class NewActivity:
 
         # Auto Delete on Time
         self.autoDeleteDateTime = autoDeleteDateTime
+
+        self.overwriteExisting = overwriteExisting
 
     def _required(self, val, desc):
         if not val:

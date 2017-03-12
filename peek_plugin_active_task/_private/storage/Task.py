@@ -57,18 +57,12 @@ class Task(Tuple, DeclarativeBase):
     onCompletedPayload = Column(LargeBinary)
     onDeletedPayload = Column(LargeBinary)
 
-    '''
-    Here we should have 
-    * TODO, A task you can mark as done
-    * Questions to answer (Yes, No, etc)
-    * Active Task (the task you should be working on at present (EG, Issued tasks))
-    * Notifications that can be marked as "READ"
-    '''
     AUTO_COMPLETE_OFF = 0
     AUTO_COMPLETE_ON_DELIVER = 1
     AUTO_COMPLETE_ON_SELECT = 2
     AUTO_COMPLETE_ON_ACTION = 4
     autoComplete = Column(Integer, nullable=False, server_default='0')
+    autoDeleteDateTime = Column(DateTime, nullable=True)
 
     AUTO_DELETE_OFF = 0
     AUTO_DELETE_ON_DELIVER = 1

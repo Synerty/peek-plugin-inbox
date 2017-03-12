@@ -9,7 +9,9 @@ import {Ng2BalloonMsgService} from "@synerty/ng2-balloon-msg";
 
 
 // MomentJS is declared globally, because the datetime picker needs it
-declare let moment: any;
+// declare let moment: any;
+
+import * as moment from "moment";
 
 @Component({
     selector: 'active-task-send-test-activity',
