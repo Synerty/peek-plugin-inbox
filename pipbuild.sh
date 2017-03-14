@@ -3,7 +3,7 @@
 PACKAGE="peek_plugin_active_task"
 
 set -o nounset
-set -o 
+set -o errexit
 #set -x
 
 if [ -n "$(git status --porcelain)" ]; then
