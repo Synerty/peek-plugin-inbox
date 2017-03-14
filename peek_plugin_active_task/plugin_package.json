@@ -2,7 +2,7 @@
   "plugin": {
     "title": "Active Task",
     "packageName": "peek_plugin_active_task",
-    "version":"0.0.30.dev1",
+    "version":"0.0.30.dev2",
     "buildNumber": "#PLUGIN_BUILD#",
     "buildDate": "#BUILD_DATE#",
     "creator": "Synerty Pty Ltd",
