@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-PACKAGE="peek_plugin_active_task"
+PY_PACKAGE="peek_plugin_active_task"
+PIP_PACKAGE="peek-plugin-active-task"
 
 set -o nounset
 set -o errexit
@@ -35,12 +36,12 @@ echo "Setting version to $VER"
 sed -i "s;^package_version.*=.*;package_version = '${VER}';"  setup.py
 
 # Update the package version
-sed -i "s;.*version.*;__version__ = '${VER}';" ${PACKAGE}/__init__.py
+sed -i "s;.*version.*;__version__ = '${VER}';" ${PY_PACKAGE}/__init__.py
 
 # Update the plugin_package.json
 # "version": "#PLUGIN_VER#",
 #sed -i 's;.*"version".*:.*".*;    "version":"'${VER}'",;' ${PACKAGE}/client_fe_module/package.json
-sed -i 's;.*"version".*:.*".*;    "version":"'${VER}'",;' ${PACKAGE}/plugin_package.json
+sed -i 's;.*"version".*:.*".*;    "version":"'${VER}'",;' ${PY_PACKAGE}/plugin_package.json
 
 # Upload to test pypi
 python setup.py sdist upload -r pypitest
@@ -51,6 +52,12 @@ git commit -a -m "Updated to version ${VER}"
 git tag ${VER}
 git push
 git push --tags
+
+RELEASE_DIR=${RELEASE_DIR-/media/psf/release}
+if [ -d  $RELEASE_DIR ]; then
+    rm -rf $RELEASE_DIR/${PIP_PACKAGE}*.gz || true
+    cp ./dist/${PIP_PACKAGE}-$VER.tar.gz $RELEASE_DIR
+fi
 
 
 
