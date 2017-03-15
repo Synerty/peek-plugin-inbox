@@ -63,6 +63,7 @@ export class SendTestTaskComponent extends ComponentLifecycleEventEmitter {
         delete taskCopy.notifyBySound;
         delete taskCopy.notifyBySms;
         delete taskCopy.notifyByEmail;
+        taskCopy.autoDeleteDateTime = moment(taskCopy.autoDeleteDateTime).toDate();
 
 
         this.vortexService.sendPayload(new Payload(this.filt, [taskCopy]));
