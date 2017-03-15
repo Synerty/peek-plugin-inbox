@@ -19,6 +19,8 @@ from sqlalchemy.sql.schema import Index, ForeignKey
 from sqlalchemy.sql.sqltypes import LargeBinary
 from vortex.Tuple import Tuple, addTupleType
 
+from peek_plugin_base.storage.TypeDecorators import PeekVarBinary
+
 logger = logging.getLogger(__name__)
 
 
@@ -47,7 +49,7 @@ class TaskAction(Tuple, DeclarativeBase):
 
     title = Column(String(50))
     confirmMessage = Column(String(200))
-    onActionPayload = Column(LargeBinary)
+    onActionPayload = Column(PeekVarBinary)
 
     __table_args__ = (
         Index("idx_TaskAction_taskId", taskId, unique=False),
