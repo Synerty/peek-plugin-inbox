@@ -14,30 +14,30 @@
     "storage"
   ],
   "client": {
-    "showPluginHomeLink": false,
-    "showPluginInTitleBar": true,
+    "showHomeLink": false,
+    "showInTitleBar": true,
     "titleBarLeft": false,
     "titleBarText": "Tasks",
     "enableAngularFrontend": true,
-    "angularFrontendAppDir": "_private/client_fe_app",
-    "angularFrontendModuleDir": "client_fe_module",
-    "angularFrontendAssetsDir": "_private/client_fe_assets",
-    "angularMainModule": "plugin-active-task.module#PluginActiveTaskClientModule",
-    "angularRootModule": {
+    "appDir": "_private/client_fe_app",
+    "moduleDir": "client_fe_module",
+    "assetDir": "_private/client_fe_assets",
+    "appModule": "plugin-active-task.module#PluginActiveTaskClientModule",
+    "rootModule": {
       "file": "plugin-active-task-root.module",
       "class": "PluginActiveTaskRootModule"
     },
-    "angularRootService": {
+    "rootService": {
       "file": "plugin-active-task-root.service",
       "class": "PluginActiveTaskRootService"
     },
-    "angularPluginIcon": null
+    "icon": null
   },
   "server": {
     "enableAngularFrontend": true,
-    "angularFrontendModuleDir": "client_fe_module",
-    "angularFrontendAppDir": "_private/server_fe_app",
-    "angularMainModule": "plugin-active-task.module#PluginActiveTaskAdminModule"
+    "moduleDir": "client_fe_module",
+    "appDir": "_private/server_fe_app",
+    "appModule": "plugin-active-task.module#PluginActiveTaskAdminModule"
   },
   "storage": {
     "alembicDir": "_private/alembic"
