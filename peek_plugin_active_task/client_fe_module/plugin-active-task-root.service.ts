@@ -18,7 +18,7 @@ import {TaskTuple} from "./tuples/TaskTuple";
 import {ActivityTuple} from "./tuples/ActivityTuple";
 import {Ng2BalloonMsgService} from "@synerty/ng2-balloon-msg";
 import {UserService} from "@peek-client/peek_plugin_user";
-import {TitleService} from "@synerty/peek-client-fe-util";
+import {TitleService} from "@synerty/peek-mobile-util";
 
 import {
     activeTaskActionProcessorName,
@@ -30,7 +30,7 @@ import {
 
 /**  Root Service
  *
- * This service will be loaded by peek-client-fe when the app laods.
+ * This service will be loaded by peek-mobile when the app laods.
  * There will be one instance of it, and it be around for the life of the app.
  *
  * Configure this in plugin_package.json

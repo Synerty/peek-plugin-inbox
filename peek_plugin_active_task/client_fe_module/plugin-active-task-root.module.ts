@@ -3,7 +3,7 @@ import {PluginActiveTaskRootService} from "./plugin-active-task-root.service";
 
 /** Client Root Module
  *
- * This module will be loaded by peek-client-fe when the app laods.
+ * This module will be loaded by peek-mobile when the app laods.
  * There will be one instance of it, and it be around for the life of the app.
  *
  * Configure this in plugin_package.json
