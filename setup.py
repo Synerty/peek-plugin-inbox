@@ -44,7 +44,7 @@ setup(
     packages=find_packages(exclude=["*.tests", "*.tests.*", "tests.*", "tests"]),
     package_data={'': package_files},
     install_requires=['peek-plugin-base'],
-    version=package_version,
+    zip_safe=False,version=package_version,
     description='Peek Plugin - ActiveTask - This is the No Operation test/example plugin',
     author='Synerty',
     author_email='contact@synerty.com',
