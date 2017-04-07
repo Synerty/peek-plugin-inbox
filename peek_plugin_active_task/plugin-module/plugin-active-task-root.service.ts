@@ -17,7 +17,7 @@ import {PeekModuleFactory, Sound} from "@synerty/peek-web-ns/index.web";
 import {TaskTuple} from "./tuples/TaskTuple";
 import {ActivityTuple} from "./tuples/ActivityTuple";
 import {Ng2BalloonMsgService} from "@synerty/ng2-balloon-msg";
-import {UserService} from "@peek-client/peek_plugin_user";
+import {UserService} from "@peek/peek_plugin_user";
 import {TitleService} from "@synerty/peek-mobile-util";
 
 import {

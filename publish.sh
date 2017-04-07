@@ -40,7 +40,7 @@ sed -i "s;.*version.*;__version__ = '${VER}';" ${PY_PACKAGE}/__init__.py
 
 # Update the plugin_package.json
 # "version": "#PLUGIN_VER#",
-#sed -i 's;.*"version".*:.*".*;    "version":"'${VER}'",;' ${PACKAGE}/client_fe_module/package.json
+#sed -i 's;.*"version".*:.*".*;    "version":"'${VER}'",;' ${PACKAGE}/plugin-module/package.json
 sed -i 's;.*"version".*:.*".*;    "version":"'${VER}'",;' ${PY_PACKAGE}/plugin_package.json
 
 # Upload to test pypi

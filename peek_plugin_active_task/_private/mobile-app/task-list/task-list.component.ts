@@ -9,8 +9,8 @@ import {
     PluginActiveTaskRootService,
     TaskActionTuple,
     TaskTuple
-} from "@peek-client/peek_plugin_active_task";
-import {UserService} from "@peek-client/peek_plugin_user";
+} from "@peek/peek_plugin_active_task";
+import {UserService} from "@peek/peek_plugin_user";
 
 import * as moment from "moment";
 

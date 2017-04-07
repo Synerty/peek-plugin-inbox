@@ -8,7 +8,7 @@ import {Router} from "@angular/router";
 import {
     ActivityTuple,
     PluginActiveTaskRootService
-} from "@peek-client/peek_plugin_active_task";
+} from "@peek/peek_plugin_active_task";
 
 
 import * as moment from "moment";

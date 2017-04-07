@@ -3,7 +3,7 @@ import {ComponentLifecycleEventEmitter} from "@synerty/vortexjs";
 import {
     PluginActiveTaskRootService,
     TaskTuple
-} from "@peek-client/peek_plugin_active_task";
+} from "@peek/peek_plugin_active_task";
 import {TitleService} from "@synerty/peek-mobile-util";
 
 

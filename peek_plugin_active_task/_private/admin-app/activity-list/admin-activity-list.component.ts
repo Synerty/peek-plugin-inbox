@@ -4,7 +4,7 @@ import {
     TupleSelector
 } from "@synerty/vortexjs";
 import {Component} from "@angular/core";
-import {ActivityTuple} from "@peek-server/peek_plugin_active_task/tuples/ActivityTuple";
+import {ActivityTuple} from "@peek/peek_plugin_active_task/tuples/ActivityTuple";
 
 
 @Component({

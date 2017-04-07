@@ -95,7 +95,7 @@ class NewTask:
 
         self.displayAs = displayAs
 
-        # The client_fe_app route to open when this task is selected
+        # The mobile-app route to open when this task is selected
         self.routePath = routePath
         self.routeParamJson = routeParamJson
 
@@ -196,7 +196,7 @@ class NewActivity:
         self.description = description
         self.iconPath = iconPath
 
-        # The client_fe_app route to open when this item is selected
+        # The mobile-app route to open when this item is selected
         self.routePath = routePath
         self.routeParamJson = routeParamJson
 

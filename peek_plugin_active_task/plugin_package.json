@@ -2,7 +2,7 @@
   "plugin": {
     "title": "Active Task",
     "packageName": "peek_plugin_active_task",
-    "version":"0.1.5",
+    "version": "0.1.5",
     "buildNumber": "#PLUGIN_BUILD#",
     "buildDate": "#BUILD_DATE#",
     "creator": "Synerty Pty Ltd",
@@ -13,15 +13,14 @@
     "client",
     "storage"
   ],
-  "client": {
+  "mobile": {
     "showHomeLink": false,
     "showInTitleBar": true,
     "titleBarLeft": false,
     "titleBarText": "Tasks",
-    "enableAngularFrontend": true,
-    "appDir": "_private/client_fe_app",
-    "moduleDir": "client_fe_module",
-    "assetDir": "_private/client_fe_assets",
+    "appDir": "_private/mobile-app",
+    "moduleDir": "plugin-module",
+    "assetDir": "_private/mobile-assets",
     "appModule": "plugin-active-task.module#PluginActiveTaskClientModule",
     "rootModule": {
       "file": "plugin-active-task-root.module",
@@ -33,11 +32,14 @@
     },
     "icon": null
   },
-  "server": {
-    "enableAngularFrontend": true,
-    "moduleDir": "client_fe_module",
-    "appDir": "_private/server_fe_app",
+  "admin": {
+    "moduleDir": "plugin-module",
+    "appDir": "_private/admin-app",
     "appModule": "plugin-active-task.module#PluginActiveTaskAdminModule"
+  },
+  "server": {
+  },
+  "client": {
   },
   "storage": {
     "alembicDir": "_private/alembic"

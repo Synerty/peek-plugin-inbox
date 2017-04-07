@@ -6,7 +6,7 @@ import {
     Tuple,
     extend
 } from "@synerty/vortexjs";
-import {activeTaskFilt} from "@peek-server/peek_plugin_active_task/plugin-active-task-names";
+import {activeTaskFilt} from "@peek/peek_plugin_active_task/plugin-active-task-names";
 
 
 class SettingProperty extends Tuple {

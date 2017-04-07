@@ -9,7 +9,7 @@ import {
     LoggedOutGuard,
     ProfileService,
     UserService
-} from "@peek-client/peek_plugin_user";
+} from "@peek/peek_plugin_user";
 
 import {ActivityListComponent} from "./activity-list/activity-list.component";
 import {TaskListComponent} from "./task-list/task-list.component";
