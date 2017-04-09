@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 
 
 class MainController(TupleActionProcessorDelegateABC):
-    PROCESS_PERIOD = 5.0
+    PROCESS_PERIOD = 60.0 # Every minutes
 
     def __init__(self, ormSessionCreator,
                  userPluginApi: UserDbServerApiABC,
