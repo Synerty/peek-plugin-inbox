@@ -55,9 +55,9 @@ class Task(Tuple, DeclarativeBase):
     routeParamJson = Column(String(200))
 
     # The confirmation options
-    onDeliveredPayload = Column(PeekVarBinary)
-    onCompletedPayload = Column(PeekVarBinary)
-    onDeletedPayload = Column(PeekVarBinary)
+    onDeliveredPayload = Column(LargeBinary)
+    onCompletedPayload = Column(LargeBinary)
+    onDeletedPayload = Column(LargeBinary)
 
     AUTO_COMPLETE_OFF = 0
     AUTO_COMPLETE_ON_DELIVER = 1
