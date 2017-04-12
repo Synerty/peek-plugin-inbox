@@ -49,7 +49,7 @@ class TaskAction(Tuple, DeclarativeBase):
 
     title = Column(String(50))
     confirmMessage = Column(String(200))
-    onActionPayload = Column(LargeBinary)
+    onActionPayload = Column(PeekLargeBinary)
 
     __table_args__ = (
         Index("idx_TaskAction_taskId", taskId, unique=False),

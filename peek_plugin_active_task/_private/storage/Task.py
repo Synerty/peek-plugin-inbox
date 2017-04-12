@@ -18,7 +18,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.sql.sqltypes import DateTime, LargeBinary
 from vortex.Tuple import Tuple, addTupleType
 
-from peek_plugin_base.storage.TypeDecorators import PeekVarBinary
+from peek_plugin_base.storage.TypeDecorators import PeekLargeBinary
 
 logger = logging.getLogger(__name__)
 
@@ -55,9 +55,9 @@ class Task(Tuple, DeclarativeBase):
     routeParamJson = Column(String(200))
 
     # The confirmation options
-    onDeliveredPayload = Column(LargeBinary)
-    onCompletedPayload = Column(LargeBinary)
-    onDeletedPayload = Column(LargeBinary)
+    onDeliveredPayload = Column(PeekLargeBinary)
+    onCompletedPayload = Column(PeekLargeBinary)
+    onDeletedPayload = Column(PeekLargeBinary)
 
     AUTO_COMPLETE_OFF = 0
     AUTO_COMPLETE_ON_DELIVER = 1
