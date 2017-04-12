@@ -10,16 +10,15 @@
 """
 import logging
 
-from peek_plugin_active_task._private.PluginNames import activeTaskTuplePrefix
-from peek_plugin_active_task._private.storage.DeclarativeBase import DeclarativeBase
 from sqlalchemy import Column
 from sqlalchemy import Integer, String
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.schema import Index, ForeignKey
-from sqlalchemy.sql.sqltypes import LargeBinary
 from vortex.Tuple import Tuple, addTupleType
 
-from peek_plugin_base.storage.TypeDecorators import PeekVarBinary
+from peek_plugin_active_task._private.PluginNames import activeTaskTuplePrefix
+from peek_plugin_active_task._private.storage.DeclarativeBase import DeclarativeBase
+from peek_plugin_base.storage.TypeDecorators import PeekLargeBinary
 
 logger = logging.getLogger(__name__)
 
