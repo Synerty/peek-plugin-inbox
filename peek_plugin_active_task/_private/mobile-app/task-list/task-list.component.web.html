@@ -7,17 +7,18 @@
             <div>
 
                 <h4><!-- Task checked/unchecked display -->
-                <fa *ngIf="task.isTask() && !task.isCompleted()"
-                      name="square-o"></fa>
-                <fa *ngIf="task.isTask() && task.isCompleted()"
-                      name="check-square-o"></fa>
+                    <fa *ngIf="task.isTask() && !task.isCompleted()"
+                        name="square-o"></fa>
+                    <fa *ngIf="task.isTask() && task.isCompleted()"
+                        name="check-square-o"></fa>
 
-                <!-- Message checked/unchecked display -->
-                <fa *ngIf="task.isMessage() && !task.isCompleted()"
-                      name="comment-o"></fa>
-                    {{task.title}}
+                    <!-- Message checked/unchecked display -->
+                    <fa *ngIf="task.isMessage() && !task.isCompleted()"
+                        name="comment-o"></fa>
+                    <span style="white-space: pre-wrap">{{task.title}}</span>
                     <fa *ngIf="hasRoute(task)" name="angle-right"
-                        class="pull-right"></fa></h4>
+                        class="pull-right"></fa>
+                </h4>
 
                 <div class="pull-right align-right">
                     {{timePast(task)}} ago<br/>
@@ -25,7 +26,7 @@
                 </div>
 
                 <img *ngIf="task.imagePath" [src]="task.imagePath">
-                {{task.description}}
+                <span style="white-space: pre-wrap">{{task.description}}</span>
 
                 <span *ngIf="!task.isActioned()">
                     <button *ngFor="let action of task.actions"

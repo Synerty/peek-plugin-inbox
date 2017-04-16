@@ -17,7 +17,9 @@ export class SendTestTaskComponent extends ComponentLifecycleEventEmitter {
         notifyBySound:false,
         notifyBySms:false,
         notifyByEmail:false,
+        notifyByDialog:false,
         displayAs:0,
+        displayPriority:1,
         autoComplete:0,
         autoDelete:0,
         actions: [],
@@ -49,6 +51,7 @@ export class SendTestTaskComponent extends ComponentLifecycleEventEmitter {
 
     send() {
         this.task.notificationRequiredFlags = 0;
+
         if (this.task.notifyByPopup)
             this.task.notificationRequiredFlags += 1;
         if (this.task.notifyBySound)
@@ -57,13 +60,18 @@ export class SendTestTaskComponent extends ComponentLifecycleEventEmitter {
             this.task.notificationRequiredFlags += 4;
         if (this.task.notifyByEmail)
             this.task.notificationRequiredFlags += 8;
+        if (this.task.notifyByDialog)
+            this.task.notificationRequiredFlags += 16;
 
         let taskCopy = extend({},this.task);
         delete taskCopy.notifyByPopup;
         delete taskCopy.notifyBySound;
         delete taskCopy.notifyBySms;
         delete taskCopy.notifyByEmail;
+        delete taskCopy.notifyByDialog;
         taskCopy.autoDeleteDateTime = moment(taskCopy.autoDeleteDateTime).toDate();
+        taskCopy.displayAs = parseInt(taskCopy.displayAs);
+        taskCopy.displayPriority = parseInt(taskCopy.displayPriority);
 
 
         this.vortexService.sendPayload(new Payload(this.filt, [taskCopy]));

@@ -2,22 +2,32 @@
     <!--<div class="panel-heading">Send Test Task</div>-->
     <div class="panel-body">
         <div class="row">
-            <div class="form-group col-md-4">
+            <div class="form-group col-md-3">
                 <label for="uniqueId">uniqueId</label>
                 <input type="text" class="form-control" id="uniqueId"
                        [(ngModel)]="task.uniqueId">
             </div>
-            <div class="form-group col-md-4">
+            <div class="form-group col-md-3">
                 <label for="userId">userId</label>
                 <input type="text" class="form-control" id="userId"
                        [(ngModel)]="task.userId">
             </div>
-            <div class="form-group col-md-4">
+            <div class="form-group col-md-3">
                 <label for="displayAs">displayAs</label>
                 <select class="form-control" id="displayAs"
                         [(ngModel)]="task.displayAs">
                     <option value="0">DISPLAY_AS_TASK</option>
                     <option value="1">DISPLAY_AS_MESSAGE</option>
+                </select>
+            </div>
+            <div class="form-group col-md-3">
+                <label for="displayPriority">displayPriority</label>
+                <select class="form-control" id="displayPriority"
+                        [(ngModel)]="task.displayPriority">
+                    <option value="1">PRIORITY_SUCCESS</option>
+                    <option value="2">PRIORITY_INFO</option>
+                    <option value="3">PRIORITY_WARNING</option>
+                    <option value="4">PRIORITY_DANGER</option>
                 </select>
             </div>
         </div>
@@ -85,13 +95,19 @@
 
         <h4>Notification Methods</h4>
         <div class="row">
-            <div class="form-group col-md-3">
+            <div class="form-group col-md-2">
                 <input #notifyByPopup
                        (change)="task.notifyByPopup = notifyByPopup.checked"
                        type="checkbox"/>
                 Popup
             </div>
-            <div class="form-group col-md-3">
+            <div class="form-group col-md-2">
+                <input #notifyByDialog
+                       (change)="task.notifyByDialog = notifyByDialog.checked"
+                       type="checkbox"/>
+                Dialog
+            </div>
+            <div class="form-group col-md-2">
                 <input #notifyBySound
                        (change)="task.notifyBySound = notifyBySound.checked"
                        type="checkbox"/>

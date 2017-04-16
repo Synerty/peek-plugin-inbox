@@ -30,17 +30,26 @@ class NewTask:
     NOTIFY_BY_DEVICE_SOUND = 2
     NOTIFY_BY_SMS = 4
     NOTIFY_BY_EMAIL = 8
+    NOTIFY_BY_DEVICE_DIALOG = 16
 
     # Display options
     DISPLAY_AS_TASK = 0
     DISPLAY_AS_MESSAGE = 1
 
+    # Priority options
+    PRIORITY_SUCCESS = 1
+    PRIORITY_INFO = 2
+    PRIORITY_WARNING = 3
+    PRIORITY_DANGER = 4
+
+
     def __init__(self, uniqueId: str, userId: str, title: str,
                  description: Optional[str] = None, iconPath: Optional[str] = None,
-                 displayAs:int = 0,
+                 displayAs:int = DISPLAY_AS_TASK,
+                 displayPriority:int = PRIORITY_SUCCESS,
                  routePath: Optional[str] = None, routeParamJson: Optional[dict] = None,
-                 autoComplete: int = 0,
-                 autoDelete: int = 0,
+                 autoComplete: int = AUTO_COMPLETE_OFF,
+                 autoDelete: int = AUTO_DELETE_OFF,
                  autoDeleteDateTime: Optional[datetime] = None,
                  onDeliveredPayload: Optional[bytes] = None,
                  onCompletedPayload: Optional[bytes] = None,
@@ -60,6 +69,7 @@ class NewTask:
         :param description: The long text that is displayed under the title for this task.
         :param iconPath: The URL for the icon, if any.
         :param displayAs: Should this task be displayed as a message or task?
+        :param displayPriority: What priority should the task display as?
     
         :param routePath: If this route path is defined, then selecting the task
             will cause the peek client fe to change routes to a new page.
@@ -94,6 +104,7 @@ class NewTask:
         self.iconPath = iconPath
 
         self.displayAs = displayAs
+        self.displayPriority = displayPriority
 
         # The mobile-app route to open when this task is selected
         self.routePath = routePath

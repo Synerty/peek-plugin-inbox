@@ -47,12 +47,19 @@ export class TaskTuple extends Tuple {
     static readonly NOTIFY_BY_DEVICE_SOUND = 2;
     static readonly NOTIFY_BY_SMS = 4;
     static readonly NOTIFY_BY_EMAIL = 8;
+    static readonly NOTIFY_BY_DEVICE_DIALOG = 16;
     notificationRequiredFlags: number;
     notificationSentFlags: number;
 
     static readonly DISPLAY_AS_TASK = 0;
     static readonly DISPLAY_AS_MESSAGE = 1;
     displayAs: number;
+
+    static readonly PRIORITY_SUCCESS = 1;
+    static readonly PRIORITY_INFO = 2;
+    static readonly PRIORITY_WARNING = 3;
+    static readonly PRIORITY_DANGER = 4;
+    displayPriority: number;
 
     // The actions for this TaskTuple.
     actions: TaskActionTuple[];
@@ -63,46 +70,70 @@ export class TaskTuple extends Tuple {
 
     // ------------------------------
     // State properties
-    isCompleted() {
+    isCompleted() : boolean{
         return !!(this.stateFlags & TaskTuple.STATE_COMPLETED);
     }
 
-    isActioned() {
+    isActioned() : boolean{
         return !!(this.stateFlags & TaskTuple.STATE_ACTIONED);
     }
 
-    isDelivered() {
+    isDelivered(): boolean {
         return !!(this.stateFlags & TaskTuple.STATE_DELIVERED);
     }
 
     // ------------------------------
     // Notifications Required properties
-    isNotifyBySound() {
+    isNotifyBySound(): boolean {
         return !!(this.notificationRequiredFlags & TaskTuple.NOTIFY_BY_DEVICE_SOUND);
     }
 
-    isNotifyByPopup() {
+    isNotifyByPopup(): boolean {
         return !!(this.notificationRequiredFlags & TaskTuple.NOTIFY_BY_DEVICE_POPUP);
+    }
+
+    isNotifyByDialog(): boolean {
+        return !!(this.notificationRequiredFlags & TaskTuple.NOTIFY_BY_DEVICE_DIALOG);
     }
 
     // ------------------------------
     // Notifications Sent properties
-    isNotifiedBySound() {
+    isNotifiedBySound(): boolean {
         return !!(this.notificationSentFlags & TaskTuple.NOTIFY_BY_DEVICE_SOUND);
     }
 
-    isNotifiedByPopup() {
+    isNotifiedByPopup(): boolean {
         return !!(this.notificationSentFlags & TaskTuple.NOTIFY_BY_DEVICE_POPUP);
+    }
+
+    isNotifiedByDialog(): boolean {
+        return !!(this.notificationSentFlags & TaskTuple.NOTIFY_BY_DEVICE_DIALOG);
     }
 
     // ------------------------------
     // Notification properties
-    isTask() {
+    isTask(): boolean {
         return this.displayAs == TaskTuple.DISPLAY_AS_TASK;
     }
 
-    isMessage() {
+    isMessage(): boolean {
         return this.displayAs == TaskTuple.DISPLAY_AS_MESSAGE;
+    }
+
+    displayAsText(): string {
+        switch (this.displayAs) {
+            case TaskTuple.DISPLAY_AS_TASK: {
+                return "Task";
+            }
+
+            case TaskTuple.DISPLAY_AS_MESSAGE: {
+                return "Message";
+            }
+
+            default: {
+                throw new Error(`Unknown displayAs type ${this.displayAs}`);
+            }
+        }
     }
 
 }

@@ -16,7 +16,7 @@ import {
 import {PeekModuleFactory, Sound} from "@synerty/peek-mobile-util/index.web";
 import {TaskTuple} from "./tuples/TaskTuple";
 import {ActivityTuple} from "./tuples/ActivityTuple";
-import {Ng2BalloonMsgService} from "@synerty/ng2-balloon-msg";
+import {Ng2BalloonMsgService, UsrMsgLevel, UsrMsgType} from "@synerty/ng2-balloon-msg";
 import {UserService} from "@peek/peek_plugin_user";
 import {TitleService} from "@synerty/peek-mobile-util";
 
@@ -251,12 +251,16 @@ export class PluginActiveTaskRootService extends ComponentLifecycleEventEmitter 
                 notificationSentFlags | TaskTuple.NOTIFY_BY_DEVICE_SOUND);
             }
 
-
             if (task.isNotifyByPopup() && !task.isNotifiedByPopup()) {
-                let desc = task.description ? task.description : "";
-                this.userMsgService.showInfo(`${task.title}\n\n${desc}`);
+                this.showMessage(UsrMsgType.Fleeting, task);
                 notificationSentFlags = (
                 notificationSentFlags | TaskTuple.NOTIFY_BY_DEVICE_POPUP);
+            }
+
+            if (task.isNotifyByDialog() && !task.isNotifiedByDialog()) {
+                this.showMessage(UsrMsgType.Confirm, task);
+                notificationSentFlags = (
+                notificationSentFlags | TaskTuple.NOTIFY_BY_DEVICE_DIALOG);
             }
 
             if (!task.isDelivered()) {
@@ -275,6 +279,47 @@ export class PluginActiveTaskRootService extends ComponentLifecycleEventEmitter 
         }
 
         return updateApplied;
+    }
+
+    private showMessage(type_: UsrMsgType, task: TaskTuple) {
+        let level: UsrMsgLevel | null = null;
+        console.log(task.displayPriority);
+
+        switch (task.displayPriority) {
+            case TaskTuple.PRIORITY_SUCCESS:
+                level = UsrMsgLevel.Success;
+                break;
+
+            case TaskTuple.PRIORITY_INFO:
+                level = UsrMsgLevel.Info;
+                break;
+
+            case TaskTuple.PRIORITY_WARNING:
+                level = UsrMsgLevel.Warning;
+                break;
+
+            case TaskTuple.PRIORITY_DANGER:
+                level = UsrMsgLevel.Error;
+                break;
+
+            default:
+                throw new Error(`Unknown priority ${task.displayPriority}`);
+
+        }
+
+        let dialogTitle = `New ${task.displayAsText()}`;
+        let desc = task.description ? task.description : "";
+        let msg = `${task.title}\n\n${desc}`;
+
+        let p = this.userMsgService.showMessage(
+            msg,
+            level,
+            type_, {
+                "confirmText": "Ok",
+                "dialogTitle": dialogTitle,
+                "routePath": task.routePath
+
+            });
     }
 
 

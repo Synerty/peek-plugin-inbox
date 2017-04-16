@@ -5,10 +5,10 @@
     <tbody>
     <tr *ngFor="let activity of activities" (click)="activityClicked(activity)">
         <td>
-            <div>
+            <div style="white-space: pre-wrap">
 
                 <h4>
-                    {{activity.title}}
+                    <span style="white-space: pre-wrap">{{activity.title}}</span>
                     <fa *ngIf="hasRoute(activity)" name="angle-right"
                         class="pull-right"></fa>
                 </h4>
@@ -19,7 +19,7 @@
                 </div>
 
                 <img *ngIf="activity.imagePath" [src]="activity.imagePath">
-                {{activity.description}}
+                <span style="white-space: pre-wrap">{{activity.description}}</span>
             </div>
         </td>
     </tr>
