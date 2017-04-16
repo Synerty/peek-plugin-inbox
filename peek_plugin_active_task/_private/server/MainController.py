@@ -18,7 +18,7 @@ from peek_plugin_active_task._private.storage.Activity import Activity
 from peek_plugin_active_task._private.storage.Setting import globalSetting
 from peek_plugin_active_task._private.storage.Task import Task
 from peek_plugin_active_task._private.storage.TaskAction import TaskAction
-from peek_plugin_user.server.UserDbServerApiABC import UserDbServerApiABC
+from peek_plugin_user.server.UserServerApiABC import UserServerApiABC
 
 logger = logging.getLogger(__name__)
 
@@ -27,7 +27,7 @@ class MainController(TupleActionProcessorDelegateABC):
     PROCESS_PERIOD = 60.0 # Every minutes
 
     def __init__(self, ormSessionCreator,
-                 userPluginApi: UserDbServerApiABC,
+                 userPluginApi: UserServerApiABC,
                  tupleObserver: TupleDataObservableHandler):
         self._ormSessionCreator = ormSessionCreator
         self._userPluginApi = userPluginApi

@@ -19,7 +19,7 @@ from peek_plugin_active_task._private.storage.DeclarativeBase import loadStorage
 from peek_plugin_base.server.PluginServerEntryHookABC import PluginServerEntryHookABC
 from peek_plugin_base.server.PluginServerStorageEntryHookABC import \
     PluginServerStorageEntryHookABC
-from peek_plugin_user.server.UserDbServerApiABC import UserDbServerApiABC
+from peek_plugin_user.server.UserServerApiABC import UserServerApiABC
 
 logger = logging.getLogger(__name__)
 
@@ -42,7 +42,7 @@ class PluginServerEntryHook(PluginServerEntryHookABC,
         userPluginApi = self.platform.getOtherPluginApi("peek_plugin_user")
 
         assert isinstance(userPluginApi,
-                          UserDbServerApiABC), "Expected UserDbServerApiABC"
+                          UserServerApiABC), "Expected UserServerApiABC"
 
         # Create the observable
         tupleObserver = makeTupleDataObservableHandler(self.dbSessionCreator)

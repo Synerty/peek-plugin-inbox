@@ -10,13 +10,13 @@ from peek_plugin_active_task._private.storage.Task import Task
 from peek_plugin_active_task._private.storage.TaskAction import TaskAction
 from peek_plugin_active_task.server.ActiveTaskApiABC import ActiveTaskApiABC, NewTask, \
     NewActivity
-from peek_plugin_user.server.UserDbServerApiABC import UserDbServerApiABC
+from peek_plugin_user.server.UserServerApiABC import UserServerApiABC
 
 logger = logging.getLogger(__name__)
 
 
 class ActiveTaskApi(ActiveTaskApiABC):
-    def __init__(self, ormSessionCreator, userPluginApi: UserDbServerApiABC
+    def __init__(self, ormSessionCreator, userPluginApi: UserServerApiABC
                  , taskProc: MainController):
         self._ormSessionCreator = ormSessionCreator
         self._userPluginApi = userPluginApi
