@@ -258,7 +258,19 @@ export class PluginActiveTaskRootService extends ComponentLifecycleEventEmitter 
             }
 
             if (task.isNotifyByDialog() && !task.isNotifiedByDialog()) {
-                this.showMessage(UsrMsgType.Confirm, task);
+                this.showMessage(UsrMsgType.Confirm, task)
+                    .then(() => {
+                        this.sendStateUpdate(task,
+                            TaskTuple.STATE_DIALOG_CONFIRMED,
+                            0
+                        );
+                    })
+                    .catch(err => {
+                        let e = `ActiveTask Dialog Error\n${err}`;
+                        console.log(e);
+                        this.userMsgService.showError(`ActiveTask Dialog Error\n${err}`);
+                    });
+
                 notificationSentFlags = (
                 notificationSentFlags | TaskTuple.NOTIFY_BY_DEVICE_DIALOG);
             }
@@ -281,7 +293,7 @@ export class PluginActiveTaskRootService extends ComponentLifecycleEventEmitter 
         return updateApplied;
     }
 
-    private showMessage(type_: UsrMsgType, task: TaskTuple) {
+    private showMessage(type_: UsrMsgType, task: TaskTuple): Promise<null> {
         let level: UsrMsgLevel | null = null;
         console.log(task.displayPriority);
 
@@ -311,7 +323,7 @@ export class PluginActiveTaskRootService extends ComponentLifecycleEventEmitter 
         let desc = task.description ? task.description : "";
         let msg = `${task.title}\n\n${desc}`;
 
-        let p = this.userMsgService.showMessage(
+        return this.userMsgService.showMessage(
             msg,
             level,
             type_, {

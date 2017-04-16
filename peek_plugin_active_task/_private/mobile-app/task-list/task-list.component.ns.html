@@ -2,10 +2,11 @@
 
 <ListView [items]="tasks">
 
-    <ng-template let-item="item" let-i="index" let-odd="odd" let-even="even">
-        <StackLayout [class.odd]="odd"
-                     [class.even]="even"
-                     [class.bg-primary]="!item.isCompleted()"
+    <ng-template let-item="item" let-i="index">
+        <StackLayout [class.bg-success]="!item.isCompleted() && item.isPrioritySuccess()"
+                     [class.bg-info]="!item.isCompleted() && item.isPriorityInfo()"
+                     [class.bg-warning]="!item.isCompleted() && item.isPriorityWarning()"
+                     [class.bg-danger]="!item.isCompleted() && item.isPriorityDanger()"
                      (tap)="taskClicked(item)">
             <GridLayout columns="auto,*,auto" rows="*">
                 <Label row="0" col="0" *ngIf="item.isTask() && !item.isCompleted()"

@@ -12,18 +12,20 @@ class NewTask:
 
     """
 
-    # Auto complete options
+    # Auto complete options, Must match _private.storage.Task.Task.state
     AUTO_COMPLETE_OFF = 0
     AUTO_COMPLETE_ON_DELIVER = 1
     AUTO_COMPLETE_ON_SELECT = 2
     AUTO_COMPLETE_ON_ACTION = 4
+    AUTO_COMPLETE_ON_DIALOG = 16
 
-    # Auto delete options
+    # Auto delete options, Must match _private.storage.Task.Task.state
     AUTO_DELETE_OFF = 0
     AUTO_DELETE_ON_DELIVER = 1
     AUTO_DELETE_ON_SELECT = 2
     AUTO_DELETE_ON_ACTION = 4
     AUTO_DELETE_ON_COMPLETE = 8
+    AUTO_DELETE_ON_DIALOG = 16
 
     # notification mask (multiple options allowed)
     NOTIFY_BY_DEVICE_POPUP = 1
@@ -54,6 +56,7 @@ class NewTask:
                  onDeliveredPayload: Optional[bytes] = None,
                  onCompletedPayload: Optional[bytes] = None,
                  onDeletedPayload: Optional[bytes] = None,
+                 onDialogConfirmPayload: Optional[bytes] = None,
                  notificationRequiredFlags: int = 0,
                  actions: List['NewTaskAction'] = (),
                  overwriteExisting=False):
@@ -91,6 +94,8 @@ class NewTask:
             on Peek Server when the task is completed (auto, or otherwise)
         :param onDeletedPayload: (Optional) The payload that will be delivered locally
             on Peek Server when the task is deleted (auto, or otherwise)
+        :param onDialogConfirmPayload: (Optional) The payload that will be delivered
+            locally on Peek Server when the user clicks "OK" on the dialog.
             
         :param overwriteExisting: If a task with that uniqueId already exists, it will be
             deleted.
@@ -114,6 +119,7 @@ class NewTask:
         self.onDeliveredPayload = onDeliveredPayload
         self.onCompletedPayload = onCompletedPayload
         self.onDeletedPayload = onDeletedPayload
+        self.onDialogConfirmPayload = onDialogConfirmPayload
 
         self.autoComplete = autoComplete
         self.autoDelete = autoDelete

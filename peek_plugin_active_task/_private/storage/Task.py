@@ -59,11 +59,13 @@ class Task(Tuple, DeclarativeBase):
     onDeliveredPayload = Column(PeekLargeBinary)
     onCompletedPayload = Column(PeekLargeBinary)
     onDeletedPayload = Column(PeekLargeBinary)
+    onDialogConfirmPayload = Column(PeekLargeBinary)
 
     AUTO_COMPLETE_OFF = NewTask.AUTO_COMPLETE_OFF
     AUTO_COMPLETE_ON_DELIVER = NewTask.AUTO_COMPLETE_ON_DELIVER
     AUTO_COMPLETE_ON_SELECT = NewTask.AUTO_COMPLETE_ON_SELECT
     AUTO_COMPLETE_ON_ACTION = NewTask.AUTO_COMPLETE_ON_ACTION
+    AUTO_COMPLETE_ON_DIALOG = NewTask.AUTO_COMPLETE_ON_DIALOG
     autoComplete = Column(Integer, nullable=False, server_default='0')
     autoDeleteDateTime = Column(DateTime, nullable=True)
 
@@ -72,6 +74,7 @@ class Task(Tuple, DeclarativeBase):
     AUTO_DELETE_ON_SELECT = NewTask.AUTO_DELETE_ON_SELECT
     AUTO_DELETE_ON_ACTION = NewTask.AUTO_DELETE_ON_ACTION
     AUTO_DELETE_ON_COMPLETE = NewTask.AUTO_DELETE_ON_COMPLETE
+    AUTO_DELETE_ON_DIALOG = NewTask.AUTO_DELETE_ON_DIALOG
     autoDelete = Column(Integer, nullable=False, server_default='0')
 
     # The state of this action
@@ -79,6 +82,7 @@ class Task(Tuple, DeclarativeBase):
     STATE_SELECTED = 2
     STATE_ACTIONED = 4
     STATE_COMPLETED = 8
+    STATE_DIALOG_CONFIRMED = 16 # The dialog was achnowledged
     stateFlags = Column(Integer, nullable=False, server_default='0')
 
     NOTIFY_BY_DEVICE_POPUP = NewTask.NOTIFY_BY_DEVICE_POPUP

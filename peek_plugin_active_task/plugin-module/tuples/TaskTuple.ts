@@ -27,6 +27,7 @@ export class TaskTuple extends Tuple {
     static readonly AUTO_COMPLETE_ON_DELIVER = 1;
     static readonly AUTO_COMPLETE_ON_SELECT = 2;
     static readonly AUTO_COMPLETE_ON_ACTION = 4;
+    static readonly AUTO_COMPLETE_ON_DIALOG = 16;
     autoComplete: number;
 
     static readonly AUTO_DELETE_OFF = 0;
@@ -34,6 +35,7 @@ export class TaskTuple extends Tuple {
     static readonly AUTO_DELETE_ON_SELECT = 2;
     static readonly AUTO_DELETE_ON_ACTION = 4;
     static readonly AUTO_DELETE_ON_COMPLETE = 8;
+    static readonly AUTO_DELETE_ON_DIALOG = 16;
     autoDelete: number;
 
     // The state of this action
@@ -41,6 +43,7 @@ export class TaskTuple extends Tuple {
     static readonly STATE_SELECTED = 2;
     static readonly STATE_ACTIONED = 4;
     static readonly STATE_COMPLETED = 8;
+    static readonly STATE_DIALOG_CONFIRMED = 16;
     stateFlags: number;
 
     static readonly NOTIFY_BY_DEVICE_POPUP = 1;
@@ -134,6 +137,25 @@ export class TaskTuple extends Tuple {
                 throw new Error(`Unknown displayAs type ${this.displayAs}`);
             }
         }
+    }
+
+    // ------------------------------
+    // Priority properties
+
+    isPrioritySuccess():boolean {
+        return this.displayPriority === TaskTuple.PRIORITY_SUCCESS;
+    }
+
+    isPriorityInfo():boolean {
+        return this.displayPriority === TaskTuple.PRIORITY_INFO;
+    }
+
+    isPriorityWarning():boolean {
+        return this.displayPriority === TaskTuple.PRIORITY_WARNING;
+    }
+
+    isPriorityDanger():boolean {
+        return this.displayPriority === TaskTuple.PRIORITY_DANGER;
     }
 
 }

@@ -3,7 +3,10 @@
 <table class="table table-striped">
     <tbody>
     <tr *ngFor="let task of tasks" (click)="taskClicked(task)">
-        <td [class.bg-success]="!task.isCompleted()">
+        <td [class.bg-success]="!task.isCompleted() && task.isPrioritySuccess()"
+            [class.bg-info]="!task.isCompleted() && task.isPriorityInfo()"
+            [class.bg-warning]="!task.isCompleted() && task.isPriorityWarning()"
+            [class.bg-danger]="!task.isCompleted() && task.isPriorityDanger()">
             <div>
 
                 <h4><!-- Task checked/unchecked display -->

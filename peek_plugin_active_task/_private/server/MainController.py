@@ -109,6 +109,7 @@ class MainController(TupleActionProcessorDelegateABC):
             userId = task.userId
             wasDelivered = task.stateFlags & Task.STATE_DELIVERED
             wasCompleted = task.stateFlags & Task.STATE_COMPLETED
+            wasDialogConfirmed = task.stateFlags & Task.STATE_DIALOG_CONFIRMED
 
             if tupleAction.data.get("stateFlags") is not None:
                 newFlags = tupleAction.data["stateFlags"]
@@ -135,6 +136,11 @@ class MainController(TupleActionProcessorDelegateABC):
             newCompleted = not wasCompleted and (newFlags & Task.STATE_COMPLETED)
             if newCompleted and task.onCompletedPayload:
                 VortexFactory.sendVortexMsgLocally(task.onCompletedPayload)
+
+            newDialogConfirmed = (newFlags & Task.STATE_DIALOG_CONFIRMED)
+            newDialogConfirmed &= not wasDialogConfirmed
+            if newDialogConfirmed and task.onDialogConfirmPayload:
+                VortexFactory.sendVortexMsgLocally(task.onDialogConfirmPayload)
 
             if autoDelete & stateFlags:
                 (session.query(Task)
