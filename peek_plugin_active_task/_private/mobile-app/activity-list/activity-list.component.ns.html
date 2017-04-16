@@ -1,7 +1,7 @@
 <label *ngIf="activities.length === 0" text="There is no recent activity"></label>
 
 <ListView [items]="activities" (tap)="activityClicked(activity)">
-    <template let-item="item" let-i="index" let-odd="odd" let-even="even">
+    <ng-template let-item="item" let-i="index" let-odd="odd" let-even="even">
         <StackLayout [class.odd]="odd" [class.even]="even"
                      (tap)="activityClicked(item)">
             <GridLayout columns="*,auto" rows="*">
@@ -16,6 +16,6 @@
             <label class="text-right"
                    [text]="timePast(item) + ' ago, ' + dateTime(item)"></label>
         </StackLayout>
-    </template>
+    </ng-template>
 </ListView>
 
