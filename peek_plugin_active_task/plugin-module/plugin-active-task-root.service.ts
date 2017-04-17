@@ -295,7 +295,6 @@ export class PluginActiveTaskRootService extends ComponentLifecycleEventEmitter 
 
     private showMessage(type_: UsrMsgType, task: TaskTuple): Promise<null> {
         let level: UsrMsgLevel | null = null;
-        console.log(task.displayPriority);
 
         switch (task.displayPriority) {
             case TaskTuple.PRIORITY_SUCCESS:
