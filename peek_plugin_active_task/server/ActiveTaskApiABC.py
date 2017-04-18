@@ -1,7 +1,7 @@
-from abc import ABCMeta, abstractmethod
 from datetime import datetime
-
 from typing import Optional, List
+
+from abc import ABCMeta, abstractmethod
 
 
 class NewTask:
@@ -44,11 +44,10 @@ class NewTask:
     PRIORITY_WARNING = 3
     PRIORITY_DANGER = 4
 
-
     def __init__(self, uniqueId: str, userId: str, title: str,
                  description: Optional[str] = None, iconPath: Optional[str] = None,
-                 displayAs:int = DISPLAY_AS_TASK,
-                 displayPriority:int = PRIORITY_SUCCESS,
+                 displayAs: int = DISPLAY_AS_TASK,
+                 displayPriority: int = PRIORITY_SUCCESS,
                  routePath: Optional[str] = None, routeParamJson: Optional[dict] = None,
                  autoComplete: int = AUTO_COMPLETE_OFF,
                  autoDelete: int = AUTO_DELETE_OFF,
@@ -110,6 +109,8 @@ class NewTask:
 
         self.displayAs = displayAs
         self.displayPriority = displayPriority
+        if not self.displayPriority in (1, 2, 3, 4):
+            raise Exception("Invalid displayPriority %s" % self.displayPriority)
 
         # The mobile-app route to open when this task is selected
         self.routePath = routePath
