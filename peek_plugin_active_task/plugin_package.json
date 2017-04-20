@@ -22,14 +22,14 @@
     "moduleDir": "plugin-module",
     "assetDir": "_private/mobile-assets",
     "appModule": "plugin-active-task.module#PluginActiveTaskClientModule",
-    "rootModule": {
+    "rootModules": [{
       "file": "plugin-active-task-root.module",
       "class": "PluginActiveTaskRootModule"
-    },
-    "rootService": {
+    }],
+    "rootServices":[ {
       "file": "plugin-active-task-root.service",
       "class": "PluginActiveTaskRootService"
-    },
+    }],
     "icon": null
   },
   "admin": {
