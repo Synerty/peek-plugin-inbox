@@ -1,42 +1,14 @@
-<h1 *ngIf="tasks.length === 0">There are no tasks :-)</h1>
-
 <table class="table table-striped">
     <tbody>
     <tr *ngFor="let task of tasks" (click)="taskClicked(task)">
-        <td [class.bg-success]="!task.isCompleted() && task.isPrioritySuccess()"
-            [class.bg-info]="!task.isCompleted() && task.isPriorityInfo()"
-            [class.bg-warning]="!task.isCompleted() && task.isPriorityWarning()"
-            [class.bg-danger]="!task.isCompleted() && task.isPriorityDanger()">
-            <div>
-
-                <h4><!-- Task checked/unchecked display -->
-                    <fa *ngIf="task.isTask() && !task.isCompleted()"
-                        name="square-o"></fa>
-                    <fa *ngIf="task.isTask() && task.isCompleted()"
-                        name="check-square-o"></fa>
-
-                    <!-- Message checked/unchecked display -->
-                    <fa *ngIf="task.isMessage() && !task.isCompleted()"
-                        name="comment-o"></fa>
-                    <span style="white-space: pre-wrap">{{task.title}}</span>
-                    <fa *ngIf="hasRoute(task)" name="angle-right"
-                        class="pull-right"></fa>
-                </h4>
-
-                <div class="pull-right align-right">
-                    {{timePast(task)}} ago<br/>
-                    {{dateTime(task)}}
-                </div>
-
-                <img *ngIf="task.imagePath" [src]="task.imagePath">
-                <span style="white-space: pre-wrap">{{task.description}}</span>
-
-                <span *ngIf="!task.isActioned()">
-                    <button *ngFor="let action of task.actions"
-                            (click)="actionClicked(task, action); $event.stopPropagation();"
-                            class="btn btn-default btn-sm">{{action.title}}</button>
-                    </span>
-
+        <td class="td">
+            <div class="task-icon">
+                <i class="fa fa-comment" aria-hidden="true"></i>
+            </div>
+            <div class="task-activity">
+                <div class="task-title">{{task.title}}</div>
+                {{task.description}}
+                <div class="task-time">{{timePast(task)}} ago, {{dateTime(task)}}</div>
             </div>
         </td>
     </tr>
