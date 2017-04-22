@@ -1,16 +1,18 @@
-<table class="table table-striped">
-    <tbody>
-    <tr *ngFor="let task of tasks" (click)="taskClicked(task)">
-        <td class="td">
-            <div class="task-icon">
-                <i class="fa fa-comment" aria-hidden="true"></i>
-            </div>
-            <div class="task-activity">
-                <div class="task-title">{{task.title}}</div>
-                {{task.description}}
-                <div class="task-time">{{timePast(task)}} ago, {{dateTime(task)}}</div>
-            </div>
-        </td>
+<div class="plugin-active-task">
+  <table class="table table-striped">
+    <tbody class="tbody">
+    <tr class="tr" *ngFor="let task of tasks" (click)="taskClicked(task)">
+      <td class="td">
+        <div class="task-icon">
+          <i class="fa fa-comment" aria-hidden="true"></i>
+        </div>
+        <div class="task-activity">
+          <div class="task-title">{{task.title}}</div>
+          {{task.description}}
+          <div class="task-time">{{timePast(task)}} ago, {{dateTime(task)}}</div>
+        </div>
+      </td>
     </tr>
     </tbody>
-</table>
+  </table>
+</div>
