@@ -1,27 +1,21 @@
-<h1 *ngIf="activities.length === 0">There is no recent activity.</h1>
+<div class="activity">
+    <h1 *ngIf="activities.length === 0">There is no recent activity.</h1>
 
-
-<table class="table table-striped">
-    <tbody>
-    <tr *ngFor="let activity of activities" (click)="activityClicked(activity)">
-        <td>
-            <div>
-
-                <h4>
-                    <span style="white-space: pre-wrap">{{activity.title}}</span>
-                    <fa *ngIf="hasRoute(activity)" name="angle-right"
-                        class="pull-right"></fa>
-                </h4>
-
-                <div class="pull-right align-right">
-                    {{timePast(activity)}} ago<br/>
-                    {{dateTime(activity)}}
+    <table class="table table-striped">
+        <tbody>
+        <tr class="tr"
+            *ngFor="let activity of activities"
+            (click)="activityClicked(activity)">
+            <td class="td">
+                <div class="row">
+                    <div class="title">{{activity.title}}</div>
+                    {{activity.description}}
+                    <div class="date-time">{{timePast(activity)}} ago,
+                        {{dateTime(activity)}}
+                    </div>
                 </div>
-
-                <img *ngIf="activity.imagePath" [src]="activity.imagePath">
-                <span style="white-space: pre-wrap">{{activity.description}}</span>
-            </div>
-        </td>
-    </tr>
-    </tbody>
-</table>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
