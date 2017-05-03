@@ -1,14 +1,27 @@
 <div class="inbox">
     <table class="table table-striped">
-        <tr class="tr" *ngFor="let task of tasks" (click)="taskClicked(task)">
+        <tr class="tr"
+            *ngFor="let task of tasks"
+            (click)="taskClicked(task)">
             <td class="td">
                 <div class="icon">
-                    <i class="fa fa-comment" aria-hidden="true"></i>
+                    <i class="fa fa-comment"
+                       aria-hidden="true">
+
+                    </i>
                 </div>
                 <div class="row">
-                    <div class="title">{{task.title}}</div>
-                    {{task.description}}
-                    <div class="date-time">{{timePast(task)}} ago, {{dateTime(task)}}
+                    <div class="title">
+                        {{task.title}}
+
+                    </div>
+                    <div class="description">
+                        {{task.description}}
+
+                    </div>
+                    <div class="date-time">
+                        {{timePast(task)}} ago, {{dateTime(task)}}
+
                     </div>
                 </div>
             </td>

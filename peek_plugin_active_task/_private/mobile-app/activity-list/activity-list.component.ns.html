@@ -1,21 +1,37 @@
-<label *ngIf="activities.length === 0" text="There is no recent activity"></label>
+<ScrollView class="inbox">
+    <label class="message"
+           *ngIf="activities.length === 0"
+           text="There is no recent activity">
 
-<ListView [items]="activities" (tap)="activityClicked(activity)">
-    <ng-template let-item="item" let-i="index" let-odd="odd" let-even="even">
-        <StackLayout [class.odd]="odd" [class.even]="even"
-                     (tap)="activityClicked(item)">
-            <GridLayout columns="*,auto" rows="*">
-                <label row="0" col="0" class="h3 peek-field-data-text"
-                       [text]="item.title" textWrap="true"></label>
-                <Label row="0" col="1" *ngIf="hasRoute(item)"
-                       class="fa h2 pull-right"
-                       [text]="'fa-angle-right' | fonticon"></Label>
-            </GridLayout>
+    </label>
 
-            <label class="" [text]="item.description" textWrap="true"></label>
-            <label class="text-right"
-                   [text]="timePast(item) + ' ago, ' + dateTime(item)"></label>
-        </StackLayout>
-    </ng-template>
-</ListView>
+    <ListView [items]="activities"
+              (tap)="activityClicked(activity)">
+        <ng-template let-item="item" let-i="index" let-odd="odd" let-even="even">
+            <StackLayout [class.odd]="odd" [class.even]="even"
+                         (tap)="activityClicked(item)">
+                <GridLayout columns="*,auto" rows="*">
+                    <label class="title"
+                           row="0" col="0"
+                           [text]="item.title" textWrap="true">
 
+                    </label>
+                    <Label class="read-more"
+                           *ngIf="hasRoute(item)"
+                           row="0" col="1"
+                           [text]="'fa-angle-right' | fonticon">
+
+                    </Label>
+                </GridLayout>
+                <label class="description"
+                       [text]="item.description">
+
+                </label>
+                <label class="date-time"
+                       [text]="timePast(item) + ' ago, ' + dateTime(item)">
+
+                </label>
+            </StackLayout>
+        </ng-template>
+    </ListView>
+</ScrollView>

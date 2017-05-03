@@ -1,43 +1,69 @@
-<label *ngIf="tasks.length === 0" text="There are no tasks :-)"></label>
+<ScrollView class="inbox">
+    <label class="message"
+           *ngIf="tasks.length === 0"
+           text="There are no tasks :-)">
 
-<ListView [items]="tasks">
+    </label>
+    <ListView [items]="tasks">
+        <ng-template let-item="item" let-i="index">
+            <StackLayout
+                    [class.bg-success]="!item.isCompleted() && item.isPrioritySuccess()"
+                    [class.bg-info]="!item.isCompleted() && item.isPriorityInfo()"
+                    [class.bg-warning]="!item.isCompleted() && item.isPriorityWarning()"
+                    [class.bg-danger]="!item.isCompleted() && item.isPriorityDanger()"
+                    (tap)="taskClicked(item)">
+                <GridLayout columns="auto,*,auto" rows="*">
+                    <Label class="icon"
+                           row="0" col="0"
+                           *ngIf="item.isTask() && !item.isCompleted()"
+                           [text]="'fa-square-o' | fonticon">
 
-    <ng-template let-item="item" let-i="index">
-        <StackLayout [class.bg-success]="!item.isCompleted() && item.isPrioritySuccess()"
-                     [class.bg-info]="!item.isCompleted() && item.isPriorityInfo()"
-                     [class.bg-warning]="!item.isCompleted() && item.isPriorityWarning()"
-                     [class.bg-danger]="!item.isCompleted() && item.isPriorityDanger()"
-                     (tap)="taskClicked(item)">
-            <GridLayout columns="auto,*,auto" rows="*">
-                <Label row="0" col="0" *ngIf="item.isTask() && !item.isCompleted()"
-                       class="fa h2 " [text]="'fa-square-o' | fonticon"></Label>
+                    </Label>
 
-                <Label row="0" col="0" *ngIf="item.isTask() && item.isCompleted()"
-                       class="fa h2" [text]="'fa-check-square-o' | fonticon"></Label>
+                    <Label class="icon"
+                           row="0" col="0"
+                           *ngIf="item.isTask() && item.isCompleted()"
+                           [text]="'fa-check-square-o' | fonticon">
 
-                <Label row="0" col="0" *ngIf="item.isMessage() && !item.isCompleted()"
-                       class="fa h2" [text]="'fa-comment-o' | fonticon"></Label>
+                    </Label>
 
-                <Label row="0" col="1" class="h3 peek-field-data-text"
-                       [text]="' ' + item.title" textWrap="true"></Label>
+                    <Label class="icon"
+                           row="0" col="0"
+                           *ngIf="item.isMessage() && !item.isCompleted()"
+                           [text]="'fa-comment-o' | fonticon">
 
-                <Label row="0" col="2" *ngIf="hasRoute(item)"
-                       class="fa h2 pull-right"
-                       [text]="'fa-angle-right' | fonticon"></Label>
+                    </Label>
 
-            </GridLayout>
+                    <Label class="title"
+                           row="0" col="1"
+                           [text]="' ' + item.title"
+                           textWrap="true">
 
-            <label class="" [text]="item.description" textWrap="true"></label>
-            <label class="text-right"
-                   [text]="timePast(item) + ' ago, ' + dateTime(item)"></label>
+                    </Label>
 
-            <WrapLayout *ngIf="!item.isActioned()">
-                <Button *ngFor="let action of item.actions"
-                        [text]="action.title"
-                        (tap)="actionClicked(item, action)"></Button>
-            </WrapLayout>
-        </StackLayout>
-    </ng-template>
+                    <Label class="read-more"
+                           row="0" col="2" *ngIf="hasRoute(item)"
 
-</ListView>
+                           [text]="'fa-angle-right' | fonticon">
 
+                    </Label>
+                </GridLayout>
+                <label class="description"
+                       [text]="item.description"
+                       textWrap="true">
+
+                </label>
+                <label class="date-time"
+                       [text]="timePast(item) + ' ago, ' + dateTime(item)"></label>
+
+                <WrapLayout *ngIf="!item.isActioned()">
+                    <Button *ngFor="let action of item.actions"
+                            [text]="action.title"
+                            (tap)="actionClicked(item, action)">
+
+                    </Button>
+                </WrapLayout>
+            </StackLayout>
+        </ng-template>
+    </ListView>
+</ScrollView>

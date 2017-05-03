@@ -1,21 +1,29 @@
 <div class="activity">
-    <h1 *ngIf="activities.length === 0">There is no recent activity.</h1>
+    <div class="message"
+         *ngIf="activities.length === 0">
+        There is no recent activity.
 
-    <table class="table table-striped">
-        <tbody>
+    </div>
+    <table class="table">
         <tr class="tr"
             *ngFor="let activity of activities"
             (click)="activityClicked(activity)">
             <td class="td">
                 <div class="row">
-                    <div class="title">{{activity.title}}</div>
-                    {{activity.description}}
-                    <div class="date-time">{{timePast(activity)}} ago,
-                        {{dateTime(activity)}}
+                    <div class="title">
+                        {{activity.title}}
+
+                    </div>
+                    <div class="description">
+                        {{activity.description}}
+
+                    </div>
+                    <div class="date-time">
+                        {{timePast(activity)}} ago, {{dateTime(activity)}}
+
                     </div>
                 </div>
             </td>
         </tr>
-        </tbody>
     </table>
 </div>
