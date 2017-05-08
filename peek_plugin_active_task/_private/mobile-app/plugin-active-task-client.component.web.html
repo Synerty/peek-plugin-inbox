@@ -1,39 +1,37 @@
-<div class="peek-inbox">
+<div class="plugin-inbox">
 
-    <!-- Nav tabs -->
     <ul class="nav nav-tabs"
         role="tablist">
         <li class="active"
             role="presentation">
-            <a href="#activeTaskTasks"
-               aria-controls="home"
-               role="tab"
-               data-toggle="tab">
-                Tasks
+            <a aria-controls="home"
+               data-toggle="tab"
+               href="http://localhost:4200/#inboxTasks"
+               role="tab">
+                Inbox
 
             </a>
         </li>
         <li role="presentation">
-            <a href="#activeTaskActivity"
-               aria-controls="profile"
-               role="tab"
-               data-toggle="tab">
+            <a aria-controls="profile"
+               data-toggle="tab"
+               href="http://localhost:4200/#inboxActivity"
+               role="tab">
                 Activity
 
             </a>
         </li>
     </ul>
-    <!-- Tab panes -->
     <div class="tab-content">
         <div class="tab-pane active"
              role="tabpanel"
-             id="activeTaskTasks">
+             id="inboxTasks">
             <plugin-active-task-task-list></plugin-active-task-task-list>
 
         </div>
         <div class="tab-pane"
              role="tabpanel"
-             id="activeTaskActivity">
+             id="inboxActivity">
             <plugin-active-task-activity-list></plugin-active-task-activity-list>
 
         </div>

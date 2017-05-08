@@ -4,26 +4,27 @@
         There is no recent activity.
 
     </div>
-    <table class="table">
-        <tr class="tr"
-            *ngFor="let activity of activities"
-            (click)="activityClicked(activity)">
-            <td class="td">
-                <div class="row">
-                    <div class="title">
-                        {{activity.title}}
+    <div class="task"
+         *ngFor="let activity of activities"
+         (click)="activityClicked(activity)">
+        <div class="info">
+            <div class="title">
+                {{activity.title}}
 
-                    </div>
-                    <div class="description">
-                        {{activity.description}}
+            </div>
+            <div class="description">
+                {{activity.description}}
 
-                    </div>
-                    <div class="date-time">
-                        {{timePast(activity)}} ago, {{dateTime(activity)}}
+            </div>
+            <div class="date-time">
+                {{timePast(activity)}} ago, {{dateTime(activity)}}
 
-                    </div>
-                </div>
-            </td>
-        </tr>
-    </table>
+            </div>
+        </div>
+        <div class="btn read-more">
+            <i class="fa fa-chevron-right"
+               aria-hidden="true"></i>
+
+        </div>
+    </div>
 </div>
