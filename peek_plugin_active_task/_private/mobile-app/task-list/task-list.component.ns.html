@@ -1,69 +1,61 @@
-<ScrollView class="inbox">
-    <label class="message"
-           *ngIf="tasks.length === 0"
-           text="There are no tasks :-)">
+<ScrollView>
+    <StackLayout class="inbox">
+        <label class="title h3"
+               *ngIf="tasks.length === 0"
+               text="There are no tasks :-)">
 
-    </label>
-    <ListView [items]="tasks">
-        <ng-template let-item="item" let-i="index">
-            <StackLayout
-                    [class.bg-success]="!item.isCompleted() && item.isPrioritySuccess()"
-                    [class.bg-info]="!item.isCompleted() && item.isPriorityInfo()"
-                    [class.bg-warning]="!item.isCompleted() && item.isPriorityWarning()"
-                    [class.bg-danger]="!item.isCompleted() && item.isPriorityDanger()"
-                    (tap)="taskClicked(item)">
-                <GridLayout columns="auto,*,auto" rows="*">
-                    <Label class="icon"
-                           row="0" col="0"
-                           *ngIf="item.isTask() && !item.isCompleted()"
-                           [text]="'fa-square-o' | fonticon">
+        </label>
+        <StackLayout>
+            <GridLayout class="inbox-item"
+                        *ngFor="let task of tasks"
+                        [class.bg-success]="!task.isCompleted() && task.isPrioritySuccess()"
+                        [class.bg-info]="!task.isCompleted() && task.isPriorityInfo()"
+                        [class.bg-warning]="!task.isCompleted() && task.isPriorityWarning()"
+                        [class.bg-danger]="!task.isCompleted() && task.isPriorityDanger()"
+                        (tap)="taskClicked(task)"
+                        rows="auto"
+                        columns="auto,*,auto">
+                <GidLayout class="inbox-icon"
+                           rows="auto,*"
+                           columns="*">
+                    <Label class="fa fa-square-o"
+                           *ngIf="task.isTask() && !task.isCompleted()"
+                           [text]="'fa-square-o' | fonticon"></Label>
 
-                    </Label>
+                    <Label class="fa fa-check-square-o"
+                           *ngIf="task.isTask() && task.isCompleted()"
+                           [text]="'fa-check-square-o' | fonticon"></Label>
 
-                    <Label class="icon"
-                           row="0" col="0"
-                           *ngIf="item.isTask() && item.isCompleted()"
-                           [text]="'fa-check-square-o' | fonticon">
+                    <Label class="fa fa-comment-o"
+                           *ngIf="task.isMessage() && !task.isCompleted()"
+                           [text]="'fa-comment-o' | fonticon"></Label>
 
-                    </Label>
+                </GidLayout>
 
-                    <Label class="icon"
-                           row="0" col="0"
-                           *ngIf="item.isMessage() && !item.isCompleted()"
-                           [text]="'fa-comment-o' | fonticon">
+                <GridLayout class="inbox-info"
+                            col="1"
+                            rows="auto,*,auto"
+                            columns="*">
+                    <Label class="inbox-title"
+                           [text]="' ' + task.title"
+                           textWrap="true"></Label>
+                    <label class="inbox-description"
+                           row="1"
+                           [text]="task.description"
+                           textWrap="true"></label>
+                    <label class="inbox-date-time"
+                           row="2"
+                           [text]="timePast(task) + ' ago, ' + dateTime(task)"></label>
 
-                    </Label>
-
-                    <Label class="title"
-                           row="0" col="1"
-                           [text]="' ' + item.title"
-                           textWrap="true">
-
-                    </Label>
-
-                    <Label class="read-more"
-                           row="0" col="2" *ngIf="hasRoute(item)"
-
-                           [text]="'fa-angle-right' | fonticon">
-
-                    </Label>
                 </GridLayout>
-                <label class="description"
-                       [text]="item.description"
-                       textWrap="true">
 
-                </label>
-                <label class="date-time"
-                       [text]="timePast(item) + ' ago, ' + dateTime(item)"></label>
+                <DockLayout col="2">
+                    <Label class="btn inbox-read-more"
+                           *ngIf="hasRoute(task)"
+                           [text]="'fa-angle-right' | fonticon"></Label>
 
-                <WrapLayout *ngIf="!item.isActioned()">
-                    <Button *ngFor="let action of item.actions"
-                            [text]="action.title"
-                            (tap)="actionClicked(item, action)">
-
-                    </Button>
-                </WrapLayout>
-            </StackLayout>
-        </ng-template>
-    </ListView>
+                </DockLayout>
+            </GridLayout>
+        </StackLayout>
+    </StackLayout>
 </ScrollView>
