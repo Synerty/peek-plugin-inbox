@@ -1,33 +1,37 @@
 <div class="inbox">
-    <div class="title h3"
-         *ngIf="tasks.length === 0">
-        The inbox is empty.
+    <div class="title h1" *ngIf="tasks.length === 0">There are no tasks :-)</div>
 
-    </div>
-    <div class="inbox-item bg-success"
-         *ngFor="let task of tasks"
-         (click)="taskClicked(task)">
-        <div class="inbox-icon">
-            <i class="fa fa-comment"></i>
+    <div class="inbox-item" *ngFor="let task of tasks" (click)="taskClicked(task)"
+         [class.bg-success]="!task.isCompleted() && task.isPrioritySuccess()"
+         [class.bg-info]="!task.isCompleted() && task.isPriorityInfo()"
+         [class.bg-warning]="!task.isCompleted() && task.isPriorityWarning()"
+         [class.bg-danger]="!task.isCompleted() && task.isPriorityDanger()">
 
+        <fa class="inbox-icon" *ngIf="task.isTask() && !task.isCompleted()"
+            name="square-o"></fa>
+        <fa *ngIf="task.isTask() && task.isCompleted()"
+            name="check-square-o"></fa>
+
+        <fa class="inbox-icon" *ngIf="task.isMessage() && !task.isCompleted()"
+            name="comment-o"></fa>
+        <span class="inbox-title">{{task.title}}</span>
+
+        <fa *ngIf="hasRoute(task)" name="angle-right"
+            class="btn inbox-read-more pull-right"></fa>
+
+        <div class="inbox-date-time">
+            {{timePast(task)}} ago<br/>
+            {{dateTime(task)}}
         </div>
-        <div class="inbox-info">
-            <div class="inbox-title">
-                {{task.title}}
 
-            </div>
-            <div class="inbox-description">
-                {{task.description}}
+        <img *ngIf="task.imagePath" [src]="task.imagePath">
+        <span class="inbox-description">
+            {{task.description}}</span>
 
-            </div>
-            <div class="inbox-date-time">
-                {{timePast(task)}} ago, {{dateTime(task)}}
-
-            </div>
-        </div>
-        <div class="btn inbox-read-more">
-            <i class="fa fa-chevron-right"></i>
-
-        </div>
+        <span *ngIf="!task.isActioned()">
+                    <button *ngFor="let action of task.actions"
+                            (click)="actionClicked(task, action); $event.stopPropagation();"
+                            class="btn btn-default btn-sm">{{action.title}}</button>
+                    </span>
     </div>
 </div>
