@@ -1,19 +1,20 @@
 <label *ngIf="activities.length === 0" text="There is no recent activity"></label>
 
-<ListView [items]="activities" (tap)="activityClicked(activity)">
+<ListView class="inbox" [items]="activities" (tap)="activityClicked(activity)">
     <ng-template let-item="item" let-i="index" let-odd="odd" let-even="even">
-        <StackLayout [class.odd]="odd" [class.even]="even"
+        <StackLayout class="inbox-item" [class.odd]="odd" [class.even]="even"
                      (tap)="activityClicked(item)">
             <GridLayout columns="*,auto" rows="*">
-                <label row="0" col="0" class="h3 peek-field-data-text"
+                <label row="0" col="0" class="inbox-title"
                        [text]="item.title" textWrap="true"></label>
                 <Label row="0" col="1" *ngIf="hasRoute(item)"
                        class="fa h2 pull-right"
                        [text]="'fa-angle-right' | fonticon"></Label>
             </GridLayout>
 
-            <label class="" [text]="item.description" textWrap="true"></label>
-            <label class="text-right"
+            <label class="inbox-description" [text]="item.description"
+                   textWrap="true"></label>
+            <label class="inbox-date-time"
                    [text]="timePast(item) + ' ago, ' + dateTime(item)"></label>
         </StackLayout>
     </ng-template>
