@@ -29,10 +29,11 @@
 
         <img *ngIf="task.imagePath" [src]="task.imagePath">
 
-        <span *ngIf="!task.isActioned()">
-                    <button *ngFor="let action of task.actions"
-                            (click)="actionClicked(task, action); $event.stopPropagation();"
-                            class="btn btn-default btn-sm">{{action.title}}</button>
-                    </span>
+        <div class="btn-group" *ngIf="!task.isActioned()">
+            <button *ngFor="let action of task.actions"
+                    (click)="actionClicked(task, action); $event.stopPropagation();"
+                    class="btn btn-sm">{{action.title}}
+            </button>
+        </div>
     </div>
 </div>
