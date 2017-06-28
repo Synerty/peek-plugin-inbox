@@ -26,7 +26,7 @@
                        [text]="' ' + item.title" textWrap="true"></Label>
 
                 <Label row="0" col="2" *ngIf="hasRoute(item)"
-                       class="fa h2 pull-right"
+                       class="fa btn pl-inbox-read-more "
                        [text]="'fa-angle-right' | fonticon"></Label>
 
             </GridLayout>
@@ -36,8 +36,9 @@
             <label class="pl-inbox-date-time"
                    [text]="timePast(item) + ' ago, ' + dateTime(item)"></label>
 
-            <WrapLayout *ngIf="!item.isActioned()">
-                <Button class="btn pl-inbox-read-more"
+            <WrapLayout class="btn-group"
+                        *ngIf="!item.isActioned()">
+                <Button class="btn btn-sm"
                         *ngFor="let action of item.actions"
                         [text]="action.title"
                         (tap)="actionClicked(item, action)"></Button>
