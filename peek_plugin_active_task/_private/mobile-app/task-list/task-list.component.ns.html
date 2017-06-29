@@ -1,9 +1,9 @@
 <label *ngIf="tasks.length === 0" text="There are no tasks :-)"></label>
 
-<ListView class="inbox" [items]="tasks">
+<ListView class="pl-inbox" [items]="tasks">
 
     <ng-template let-item="item" let-i="index">
-        <StackLayout class="inbox-item"
+        <StackLayout class="pl-inbox-item"
                      [class.bg-success]="!item.isCompleted() && item.isPrioritySuccess()"
                      [class.bg-info]="!item.isCompleted() && item.isPriorityInfo()"
                      [class.bg-warning]="!item.isCompleted() && item.isPriorityWarning()"
@@ -11,33 +11,34 @@
                      (tap)="taskClicked(item)">
             <GridLayout columns="auto,*,auto" rows="*">
                 <Label row="0" col="0" *ngIf="item.isTask() && !item.isCompleted()"
-                       class="inbox-icon fa h2 "
+                       class="pl-inbox-icon fa h2 "
                        [text]="'fa-square-o' | fonticon"></Label>
 
                 <Label row="0" col="0" *ngIf="item.isTask() && item.isCompleted()"
-                       class="inbox-icon fa h2"
+                       class="pl-inbox-icon fa h2"
                        [text]="'fa-check-square-o' | fonticon"></Label>
 
                 <Label row="0" col="0" *ngIf="item.isMessage() && !item.isCompleted()"
-                       class="inbox-icon fa h2"
+                       class="pl-inbox-icon fa h2"
                        [text]="'fa-comment-o' | fonticon"></Label>
 
-                <Label row="0" col="1" class="inbox-title"
+                <Label row="0" col="1" class="pl-inbox-title"
                        [text]="' ' + item.title" textWrap="true"></Label>
 
                 <Label row="0" col="2" *ngIf="hasRoute(item)"
-                       class="fa h2 pull-right"
+                       class="fa btn pl-inbox-read-more "
                        [text]="'fa-angle-right' | fonticon"></Label>
 
             </GridLayout>
 
-            <label class="inbox-description" [text]="item.description"
+            <label class="pl-inbox-description" [text]="item.description"
                    textWrap="true"></label>
-            <label class="inbox-date-time"
+            <label class="pl-inbox-date-time"
                    [text]="timePast(item) + ' ago, ' + dateTime(item)"></label>
 
-            <WrapLayout *ngIf="!item.isActioned()">
-                <Button class="btn inbox-read-more"
+            <WrapLayout class="btn-group"
+                        *ngIf="!item.isActioned()">
+                <Button class="btn btn-sm"
                         *ngFor="let action of item.actions"
                         [text]="action.title"
                         (tap)="actionClicked(item, action)"></Button>
