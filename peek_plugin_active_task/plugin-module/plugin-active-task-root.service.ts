@@ -13,12 +13,12 @@ import {
     VortexStatusService,
     WebSqlFactoryService
 } from "@synerty/vortexjs";
-import {PeekModuleFactory, Sound} from "@synerty/peek-mobile-util/index.web";
+import {PeekModuleFactory, Sound} from "@synerty/peek-util/index.web";
 import {TaskTuple} from "./tuples/TaskTuple";
 import {ActivityTuple} from "./tuples/ActivityTuple";
 import {Ng2BalloonMsgService, UsrMsgLevel, UsrMsgType} from "@synerty/ng2-balloon-msg";
 import {UserService} from "@peek/peek_plugin_user";
-import {TitleService} from "@synerty/peek-mobile-util";
+import {TitleService} from "@synerty/peek-util";
 
 import {
     activeTaskActionProcessorName,

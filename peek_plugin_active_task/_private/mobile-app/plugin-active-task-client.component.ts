@@ -4,7 +4,7 @@ import {
     PluginActiveTaskRootService,
     TaskTuple
 } from "@peek/peek_plugin_active_task";
-import {TitleService} from "@synerty/peek-mobile-util";
+import {TitleService} from "@synerty/peek-util";
 
 
 // MomentJS is declared globally, because the datetime picker needs it
