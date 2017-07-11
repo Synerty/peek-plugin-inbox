@@ -11,7 +11,8 @@ import {
     TupleSelector,
     VortexService,
     VortexStatusService,
-    WebSqlFactoryService
+    WebSqlFactoryService,
+    TupleStorageFactoryService
 } from "@synerty/vortexjs";
 import {PeekModuleFactory, Sound} from "@synerty/peek-util/index.web";
 import {TaskTuple} from "./tuples/TaskTuple";
@@ -57,6 +58,7 @@ export class PluginActiveTaskRootService extends ComponentLifecycleEventEmitter 
                 vortexService: VortexService,
                 vortexStatusService: VortexStatusService,
                 webSqlFactory: WebSqlFactoryService,
+                storageFactory: TupleStorageFactoryService,
                 zone: NgZone) {
         super();
 
@@ -72,7 +74,7 @@ export class PluginActiveTaskRootService extends ComponentLifecycleEventEmitter 
             activeTaskActionProcessorName, activeTaskFilt);
 
         let tupleOfflineStorageService = new TupleOfflineStorageService(
-            webSqlFactory, storageName);
+            storageFactory, storageName);
 
         this.tupleDataOfflineObserver = new TupleDataOfflineObserverService(
             vortexService,
