@@ -6,7 +6,7 @@ from setuptools import find_packages
 
 pip_package_name = "peek-plugin-active-task"
 py_package_name = "peek_plugin_active_task"
-package_version = '0.5.0'
+package_version = '0.6.0'
 
 egg_info = "%s.egg-info" % pip_package_name
 if os.path.isdir(egg_info):
