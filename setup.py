@@ -4,8 +4,8 @@ from setuptools import setup
 
 from setuptools import find_packages
 
-pip_package_name = "peek-plugin-active-task"
-py_package_name = "peek_plugin_active_task"
+pip_package_name = "peek-plugin-inbox"
+py_package_name = "peek_plugin_inbox"
 package_version = '0.6.0'
 
 egg_info = "%s.egg-info" % pip_package_name
@@ -45,7 +45,7 @@ setup(
     package_data={'': package_files},
     install_requires=['peek-plugin-base'],
     zip_safe=False,version=package_version,
-    description='Peek Plugin - ActiveTask - This is the No Operation test/example plugin',
+    description='Peek Plugin - Inbox - This is the No Operation test/example plugin',
     author='Synerty',
     author_email='contact@synerty.com',
     url='https://github.com/Synerty/%s' % py_package_name,

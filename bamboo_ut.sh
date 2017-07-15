@@ -4,7 +4,7 @@ set -o nounset
 set -o 
 set -x
 
-PLUGIN_NAME="plugin_active_task"
+PLUGIN_NAME="plugin_inbox"
 
 # activate virtualenv
 export PATH=/home/bamboo/pyenvs/py_ut/bin:$PATH

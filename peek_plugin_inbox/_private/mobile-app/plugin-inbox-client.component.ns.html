@@ -1,0 +1,10 @@
+<StackLayout class="pl-inbox">
+    <TabView #tabview [selectedIndex]="tabindex" sdkExampleTitle sdkToggleNavButton>
+        <StackLayout *tabItem="{title: 'Tasks'}">
+            <plugin-inbox-task-list></plugin-inbox-task-list>
+        </StackLayout>
+        <StackLayout *tabItem="{title: 'Activity'}">
+            <plugin-inbox-activity-list></plugin-inbox-activity-list>
+        </StackLayout>
+    </TabView>
+</StackLayout>

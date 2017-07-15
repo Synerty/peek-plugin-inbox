@@ -1,0 +1,48 @@
+import {CommonModule} from "@angular/common";
+import {NgModule} from "@angular/core";
+import {PluginInboxClientComponent} from "./plugin-inbox-client.component";
+import {Routes} from "@angular/router";
+import {PeekModuleFactory} from "@synerty/peek-util/index.web";
+
+import {
+    LoggedInGuard,
+    LoggedOutGuard,
+    ProfileService,
+    UserService
+} from "@peek/peek_plugin_user";
+
+import {ActivityListComponent} from "./activity-list/activity-list.component";
+import {TaskListComponent} from "./task-list/task-list.component";
+
+
+export const pluginRoutes: Routes = [
+    {
+        path: '',
+        component: PluginInboxClientComponent,
+        canActivate: [LoggedInGuard]
+    },
+    {
+        path: '**',
+        component: PluginInboxClientComponent,
+        canActivate: [LoggedInGuard]
+    }
+
+];
+
+@NgModule({
+    imports: [
+        CommonModule,
+        PeekModuleFactory.RouterModule.forChild(pluginRoutes),
+        ...PeekModuleFactory.FormsModules
+    ],
+    exports: [],
+    providers: [
+        // User Providers
+        UserService, ProfileService, LoggedInGuard, LoggedOutGuard],
+    declarations: [PluginInboxClientComponent,
+        TaskListComponent,
+        ActivityListComponent
+    ]
+})
+export class PluginInboxClientModule {
+}

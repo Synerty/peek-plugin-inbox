@@ -5,7 +5,7 @@ set -o errexit
 
 #------------------------------------------------------------------------------
 # Configure package preferences here
-PY_PACKAGE="peek_plugin_active_task"
+PY_PACKAGE="peek_plugin_inbox"
 
 # Leave blank not to publish
 # Or select one of the index servers defined in ~/.pypirc

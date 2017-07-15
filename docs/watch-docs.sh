@@ -25,7 +25,7 @@ EOPY
 ARGS="-H 0.0.0.0"
 ARGS="$ARGS -p 8020"
 ARGS="$ARGS . ../dist/doc_autobuild"
-ARGS="$ARGS --watch `modPath 'peek_plugin_active_task'`"
+ARGS="$ARGS --watch `modPath 'peek_plugin_inbox'`"
 
 echo "Running sphinx-autobuild with args :"
 echo "$ARGS"

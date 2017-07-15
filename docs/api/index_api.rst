@@ -8,4 +8,4 @@ API Reference
     :maxdepth: 2
     :caption: Contents:
 
-    ../api_autodoc/peek_plugin_active_task/peek_plugin_active_task
+    ../api_autodoc/peek_plugin_inbox/peek_plugin_inbox

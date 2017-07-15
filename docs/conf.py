@@ -368,14 +368,14 @@ def createApiDocs(modFileName):
 
 # Create APIs with the AutoAPI hack above
 try:
-    import peek_plugin_active_task
+    import peek_plugin_inbox
 
 except ImportError:
     # Otherwise, add the plugin root dir to the import path, for read the docs.
     sys.path.append(os.path.dirname(os.path.dirname(__file__)))
-    import peek_plugin_active_task
+    import peek_plugin_inbox
 
-createApiDocs(peek_plugin_active_task.__file__)
+createApiDocs(peek_plugin_inbox.__file__)
 
 # import peek_platform
 # createApiDocs(peek_platform.__file__)

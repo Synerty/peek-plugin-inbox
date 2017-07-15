@@ -1,0 +1,39 @@
+<div class="pl-inbox">
+
+    <ul class="nav nav-tabs"
+        role="tablist">
+        <li class="active"
+            role="presentation">
+            <a href="#inboxTasks"
+               aria-controls="inboxTasks"
+               data-toggle="tab"
+               role="tab">
+                Inbox
+
+            </a>
+        </li>
+        <li role="presentation">
+            <a href="#inboxActivity"
+               aria-controls="inboxActivity"
+               data-toggle="tab"
+               role="tab">
+                Activity
+
+            </a>
+        </li>
+    </ul>
+    <div class="tab-content">
+        <div class="tab-pane active"
+             role="tabpanel"
+             id="inboxTasks">
+            <plugin-inbox-task-list></plugin-inbox-task-list>
+
+        </div>
+        <div class="tab-pane"
+             role="tabpanel"
+             id="inboxActivity">
+            <plugin-inbox-activity-list></plugin-inbox-activity-list>
+
+        </div>
+    </div>
+</div>

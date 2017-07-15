@@ -47,4 +47,4 @@ Examples
 Design Diagram
 --------------
 
-.. image:: ActiveTask-DesignDiagram.jpg
+.. image:: Inbox-DesignDiagram.jpg

@@ -1,0 +1,47 @@
+{
+  "plugin": {
+    "title": "Active Task",
+    "packageName": "peek_plugin_inbox",
+    "version":"0.6.0",
+    "buildNumber": "#PLUGIN_BUILD#",
+    "buildDate": "#BUILD_DATE#",
+    "creator": "Synerty Pty Ltd",
+    "website": "www.synerty.com"
+  },
+  "requiresServices": [
+    "server",
+    "client",
+    "storage"
+  ],
+  "mobile": {
+    "showHomeLink": false,
+    "showInTitleBar": true,
+    "titleBarLeft": false,
+    "titleBarText": "Tasks",
+    "appDir": "_private/mobile-app",
+    "moduleDir": "plugin-module",
+    "assetDir": "_private/mobile-assets",
+    "appModule": "plugin-inbox.module#PluginInboxClientModule",
+    "rootModules": [{
+      "file": "plugin-inbox-root.module",
+      "class": "PluginInboxRootModule"
+    }],
+    "rootServices":[ {
+      "file": "plugin-inbox-root.service",
+      "class": "PluginInboxRootService"
+    }],
+    "icon": null
+  },
+  "admin": {
+    "moduleDir": "plugin-module",
+    "appDir": "_private/admin-app",
+    "appModule": "plugin-inbox.module#PluginInboxAdminModule"
+  },
+  "server": {
+  },
+  "client": {
+  },
+  "storage": {
+    "alembicDir": "_private/alembic"
+  }
+}
