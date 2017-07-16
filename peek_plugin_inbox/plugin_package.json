@@ -2,7 +2,7 @@
   "plugin": {
     "title": "Active Task",
     "packageName": "peek_plugin_inbox",
-    "version":"0.6.1",
+    "version":"0.6.2",
     "buildNumber": "#PLUGIN_BUILD#",
     "buildDate": "#BUILD_DATE#",
     "creator": "Synerty Pty Ltd",
