@@ -3,16 +3,16 @@ import {
     ComponentLifecycleEventEmitter,
     TupleActionPushNameService,
     TupleActionPushOfflineService,
+    TupleActionPushOfflineSingletonService,
     TupleDataObservableNameService,
     TupleDataOfflineObserverService,
     TupleGenericAction,
     TupleOfflineStorageNameService,
     TupleOfflineStorageService,
     TupleSelector,
+    TupleStorageFactoryService,
     VortexService,
-    VortexStatusService,
-    WebSqlFactoryService,
-    TupleStorageFactoryService
+    VortexStatusService
 } from "@synerty/vortexjs";
 import {PeekModuleFactory, Sound} from "@synerty/peek-util/index.web";
 import {TaskTuple} from "./tuples/TaskTuple";
@@ -57,7 +57,7 @@ export class PluginInboxRootService extends ComponentLifecycleEventEmitter {
                 private titleService: TitleService,
                 vortexService: VortexService,
                 vortexStatusService: VortexStatusService,
-                webSqlFactory: WebSqlFactoryService,
+                actionSingletonService: TupleActionPushOfflineSingletonService,
                 storageFactory: TupleStorageFactoryService,
                 zone: NgZone) {
         super();
@@ -88,7 +88,7 @@ export class PluginInboxRootService extends ComponentLifecycleEventEmitter {
             tupleActionName,
             vortexService,
             vortexStatusService,
-            webSqlFactory);
+            actionSingletonService);
 
         let sub = this.userService.loggedInStatus.subscribe(
             (status) => {
