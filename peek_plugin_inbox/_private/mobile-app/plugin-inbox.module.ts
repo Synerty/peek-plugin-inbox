@@ -36,9 +36,7 @@ export const pluginRoutes: Routes = [
         ...PeekModuleFactory.FormsModules
     ],
     exports: [],
-    providers: [
-        // User Providers
-        UserService, ProfileService, LoggedInGuard, LoggedOutGuard],
+    providers: [],
     declarations: [PluginInboxClientComponent,
         TaskListComponent,
         ActivityListComponent
