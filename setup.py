@@ -6,7 +6,7 @@ from setuptools import find_packages
 
 pip_package_name = "peek-plugin-inbox"
 py_package_name = "peek_plugin_inbox"
-package_version = '0.7.1.dev1'
+package_version = '0.7.1.1'
 
 egg_info = "%s.egg-info" % pip_package_name
 if os.path.isdir(egg_info):
