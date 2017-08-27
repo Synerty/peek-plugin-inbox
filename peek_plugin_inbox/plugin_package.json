@@ -2,7 +2,7 @@
   "plugin": {
     "title": "Active Task",
     "packageName": "peek_plugin_inbox",
-    "version":"0.7.1.1",
+    "version": "0.7.1.1",
     "buildNumber": "#PLUGIN_BUILD#",
     "buildDate": "#BUILD_DATE#",
     "creator": "Synerty Pty Ltd",
@@ -22,14 +22,17 @@
     "moduleDir": "plugin-module",
     "assetDir": "_private/mobile-assets",
     "appModule": "plugin-inbox.module#PluginInboxClientModule",
-    "rootModules": [{
-      "file": "plugin-inbox-root.module",
-      "class": "PluginInboxRootModule"
-    }],
-    "rootServices":[ {
-      "file": "plugin-inbox-root.service",
-      "class": "PluginInboxRootService"
-    }],
+    "rootServices": [
+      {
+        "file": "_private/private-inbox-tuple-provider.service",
+        "class": "PrivateInboxTupleProviderService"
+      },
+      {
+        "file": "plugin-inbox-root.service",
+        "class": "PluginInboxRootService",
+        "persistent": true
+      }
+    ],
     "icon": null
   },
   "admin": {

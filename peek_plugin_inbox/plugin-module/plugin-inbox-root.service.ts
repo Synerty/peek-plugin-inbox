@@ -1,18 +1,12 @@
-import {Injectable, NgZone} from "@angular/core";
+import {Injectable} from "@angular/core";
 import {
     ComponentLifecycleEventEmitter,
-    TupleActionPushNameService,
-    TupleActionPushOfflineService,
-    TupleActionPushOfflineSingletonService,
-    TupleDataObservableNameService,
-    TupleDataOfflineObserverService,
     TupleGenericAction,
-    TupleOfflineStorageNameService,
-    TupleOfflineStorageService,
     TupleSelector,
-    TupleStorageFactoryService,
     VortexService,
-    VortexStatusService
+    VortexStatusService,
+    TupleActionPushOfflineService,
+    TupleDataOfflineObserverService
 } from "@synerty/vortexjs";
 import {PeekModuleFactory, Sound} from "@synerty/peek-util/index.web";
 import {TaskTuple} from "./tuples/TaskTuple";
@@ -21,13 +15,8 @@ import {Ng2BalloonMsgService, UsrMsgLevel, UsrMsgType} from "@synerty/ng2-balloo
 import {UserService} from "@peek/peek_plugin_user";
 import {TitleService} from "@synerty/peek-util";
 
-import {
-    inboxActionProcessorName,
-    inboxFilt,
-    inboxObservableName,
-    inboxPluginName,
-    inboxTupleOfflineServiceName
-} from "./plugin-inbox-names";
+import {inboxPluginName} from "./plugin-inbox-names";
+import {PrivateInboxTupleProviderService} from "./_private/private-inbox-tuple-provider.service";
 
 /**  Root Service
  *
@@ -40,12 +29,7 @@ import {
 
 @Injectable()
 export class PluginInboxRootService extends ComponentLifecycleEventEmitter {
-    private static instanceCount = 0;
-    private instanceIndex;
     tasks: TaskTuple[] = [];
-
-    private tupleOfflineAction: TupleActionPushOfflineService;
-    private tupleDataOfflineObserver: TupleDataOfflineObserverService;
 
     private taskSubscription: any | null;
     private activitiesSubscription: any | null;
@@ -57,38 +41,12 @@ export class PluginInboxRootService extends ComponentLifecycleEventEmitter {
                 private titleService: TitleService,
                 vortexService: VortexService,
                 vortexStatusService: VortexStatusService,
-                actionSingletonService: TupleActionPushOfflineSingletonService,
-                storageFactory: TupleStorageFactoryService,
-                zone: NgZone) {
+                private tupleService: PrivateInboxTupleProviderService) {
         super();
 
         this.alertSound = PeekModuleFactory
             .createSound('/assets/peek_plugin_inbox/alert.mp3');
 
-
-        let tupleDataObservableName = new TupleDataObservableNameService(
-            inboxObservableName, inboxFilt);
-        let storageName = new TupleOfflineStorageNameService(
-            inboxTupleOfflineServiceName);
-        let tupleActionName = new TupleActionPushNameService(
-            inboxActionProcessorName, inboxFilt);
-
-        let tupleOfflineStorageService = new TupleOfflineStorageService(
-            storageFactory, storageName);
-
-        this.tupleDataOfflineObserver = new TupleDataOfflineObserverService(
-            vortexService,
-            vortexStatusService,
-            zone,
-            tupleDataObservableName,
-            tupleOfflineStorageService);
-
-
-        this.tupleOfflineAction = new TupleActionPushOfflineService(
-            tupleActionName,
-            vortexService,
-            vortexStatusService,
-            actionSingletonService);
 
         let sub = this.userService.loggedInStatus.subscribe(
             (status) => {
@@ -102,11 +60,6 @@ export class PluginInboxRootService extends ComponentLifecycleEventEmitter {
         if (this.userService.loggedIn)
             this.subscribe();
 
-        // Some singleton debugging
-        this.instanceIndex = PluginInboxRootService.instanceCount++;
-        console.log("peek-plugin-inbox - PluginInboxRootService LOADED #"
-            + this.instanceIndex);
-
         this.onDestroyEvent.subscribe(() => this.unsubscribe());
     }
 
@@ -117,7 +70,7 @@ export class PluginInboxRootService extends ComponentLifecycleEventEmitter {
 
         // Load Tasks ------------------
 
-        this.taskSubscription = this.tupleDataOfflineObserver
+        this.taskSubscription = this.tupleService.tupleDataOfflineObserver
             .subscribeToTupleSelector(this.taskTupleSelector)
             .subscribe((tuples: TaskTuple[]) => {
                 this.tasks = tuples;
@@ -135,7 +88,7 @@ export class PluginInboxRootService extends ComponentLifecycleEventEmitter {
 
                 if (updateApplied) {
                     // Update the cached data
-                    this.tupleDataOfflineObserver.updateOfflineState(
+                    this.tupleService.tupleDataOfflineObserver.updateOfflineState(
                         this.taskTupleSelector, this.tasks);
                 }
             });
@@ -144,7 +97,7 @@ export class PluginInboxRootService extends ComponentLifecycleEventEmitter {
 
         // We don't do anything with the activities, we just want to store
         // them offline.
-        this.activitiesSubscription = this.tupleDataOfflineObserver
+        this.activitiesSubscription = this.tupleService.tupleDataOfflineObserver
             .subscribeToTupleSelector(this.activityTupleSelector)
             .subscribe((tuples: ActivityTuple[]) => {
             });
@@ -162,11 +115,11 @@ export class PluginInboxRootService extends ComponentLifecycleEventEmitter {
     // Properties for the UI components to use
 
     get tupleObserverService(): TupleDataOfflineObserverService {
-        return this.tupleDataOfflineObserver;
+        return this.tupleService.tupleDataOfflineObserver;
     }
 
     get tupleActionService(): TupleActionPushOfflineService {
-        return this.tupleOfflineAction;
+        return this.tupleService.tupleOfflineAction;
     }
 
     get taskTupleSelector(): TupleSelector {
@@ -204,7 +157,7 @@ export class PluginInboxRootService extends ComponentLifecycleEventEmitter {
         this.processDeletesAndCompletes();
 
         // Update the cached data
-        this.tupleDataOfflineObserver.updateOfflineState(
+        this.tupleService.tupleDataOfflineObserver.updateOfflineState(
             this.taskTupleSelector, this.tasks);
     }
 
@@ -250,13 +203,13 @@ export class PluginInboxRootService extends ComponentLifecycleEventEmitter {
             if (task.isNotifyBySound() && !task.isNotifiedBySound()) {
                 this.alertSound.play();
                 notificationSentFlags = (
-                notificationSentFlags | TaskTuple.NOTIFY_BY_DEVICE_SOUND);
+                    notificationSentFlags | TaskTuple.NOTIFY_BY_DEVICE_SOUND);
             }
 
             if (task.isNotifyByPopup() && !task.isNotifiedByPopup()) {
                 this.showMessage(UsrMsgType.Fleeting, task);
                 notificationSentFlags = (
-                notificationSentFlags | TaskTuple.NOTIFY_BY_DEVICE_POPUP);
+                    notificationSentFlags | TaskTuple.NOTIFY_BY_DEVICE_POPUP);
             }
 
             if (task.isNotifyByDialog() && !task.isNotifiedByDialog()) {
@@ -274,7 +227,7 @@ export class PluginInboxRootService extends ComponentLifecycleEventEmitter {
                     });
 
                 notificationSentFlags = (
-                notificationSentFlags | TaskTuple.NOTIFY_BY_DEVICE_DIALOG);
+                    notificationSentFlags | TaskTuple.NOTIFY_BY_DEVICE_DIALOG);
             }
 
             if (!task.isDelivered()) {
@@ -346,7 +299,7 @@ export class PluginInboxRootService extends ComponentLifecycleEventEmitter {
             stateFlags: stateFlags,
             notificationSentFlags: notificationSentFlags
         };
-        this.tupleOfflineAction.pushAction(action)
+        this.tupleService.tupleOfflineAction.pushAction(action)
             .catch(err => alert(err));
 
 
