@@ -1,22 +1,43 @@
-<label *ngIf="activities.length === 0" text="There is no recent activity"></label>
+<GridLayout rows="*" columns="*">
+    <label *ngIf="activities.length === 0"
+           class="title h1"
+           text="There is no recent activity"></label>
 
-<ListView class="pl-inbox" [items]="activities" (tap)="activityClicked(activity)">
-    <ng-template let-item="item" let-i="index" let-odd="odd" let-even="even">
-        <StackLayout class="pl-inbox-item" [class.odd]="odd" [class.even]="even"
-                     (tap)="activityClicked(item)">
-            <GridLayout columns="*,auto" rows="*">
-                <label row="0" col="0" class="pl-inbox-title"
-                       [text]="item.title" textWrap="true"></label>
-                <Label row="0" col="1" *ngIf="hasRoute(item)"
-                       class="fa h2 pull-right"
-                       [text]="'fa-angle-right' | fonticon"></Label>
-            </GridLayout>
+    <ListView class="pl-inbox" [items]="activities" (tap)="activityClicked(activity)">
+        <ng-template let-item="item" let-i="index" let-odd="odd" let-even="even">
+            <StackLayout class="pl-inbox-item bg-primary"
+                         [class.odd]="odd" [class.even]="even"
+                         (tap)="activityClicked(item)">
+                <GridLayout rows="*" columns="*, auto">
 
-            <label class="pl-inbox-description" [text]="item.description"
-                   textWrap="true"></label>
-            <label class="pl-inbox-date-time"
-                   [text]="timePast(item) + ' ago, ' + dateTime(item)"></label>
-        </StackLayout>
-    </ng-template>
-</ListView>
+                    <!--Title, Description and Date-Time-->
+                    <GridLayout row="0" col="0"
+                                rows="auto, *, auto" columns="*">
+                        <Label row="0" col="0"
+                               class="pl-inbox-title"
+                               [text]="item.title"
+                               textWrap="true"></Label>
 
+                        <label row="1" col="0"
+                               class="pl-inbox-description"
+                               [text]="item.description"
+                               textWrap="true"></label>
+
+                        <GridLayout row="2" col="0"
+                                    rows="auto" columns="*, auto">
+                            <label row="0" col="1"
+                                   class="pl-inbox-date-time"
+                                   [text]="timePast(item) + ' ago, ' + dateTime(item)"></label>
+                        </GridLayout>
+                    </GridLayout>
+
+                    <!--Read More-->
+                    <Button row="0" col="1"
+                            *ngIf="hasRoute(item)"
+                            class="fa pl-inbox-read-more"
+                            [text]="'fa-arrow-right' | fonticon"></Button>
+                </GridLayout>
+            </StackLayout>
+        </ng-template>
+    </ListView>
+</GridLayout>
