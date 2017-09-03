@@ -1,6 +1,6 @@
 <GridLayout rows="*" columns="*">
     <label *ngIf="tasks.length === 0"
-           class="title h1 fa"
+           class="title fa"
            text="There are no tasks {{'fa-smile-o' | fonticon }}"></label>
 
     <ListView class="pl-inbox" [items]="tasks">
@@ -36,7 +36,8 @@
 
                     <!--Title, Description and Date-Time-->
                     <GridLayout row="0" col="1"
-                                rows="auto, auto, auto" columns="*">
+                                rows="auto, auto, auto, auto" columns="*"
+                                class="pl-inbox-info">
                         <Label row="0" col="0"
                                class="pl-inbox-title"
                                [text]="item.title"
@@ -46,7 +47,17 @@
                                class="pl-inbox-description"
                                [text]="item.description"
                                textWrap="true"></label>
-                        <GridLayout row="2" col="1"
+
+                        <WrapLayout row="2" col="1"
+                                    class="btn-group"
+                                    *ngIf="!item.isActioned()">
+                            <Button class="btn btn-sm"
+                                    *ngFor="let action of item.actions"
+                                    [text]="action.title"
+                                    (tap)="actionClicked(item, action)"></Button>
+
+                        </WrapLayout>
+                        <GridLayout row="3" col="1"
                                     rows="auto" columns="*, auto">
 
                             <label row="0" col="1"
@@ -59,18 +70,9 @@
                     <Button row="0" col="2"
                             *ngIf="hasRoute(item)"
                             class="fa pl-inbox-read-more "
-                            [text]="'fa-arrow-right' | fonticon"></Button>
+                            [text]="'fa-chevron-right' | fonticon"></Button>
 
                 </GridLayout>
-
-                <WrapLayout class="btn-group"
-                            *ngIf="!item.isActioned()">
-                    <Button class="btn btn-sm"
-                            *ngFor="let action of item.actions"
-                            [text]="action.title"
-                            (tap)="actionClicked(item, action)"></Button>
-
-                </WrapLayout>
             </StackLayout>
         </ng-template>
     </ListView>

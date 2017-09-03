@@ -1,5 +1,5 @@
 <div class="pl-inbox">
-    <div class="title h1" *ngIf="tasks.length === 0">There are no tasks :-)</div>
+    <div class="title" *ngIf="tasks.length === 0">There are no tasks :-)</div>
 
     <div class="pl-inbox-item" *ngFor="let task of tasks" (click)="taskClicked(task)"
          [class.bg-success]="!task.isCompleted() && task.isPrioritySuccess()"
@@ -21,7 +21,7 @@
 
             <fa *ngIf="hasRoute(task)"
                 class="pl-inbox-read-more"
-                name="arrow-right"></fa>
+                name="chevron-right"></fa>
 
             <div class="pl-inbox-date-time">
                 {{timePast(task)}} ago {{dateTime(task)}}
