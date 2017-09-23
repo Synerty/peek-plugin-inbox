@@ -2,15 +2,7 @@ import logging
 from datetime import datetime
 
 from sqlalchemy.orm.exc import NoResultFound
-from twisted.internet.defer import inlineCallbacks
 from twisted.internet.task import LoopingCall
-from txhttputil.util.DeferUtil import deferToThreadWrap
-from vortex.DeferUtil import vortexLogFailure, deferToThreadWrapWithLogger
-from vortex.TupleAction import TupleGenericAction
-from vortex.TupleSelector import TupleSelector
-from vortex.VortexFactory import VortexFactory
-from vortex.handler.TupleActionProcessor import TupleActionProcessorDelegateABC
-from vortex.handler.TupleDataObservableHandler import TupleDataObservableHandler
 
 from peek_plugin_inbox._private.server.EmailUtil import SendEmail
 from peek_plugin_inbox._private.storage import Setting
@@ -19,12 +11,18 @@ from peek_plugin_inbox._private.storage.Setting import globalSetting
 from peek_plugin_inbox._private.storage.Task import Task
 from peek_plugin_inbox._private.storage.TaskAction import TaskAction
 from peek_plugin_user.server.UserServerApiABC import UserServerApiABC
+from vortex.DeferUtil import vortexLogFailure, deferToThreadWrapWithLogger
+from vortex.TupleAction import TupleGenericAction
+from vortex.TupleSelector import TupleSelector
+from vortex.VortexFactory import VortexFactory
+from vortex.handler.TupleActionProcessor import TupleActionProcessorDelegateABC
+from vortex.handler.TupleDataObservableHandler import TupleDataObservableHandler
 
 logger = logging.getLogger(__name__)
 
 
 class MainController(TupleActionProcessorDelegateABC):
-    PROCESS_PERIOD = 60.0 # Every minutes
+    PROCESS_PERIOD = 60.0  # Every minutes
 
     def __init__(self, ormSessionCreator,
                  userPluginApi: UserServerApiABC,
@@ -68,7 +66,7 @@ class MainController(TupleActionProcessorDelegateABC):
     def activityAdded(self, taskId, userId):
         self._notifyObserver(Activity.tupleName(), userId)
 
-    @deferToThreadWrap
+    @deferToThreadWrapWithLogger(logger)
     def processTupleAction(self, tupleAction: TupleGenericAction):
         if tupleAction.key == Task.tupleName():
             self._processTaskUpdate(tupleAction)
@@ -159,31 +157,31 @@ class MainController(TupleActionProcessorDelegateABC):
         finally:
             session.close()
 
-    @deferToThreadWrap
+    @deferToThreadWrapWithLogger(logger)
     def _deleteOnDateTime(self):
         session = self._ormSessionCreator()
         usersToNotify = set()
 
         try:
-            activitiesToExpire = (
+            delActivityQry = (
                 session
                     .query(Activity)
                     .filter(Activity.autoDeleteDateTime < datetime.utcnow())
             )
 
-            for activity in activitiesToExpire:
-                usersToNotify.add(activity.userId)
-                session.delete(activity)
-
-            tasksToExpire = (
+            delTaskQry = (
                 session
                     .query(Task)
-                    .filter(Task.autoDeleteDateTime < datetime.utcnow())
-            )
+                    .filter(Task.autoDeleteDateTime < datetime.utcnow()))
 
-            for task in tasksToExpire:
+            for activity in delActivityQry:
+                usersToNotify.add(activity.userId)
+
+            for task in delTaskQry:
                 usersToNotify.add(task.userId)
-                session.delete(task)
+
+            delActivityQry.delete(synchronize_session=False)
+            delTaskQry.delete(synchronize_session=False)
 
             session.commit()
 
@@ -193,9 +191,7 @@ class MainController(TupleActionProcessorDelegateABC):
         for userId in usersToNotify:
             self._notifyObserver(Activity.tupleName(), userId)
 
-    deferToThreadWrapWithLogger(logger)
-
-    @deferToThreadWrap
+    @deferToThreadWrapWithLogger(logger)
     def _sendSmsNotification(self, taskId: int):
         session = self._ormSessionCreator()
 
@@ -231,7 +227,7 @@ class MainController(TupleActionProcessorDelegateABC):
         finally:
             session.close()
 
-    @deferToThreadWrap
+    @deferToThreadWrapWithLogger(logger)
     def _sendEmailNotification(self, taskId: int):
         session = self._ormSessionCreator()
 
