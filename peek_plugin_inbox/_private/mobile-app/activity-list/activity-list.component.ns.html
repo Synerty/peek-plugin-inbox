@@ -4,7 +4,7 @@
            text="There is no recent activity"></label>
 
     <ListView class="pl-inbox" [items]="activities" (tap)="activityClicked(activity)"
-              *ngIf="tasks.length > 0">
+              *ngIf="activities != null && activities.length != 0">
         <ng-template let-item="item" let-i="index" let-odd="odd" let-even="even">
             <StackLayout class="pl-inbox-item bg-primary"
                          [class.odd]="odd" [class.even]="even"
