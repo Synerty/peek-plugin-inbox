@@ -4,7 +4,7 @@
            text="There are no tasks {{'fa-smile-o' | fonticon }}"></label>
 
     <ListView class="pl-inbox" [items]="tasks"
-              *ngIf="tasks.length != 0">
+              *ngIf="tasks != null && tasks.length !=0">
         <ng-template let-item="item" let-i="index">
             <StackLayout class="pl-inbox-item"
                          [class.bg-success]="!item.isCompleted() && item.isPrioritySuccess()"
