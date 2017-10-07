@@ -10,13 +10,13 @@ from peek_plugin_inbox._private.storage.Task import Task
 from peek_plugin_inbox._private.storage.TaskAction import TaskAction
 from peek_plugin_inbox.server.InboxApiABC import InboxApiABC, NewTask, \
     NewActivity
-from peek_plugin_user.server.UserServerApiABC import UserServerApiABC
+from peek_plugin_user.server.UserApiABC import UserApiABC
 
 logger = logging.getLogger(__name__)
 
 
 class InboxApi(InboxApiABC):
-    def __init__(self, ormSessionCreator, userPluginApi: UserServerApiABC
+    def __init__(self, ormSessionCreator, userPluginApi: UserApiABC
                  , taskProc: MainController):
         self._ormSessionCreator = ormSessionCreator
         self._userPluginApi = userPluginApi
