@@ -124,13 +124,13 @@ export class PluginInboxRootService extends ComponentLifecycleEventEmitter {
 
     get taskTupleSelector(): TupleSelector {
         return new TupleSelector(TaskTuple.tupleName, {
-            userId: this.userService.loggedInUserDetails.userId
+            userName: this.userService.loggedInUserDetails.userName
         });
     }
 
     get activityTupleSelector(): TupleSelector {
         return new TupleSelector(ActivityTuple.tupleName, {
-            userId: this.userService.loggedInUserDetails.userId
+            userName: this.userService.loggedInUserDetails.userName
         });
     }
 
