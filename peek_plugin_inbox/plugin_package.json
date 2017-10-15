@@ -1,6 +1,6 @@
 {
   "plugin": {
-    "title": "Active Task",
+    "title": "Inbox",
     "packageName": "peek_plugin_inbox",
     "version":"0.7.6.3",
     "buildNumber": "#PLUGIN_BUILD#",
