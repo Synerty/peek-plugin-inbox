@@ -1,12 +1,10 @@
 import logging
 
-from vortex.handler.TupleActionProcessor import TupleActionProcessor
-
 from peek_plugin_inbox._private.PluginNames import inboxFilt, \
     inboxActionProcessorName
-
-from peek_plugin_inbox._private.server.MainController import \
+from peek_plugin_inbox._private.server.controller.MainController import \
     MainController
+from vortex.handler.TupleActionProcessor import TupleActionProcessor
 
 logger = logging.getLogger(__name__)
 

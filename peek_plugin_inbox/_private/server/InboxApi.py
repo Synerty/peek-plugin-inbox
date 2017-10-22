@@ -3,7 +3,7 @@ from datetime import datetime
 
 from sqlalchemy.orm.exc import NoResultFound
 
-from peek_plugin_inbox._private.server.MainController import \
+from peek_plugin_inbox._private.server.controller.MainController import \
     MainController
 from peek_plugin_inbox._private.storage.Activity import Activity
 from peek_plugin_inbox._private.storage.Task import Task

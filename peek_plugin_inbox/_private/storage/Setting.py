@@ -268,12 +268,3 @@ globalProperties = {}
 def globalSetting(ormSession, key=None, value=None):
     return _getSetting(ormSession, "Global", globalProperties, key=key, value=value)
 
-
-EMAIL_SENDER = PropertyKey(
-    'Email Sender', 'peek@synerty.com', propertyDict=globalProperties)
-
-EMAIL_SMTP_HOST = PropertyKey(
-    'Email SMTP Server', 'smtp.company.com', propertyDict=globalProperties)
-
-SMS_NUMBER_EMAIL_POSTFIX = PropertyKey(
-    'SMS Email Postfix', '@smsgateway.com', propertyDict=globalProperties)

@@ -1,13 +1,13 @@
 import logging
 from datetime import datetime
+from typing import Optional
 
 from sqlalchemy.orm.exc import NoResultFound
+from twisted.internet.defer import inlineCallbacks, Deferred
 from twisted.internet.task import LoopingCall
 
-from peek_plugin_inbox._private.server.EmailUtil import SendEmail
-from peek_plugin_inbox._private.storage import Setting
+from peek_core_email.server.EmailApiABC import EmailApiABC
 from peek_plugin_inbox._private.storage.Activity import Activity
-from peek_plugin_inbox._private.storage.Setting import globalSetting
 from peek_plugin_inbox._private.storage.Task import Task
 from peek_plugin_inbox._private.storage.TaskAction import TaskAction
 from peek_plugin_user.server.UserApiABC import UserApiABC
@@ -26,9 +26,11 @@ class MainController(TupleActionProcessorDelegateABC):
 
     def __init__(self, ormSessionCreator,
                  userPluginApi: UserApiABC,
+                 emailApi: EmailApiABC,
                  tupleObserver: TupleDataObservableHandler):
         self._ormSessionCreator = ormSessionCreator
         self._userPluginApi = userPluginApi
+        self._emailApi = emailApi
         self._tupleObserver = tupleObserver
 
         self._processLoopingCall = LoopingCall(self._deleteOnDateTime)
@@ -66,18 +68,19 @@ class MainController(TupleActionProcessorDelegateABC):
     def activityAdded(self, taskId, userId):
         self._notifyObserver(Activity.tupleName(), userId)
 
-    @deferToThreadWrapWithLogger(logger)
+    @inlineCallbacks
     def processTupleAction(self, tupleAction: TupleGenericAction):
         if tupleAction.key == Task.tupleName():
-            self._processTaskUpdate(tupleAction)
-            return
+            yield self._processTaskUpdate(tupleAction)
+            return []
 
         elif tupleAction.key == TaskAction.tupleName():
-            self._processTaskActionUpdate(tupleAction)
-            return
+            yield self._processTaskActionUpdate(tupleAction)
+            return []
 
         raise Exception("Unhandled tuple action key=%s" % tupleAction.key)
 
+    @deferToThreadWrapWithLogger(logger)
     def _processTaskActionUpdate(self, tupleAction: TupleGenericAction):
         """ Process Task Action Update
         
@@ -94,6 +97,7 @@ class MainController(TupleActionProcessorDelegateABC):
         finally:
             session.close()
 
+    @deferToThreadWrapWithLogger(logger)
     def _processTaskUpdate(self, tupleAction: TupleGenericAction):
         """ Process Task Update
         
@@ -191,66 +195,87 @@ class MainController(TupleActionProcessorDelegateABC):
         for userId in usersToNotify:
             self._notifyObserver(Activity.tupleName(), userId)
 
+    @inlineCallbacks
+    def _sendSmsNotification(self, taskId: int) -> Deferred:
+        task = yield self._loadTask(taskId)
+        if not task:
+            return
+
+        if not (task.notificationRequiredFlags & Task.NOTIFY_BY_SMS):
+            return
+
+        user = yield self._userPluginApi.infoApi.user(task.userId)
+
+        if not user:
+            logger.debug("No user for %s" % task.userId)
+            return
+
+        if not user.phone:
+            logger.debug("User %s has no phone number" % task.userId)
+            return
+
+        desc = task.description if task.description else ""
+
+        yield self._emailApi.sendSms(
+            contents="%s\n%s" % (task.title, desc),
+            mobile=user.phone
+        )
+
+        yield self._addNotificationSentFlags(taskId, Task.NOTIFY_BY_SMS)
+
+    @inlineCallbacks
+    def _sendEmailNotification(self, taskId: int) -> Deferred:
+        task = yield self._loadTask(taskId)
+        if not task:
+            return
+
+        if not (task.notificationRequiredFlags & Task.NOTIFY_BY_EMAIL):
+            return
+
+        user = yield self._userPluginApi.infoApi.user(task.userId)
+
+        if not user:
+            logger.debug("No user for %s" % task.userId)
+            return
+
+        if not user.email:
+            logger.debug("User %s has no email" % task.userId)
+            return
+
+        desc = task.description if task.description else ""
+
+        yield self._emailApi.sendEmail(
+            contents="%s\n%s" % (task.title, desc),
+            subject=task.title,
+            addresses=[user.email],
+            isHtml=False
+        )
+
+        yield self._addNotificationSentFlags(taskId, Task.NOTIFY_BY_EMAIL)
+
     @deferToThreadWrapWithLogger(logger)
-    def _sendSmsNotification(self, taskId: int):
+    def _loadTask(self, taskId: int) -> Optional[Task]:
         session = self._ormSessionCreator()
 
         try:
             task = session.query(Task).filter(Task.id == taskId).one()
-
-            if not (task.notificationRequiredFlags & Task.NOTIFY_BY_SMS):
-                return
-
-            settings = globalSetting(session)
-            smsEmailPostfix = settings[Setting.SMS_NUMBER_EMAIL_POSTFIX]
-
-            user = self._userPluginApi.userDetailsForUserIdBlocking(task.userId)
-            email = user.phone + smsEmailPostfix
-            email = email.replace("+", "")
-
-            desc = task.description if task.description else ""
-            title = task.title
-
-            emailer = SendEmail(self._ormSessionCreator)
-            emailer.sendBlocking(
-                message="%s\n%s" % (title, desc),
-                subject="",
-                recipients=[email]
-            )
-
-            task.notificationSentFlags = task.notificationSentFlags & Task.NOTIFY_BY_SMS
-            session.commit()
+            session.expunge_all()
+            return task
 
         except NoResultFound:
             logger.debug("_processTaskUpdate Task %s has already been deleted" % taskId)
+            return None
 
         finally:
             session.close()
 
     @deferToThreadWrapWithLogger(logger)
-    def _sendEmailNotification(self, taskId: int):
+    def _addNotificationSentFlags(self, taskId: int, flags: int):
         session = self._ormSessionCreator()
 
         try:
             task = session.query(Task).filter(Task.id == taskId).one()
-
-            if not (task.notificationRequiredFlags & Task.NOTIFY_BY_EMAIL):
-                return
-
-            user = self._userPluginApi.userDetailsForUserIdBlocking(task.userId)
-            email = user.email
-            desc = task.description if task.description else ""
-            title = task.title
-
-            emailer = SendEmail(self._ormSessionCreator)
-
-            emailer.sendBlocking(
-                message="%s\n%s" % (title, desc),
-                subject=title,
-                recipients=[email]
-            )
-
-            task.notificationSentFlags = task.notificationSentFlags & Task.NOTIFY_BY_EMAIL
+            task.notificationSentFlags = task.notificationSentFlags | flags
             session.commit()
 
         except NoResultFound:

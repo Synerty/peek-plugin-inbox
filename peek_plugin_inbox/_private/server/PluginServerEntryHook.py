@@ -1,24 +1,24 @@
 import logging
-
-from peek_plugin_inbox._private.server.MainController import \
-    MainController
-from peek_plugin_inbox._private.server.backend.PeekAdmSettingHandler import \
-    createAdminSettingsHandler
 from typing import Optional
 
-from peek_plugin_inbox._private.server.InboxApi import InboxApi
+from peek_core_email.server.EmailApiABC import EmailApiABC
+from peek_plugin_base.server.PluginServerEntryHookABC import PluginServerEntryHookABC
+from peek_plugin_base.server.PluginServerStorageEntryHookABC import \
+    PluginServerStorageEntryHookABC
 from peek_plugin_inbox._private.server.ClientTupleActionProcessor import \
     makeTupleActionProcessorHandler
 from peek_plugin_inbox._private.server.ClientTupleDataObservable import \
     makeTupleDataObservableHandler
+from peek_plugin_inbox._private.server.InboxApi import InboxApi
+from peek_plugin_inbox._private.server.backend.PeekAdmSettingHandler import \
+    createAdminSettingsHandler
 from peek_plugin_inbox._private.server.backend.SendTestActivityHandler import \
     createSendTestActivityHander
 from peek_plugin_inbox._private.server.backend.SendTestTaskHandler import \
     createSendTestTaskHander
+from peek_plugin_inbox._private.server.controller.MainController import \
+    MainController
 from peek_plugin_inbox._private.storage.DeclarativeBase import loadStorageTuples
-from peek_plugin_base.server.PluginServerEntryHookABC import PluginServerEntryHookABC
-from peek_plugin_base.server.PluginServerStorageEntryHookABC import \
-    PluginServerStorageEntryHookABC
 from peek_plugin_user.server.UserApiABC import UserApiABC
 
 logger = logging.getLogger(__name__)
@@ -40,17 +40,22 @@ class PluginServerEntryHook(PluginServerEntryHookABC,
 
     def start(self):
         userPluginApi = self.platform.getOtherPluginApi("peek_plugin_user")
+        assert isinstance(userPluginApi, UserApiABC), "Expected UserApiABC"
 
-        assert isinstance(userPluginApi,
-                          UserApiABC), "Expected UserApiABC"
+        emailApi = self.platform.getOtherPluginApi("peek_core_email")
+        assert isinstance(emailApi, EmailApiABC), "emailApi is not EmailApiABC"
 
         # Create the observable
         tupleObserver = makeTupleDataObservableHandler(self.dbSessionCreator)
         self._runningHandlers.append(tupleObserver)
 
         # Create the main controller
-        self._mainController = MainController(self.dbSessionCreator, userPluginApi,
-                                              tupleObserver)
+        self._mainController = MainController(
+            ormSessionCreator=self.dbSessionCreator,
+            userPluginApi=userPluginApi,
+            emailApi=emailApi,
+            tupleObserver=tupleObserver
+        )
         self._runningHandlers.append(self._mainController)
 
         # Create the endpoing that listens for TupleActions
@@ -58,8 +63,9 @@ class PluginServerEntryHook(PluginServerEntryHookABC,
         self._runningHandlers.append(actionProcessor)
 
         # Create the API that other plugins will use
-        self._api = InboxApi(self.dbSessionCreator, userPluginApi,
-                                  self._mainController)
+        self._api = InboxApi(
+            self.dbSessionCreator, userPluginApi, self._mainController
+        )
         self._runningHandlers.append(self._api)
 
         # Add the handlers for the Admin UI
