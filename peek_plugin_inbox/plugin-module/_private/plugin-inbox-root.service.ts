@@ -9,14 +9,14 @@ import {
     TupleDataOfflineObserverService
 } from "@synerty/vortexjs";
 import {PeekModuleFactory, Sound} from "@synerty/peek-util/index.web";
-import {TaskTuple} from "./tuples/TaskTuple";
-import {ActivityTuple} from "./tuples/ActivityTuple";
+import {TaskTuple} from "../tuples/TaskTuple";
+import {ActivityTuple} from "../tuples/ActivityTuple";
 import {Ng2BalloonMsgService, UsrMsgLevel, UsrMsgType} from "@synerty/ng2-balloon-msg";
 import {UserService} from "@peek/peek_plugin_user";
 import {TitleService} from "@synerty/peek-util";
 
-import {inboxPluginName} from "./plugin-inbox-names";
-import {PrivateInboxTupleProviderService} from "./_private/private-inbox-tuple-provider.service";
+import {inboxPluginName} from "../plugin-inbox-names";
+import {PrivateInboxTupleProviderService} from "./private-inbox-tuple-provider.service";
 
 /**  Root Service
  *
@@ -48,8 +48,9 @@ export class PluginInboxRootService extends ComponentLifecycleEventEmitter {
             .createSound('/assets/peek_plugin_inbox/alert.mp3');
 
 
-        let sub = this.userService.loggedInStatus.subscribe(
-            (status) => {
+        this.userService.loggedInStatus
+            .takeUntil(this.onDestroyEvent)
+            .subscribe((status) => {
                 if (status)
                     this.subscribe();
                 else
@@ -67,12 +68,32 @@ export class PluginInboxRootService extends ComponentLifecycleEventEmitter {
     // Setup subscriptions when the user changes
 
     private subscribe() {
+        this.unsubscribe();
 
         // Load Tasks ------------------
 
         this.taskSubscription = this.tupleService.tupleDataOfflineObserver
             .subscribeToTupleSelector(this.taskTupleSelector)
             .subscribe((tuples: TaskTuple[]) => {
+                // Make sure we have the latest flags, to avoid notifying the user again.
+                let existingTasksById = {};
+
+                for (let task of this.tasks) {
+                    existingTasksById[task.id] = task;
+                }
+
+                for (let task of tuples) {
+                    let existingTask = existingTasksById[task.id];
+                    if (existingTask == null)
+                        continue;
+
+                    task.stateFlags = (task.stateFlags | existingTask.stateFlags);
+
+                    task.notificationSentFlags =
+                        (task.notificationSentFlags | existingTask.notificationSentFlags);
+                }
+
+                // Now we can set the tasks
                 this.tasks = tuples;
 
                 let notCompletedCount = 0;
@@ -104,11 +125,15 @@ export class PluginInboxRootService extends ComponentLifecycleEventEmitter {
     }
 
     private unsubscribe() {
-        if (this.activitiesSubscription != null)
+        if (this.activitiesSubscription != null) {
             this.activitiesSubscription.unsubscribe();
+            this.activitiesSubscription = null;
+        }
 
-        if (this.taskSubscription != null)
+        if (this.taskSubscription != null) {
             this.taskSubscription.unsubscribe();
+            this.taskSubscription = null;
+        }
     }
 
     // -------------------------
@@ -201,9 +226,16 @@ export class PluginInboxRootService extends ComponentLifecycleEventEmitter {
             let newStateMask = 0;
 
             if (task.isNotifyBySound() && !task.isNotifiedBySound()) {
-                this.alertSound.play();
+
                 notificationSentFlags = (
                     notificationSentFlags | TaskTuple.NOTIFY_BY_DEVICE_SOUND);
+
+                this.alertSound.play()
+                    .catch(err => {
+                        let e = `Failed to play alert sound\n${err}`;
+                        console.log(e);
+                        this.userMsgService.showError(e);
+                    });
             }
 
             if (task.isNotifyByPopup() && !task.isNotifiedByPopup()) {
@@ -223,7 +255,7 @@ export class PluginInboxRootService extends ComponentLifecycleEventEmitter {
                     .catch(err => {
                         let e = `Inbox Dialog Error\n${err}`;
                         console.log(e);
-                        this.userMsgService.showError(`Inbox Dialog Error\n${err}`);
+                        this.userMsgService.showError(e);
                     });
 
                 notificationSentFlags = (

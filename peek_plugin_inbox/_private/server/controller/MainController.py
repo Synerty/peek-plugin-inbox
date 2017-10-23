@@ -210,7 +210,7 @@ class MainController(TupleActionProcessorDelegateABC):
             logger.debug("No user for %s" % task.userId)
             return
 
-        if not user.phone:
+        if not user.mobile:
             logger.debug("User %s has no phone number" % task.userId)
             return
 
@@ -218,7 +218,7 @@ class MainController(TupleActionProcessorDelegateABC):
 
         yield self._emailApi.sendSms(
             contents="%s\n%s" % (task.title, desc),
-            mobile=user.phone
+            mobile=user.mobile
         )
 
         yield self._addNotificationSentFlags(taskId, Task.NOTIFY_BY_SMS)

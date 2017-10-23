@@ -35,14 +35,14 @@ export class ActivityListComponent extends ComponentLifecycleEventEmitter {
 
         // Load Activities ------------------
 
-        let sup = this.tupleDataOfflineObserver
+        this.tupleDataOfflineObserver
             .subscribeToTupleSelector(rootService.activityTupleSelector)
+            .takeUntil(this.onDestroyEvent)
             .subscribe((tuples: ActivityTuple[]) => {
                 this.activities = tuples.sort(
                     (o1, o2) => o2.dateTime.getTime() - o1.dateTime.getTime()
                 );
             });
-        this.onDestroyEvent.subscribe(() => sup.unsubscribe());
 
     }
 

@@ -6,10 +6,14 @@ import {
 } from "@synerty/vortexjs";
 import {Router} from "@angular/router";
 import {
-    PluginInboxRootService,
     TaskActionTuple,
     TaskTuple
 } from "@peek/peek_plugin_inbox";
+
+import {
+    PluginInboxRootService
+} from "@peek/peek_plugin_inbox/_private/plugin-inbox-root.service";
+
 import {UserService} from "@peek/peek_plugin_user";
 
 import * as moment from "moment";
@@ -33,14 +37,14 @@ export class TaskListComponent extends ComponentLifecycleEventEmitter {
 
         // Load Tasks ------------------
 
-        let sup = rootService.tupleObserverService
+        rootService.tupleObserverService
             .subscribeToTupleSelector(rootService.taskTupleSelector)
+            .takeUntil(this.onDestroyEvent)
             .subscribe((tuples: TaskTuple[]) => {
                 this.tasks = tuples.sort(
                     (o1, o2) => o2.dateTime.getTime() - o1.dateTime.getTime()
                 );
             });
-        this.onDestroyEvent.subscribe(() => sup.unsubscribe());
 
     }
 

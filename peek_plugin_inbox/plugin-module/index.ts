@@ -1,5 +1,5 @@
 
-export {PluginInboxRootService} from "./plugin-inbox-root.service";
+export {PluginInboxRootService} from "./_private/plugin-inbox-root.service";
 
 export {ActivityTuple} from "./tuples/ActivityTuple";
 export {TaskActionTuple} from "./tuples/TaskActionTuple";
