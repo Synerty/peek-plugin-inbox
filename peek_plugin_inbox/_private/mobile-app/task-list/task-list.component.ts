@@ -2,8 +2,10 @@ import {Component} from "@angular/core";
 import {
     ComponentLifecycleEventEmitter,
     TupleActionPushOfflineService,
-    TupleGenericAction
+    TupleGenericAction,
+    TupleSelector
 } from "@synerty/vortexjs";
+import {TitleService} from "@synerty/peek-util";
 import {Router} from "@angular/router";
 import {
     TaskActionTuple,
@@ -13,6 +15,10 @@ import {
 import {
     PluginInboxRootService
 } from "@peek/peek_plugin_inbox/_private/plugin-inbox-root.service";
+
+import {
+    PrivateInboxTupleProviderService
+} from "@peek/peek_plugin_inbox/_private/private-inbox-tuple-provider.service";
 
 import {UserService} from "@peek/peek_plugin_user";
 
@@ -26,26 +32,27 @@ import * as moment from "moment";
 export class TaskListComponent extends ComponentLifecycleEventEmitter {
 
     tasks: TaskTuple[] = [];
-    private tupleOfflineAction: TupleActionPushOfflineService;
 
-    constructor(private rootService: PluginInboxRootService,
-                private router: Router) {
+    constructor(titleService: TitleService,
+                private rootService: PluginInboxRootService,
+                private router: Router,
+                private tupleService: PrivateInboxTupleProviderService) {
 
         super();
 
-        this.tupleOfflineAction = rootService.tupleActionService;
+        titleService.setTitle("My Tasks");
 
         // Load Tasks ------------------
 
-        rootService.tupleObserverService
-            .subscribeToTupleSelector(rootService.taskTupleSelector)
+        this.tasks = this.tupleService.tasks;
+        this.tupleService.taskTupleObservable()
             .takeUntil(this.onDestroyEvent)
-            .subscribe((tuples: TaskTuple[]) => {
-                this.tasks = tuples.sort(
-                    (o1, o2) => o2.dateTime.getTime() - o1.dateTime.getTime()
-                );
-            });
+            .subscribe((tuples: TaskTuple[]) => this.tasks = tuples);
 
+    }
+
+    noItems():boolean {
+        return this.tasks == null || this.tasks.length == 0;
     }
 
 
@@ -82,7 +89,7 @@ export class TaskListComponent extends ComponentLifecycleEventEmitter {
         let action = new TupleGenericAction();
         action.key = TaskActionTuple.tupleName;
         action.data = {id: taskAction.id};
-        this.tupleOfflineAction.pushAction(action)
+        this.tupleService.tupleOfflineAction.pushAction(action)
             .catch(err => alert(err));
 
         this.rootService.taskActioned(task.id);

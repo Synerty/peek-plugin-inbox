@@ -1,14 +1,17 @@
 import {Component} from "@angular/core";
 import {
-    ComponentLifecycleEventEmitter,
-    TupleActionPushOfflineService,
-    TupleDataOfflineObserverService
+    ComponentLifecycleEventEmitter
 } from "@synerty/vortexjs";
 import {Router} from "@angular/router";
+import {TitleService} from "@synerty/peek-util";
 import {
     ActivityTuple,
     PluginInboxRootService
 } from "@peek/peek_plugin_inbox";
+
+import {
+    PrivateInboxTupleProviderService
+} from "@peek/peek_plugin_inbox/_private/private-inbox-tuple-provider.service";
 
 
 import * as moment from "moment";
@@ -22,28 +25,25 @@ export class ActivityListComponent extends ComponentLifecycleEventEmitter {
 
     activities: ActivityTuple[] = [];
 
-    private tupleDataOfflineObserver: TupleDataOfflineObserverService;
-    private tupleOfflineAction: TupleActionPushOfflineService;
-
-    constructor(private rootService: PluginInboxRootService,
-                private router: Router) {
+    constructor(titleService: TitleService,
+                private rootService: PluginInboxRootService,
+                private router: Router,
+                private tupleService: PrivateInboxTupleProviderService) {
 
         super();
-
-        this.tupleDataOfflineObserver = rootService.tupleObserverService;
-        this.tupleOfflineAction = rootService.tupleActionService;
+        titleService.setTitle("My Activity");
 
         // Load Activities ------------------
 
-        this.tupleDataOfflineObserver
-            .subscribeToTupleSelector(rootService.activityTupleSelector)
+        this.activities = this.tupleService.activities;
+        this.tupleService.activityTupleObservable()
             .takeUntil(this.onDestroyEvent)
-            .subscribe((tuples: ActivityTuple[]) => {
-                this.activities = tuples.sort(
-                    (o1, o2) => o2.dateTime.getTime() - o1.dateTime.getTime()
-                );
-            });
+            .subscribe((tuples: ActivityTuple[]) => this.activities = tuples);
 
+    }
+
+    noItems():boolean {
+        return this.activities == null || this.activities.length == 0;
     }
 
 

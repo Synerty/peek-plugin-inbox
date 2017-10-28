@@ -4,8 +4,12 @@ import {
     PluginInboxRootService,
     TaskTuple
 } from "@peek/peek_plugin_inbox";
-import {TitleService} from "@synerty/peek-util";
 
+import {
+    PrivateInboxTupleProviderService
+} from "@peek/peek_plugin_inbox/_private/private-inbox-tuple-provider.service";
+
+import {SegmentedBarItem} from "./InboxSegmentedBarDeclaration.web";
 
 // MomentJS is declared globally, because the datetime picker needs it
 declare let moment: any;
@@ -17,20 +21,15 @@ declare let moment: any;
 })
 export class PluginInboxClientComponent extends ComponentLifecycleEventEmitter {
 
+    barItems  = [new SegmentedBarItem(), new SegmentedBarItem()];
+    barIndex = 0;
+
     constructor(rootService: PluginInboxRootService,
-                titleService: TitleService) {
-
+                private tupleService: PrivateInboxTupleProviderService) {
         super();
-        titleService.setTitle("My Tasks");
 
-        // Load Tasks ------------------
-
-        let sup = rootService.tupleObserverService
-            .subscribeToTupleSelector(rootService.taskTupleSelector)
-            .subscribe((tuples: TaskTuple[]) => {
-
-            });
-        this.onDestroyEvent.subscribe(() => sup.unsubscribe());
+        this.barItems[0].title = 'Tasks';
+        this.barItems[1].title = 'Activity';
 
 
     }

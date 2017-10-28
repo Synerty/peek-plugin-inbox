@@ -9,9 +9,14 @@ import {
     TupleOfflineStorageService,
     TupleStorageFactoryService,
     VortexService,
-    VortexStatusService
+    VortexStatusService,
+    ComponentLifecycleEventEmitter,
+    TupleSelector
 } from "@synerty/vortexjs";
 import {UserService} from "@peek/peek_plugin_user";
+import {Subject, Observable} from "rxjs";
+import {TaskTuple} from "../tuples/TaskTuple";
+import {ActivityTuple} from "../tuples/ActivityTuple";
 
 import {
     inboxActionProcessorName,
@@ -22,17 +27,27 @@ import {
 
 
 @Injectable()
-export class PrivateInboxTupleProviderService {
+export class PrivateInboxTupleProviderService extends ComponentLifecycleEventEmitter {
     public tupleOfflineAction: TupleActionPushOfflineService;
     public tupleDataOfflineObserver: TupleDataOfflineObserverService;
 
+    private tasksSubject = new Subject<TaskTuple[]>();
+    private activitiesSubject = new Subject<ActivityTuple[]>();
 
-    constructor(tupleActionSingletonService: TupleActionPushOfflineSingletonService,
+    private taskSubscription: any | null;
+    private activitiesSubscription: any | null;
+
+    private _tasks: TaskTuple[] = [];
+    private _activities: ActivityTuple[] = [];
+
+    constructor(private userService: UserService,
+                tupleActionSingletonService: TupleActionPushOfflineSingletonService,
                 vortexService: VortexService,
                 vortexStatusService: VortexStatusService,
                 storageFactory: TupleStorageFactoryService,
                 zone: NgZone) {
 
+        super();
 
         let tupleDataObservableName = new TupleDataObservableNameService(
             inboxObservableName, inboxFilt);
@@ -58,7 +73,106 @@ export class PrivateInboxTupleProviderService {
             vortexStatusService,
             tupleActionSingletonService);
 
+
+        this.userService.loggedInStatus
+            .takeUntil(this.onDestroyEvent)
+            .subscribe((status) => {
+                    if (status)
+                        this.subscribe();
+                    else
+                        this.unsubscribe();
+                }
+            );
+
+        if (this.userService.loggedIn)
+            this.subscribe();
+
+        this.onDestroyEvent.subscribe(() => this.unsubscribe());
     }
 
+    // -------------------------
+    // Setup subscriptions when the user changes
+
+    private subscribe() {
+        this.unsubscribe();
+
+        // Load Tasks ------------------
+
+        this.taskSubscription = this.tupleDataOfflineObserver
+            .subscribeToTupleSelector(
+                new TupleSelector(TaskTuple.tupleName, {
+                    userId: this.userService.loggedInUserDetails.userId
+                })
+            )
+            .takeUntil(this.onDestroyEvent)
+            .subscribe((tuples: TaskTuple[]) => {
+                    this._tasks = tuples.sort(
+                        (o1, o2) => o2.dateTime.getTime() - o1.dateTime.getTime()
+                    );
+                    this.tasksSubject.next(this._tasks);
+                }
+            );
+
+        // Load Activities ------------------
+
+        // We don't do anything with the activities, we just want to store
+        // them offline.
+        this.activitiesSubscription = this.tupleDataOfflineObserver
+            .subscribeToTupleSelector(
+                new TupleSelector(ActivityTuple.tupleName, {
+                    userId: this.userService.loggedInUserDetails.userId
+                })
+            )
+            .takeUntil(this.onDestroyEvent)
+            .subscribe((tuples: ActivityTuple[]) => {
+                this._activities = tuples.sort(
+                    (o1, o2) => o2.dateTime.getTime() - o1.dateTime.getTime()
+                );
+                this.activitiesSubject.next(this._activities);
+            });
+    }
+
+    private unsubscribe() {
+        if (this.activitiesSubscription != null) {
+            this.activitiesSubscription.unsubscribe();
+            this.activitiesSubscription = null;
+        }
+
+        if (this.taskSubscription != null) {
+            this.taskSubscription.unsubscribe();
+            this.taskSubscription = null;
+        }
+    }
+
+    // -------------------------
+    // Properties for the UI components to use
+
+    taskTupleObservable(): Observable<TaskTuple[]> {
+        return this.tasksSubject;
+    }
+
+    activityTupleObservable(): Observable<ActivityTuple[]> {
+        return this.activitiesSubject;
+    }
+
+    get tasks(): TaskTuple[] {
+        return this._tasks;
+    }
+
+    get activities(): ActivityTuple[] {
+        return this._activities;
+    }
+
+    get taskTupleSelector(): TupleSelector {
+        return new TupleSelector(TaskTuple.tupleName, {
+            userId: this.userService.loggedInUserDetails.userId
+        });
+    }
+
+    get activityTupleSelector(): TupleSelector {
+        return new TupleSelector(ActivityTuple.tupleName, {
+            userId: this.userService.loggedInUserDetails.userId
+        });
+    }
 
 }

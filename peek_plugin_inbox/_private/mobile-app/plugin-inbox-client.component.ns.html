@@ -1,10 +1,11 @@
 <StackLayout class="pl-inbox">
-    <TabView #tabview [selectedIndex]="tabindex" sdkExampleTitle sdkToggleNavButton>
-        <StackLayout *tabItem="{title: 'Tasks'}">
-            <plugin-inbox-task-list></plugin-inbox-task-list>
-        </StackLayout>
-        <StackLayout *tabItem="{title: 'Activity'}">
-            <plugin-inbox-activity-list></plugin-inbox-activity-list>
-        </StackLayout>
-    </TabView>
+
+	<!-- >> segmentedbar-basic-html -->
+	<SegmentedBar [items]="barItems"
+                  selectedIndex="0"
+                  (selectedIndexChange)="barIndex = $event.object.selectedIndex">
+    </SegmentedBar>
+
+    <plugin-inbox-task-list *ngIf="barIndex == 0"></plugin-inbox-task-list>
+    <plugin-inbox-activity-list *ngIf="barIndex == 1"></plugin-inbox-activity-list>
 </StackLayout>

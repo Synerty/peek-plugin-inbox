@@ -1,10 +1,10 @@
 <GridLayout rows="*" columns="*">
-    <label *ngIf="tasks.length === 0"
+    <label *ngIf="noItems()"
            class="title fa"
            text="There are no tasks {{'fa-smile-o' | fonticon }}"></label>
 
     <ListView class="pl-inbox" [items]="tasks"
-              *ngIf="tasks != null && tasks.length !=0">
+              *ngIf="!noItems()">
         <ng-template let-item="item" let-i="index">
             <StackLayout class="pl-inbox-item"
                          [class.bg-success]="!item.isCompleted() && item.isPrioritySuccess()"
@@ -68,10 +68,10 @@
                     </GridLayout>
 
                     <!--Read More-->
-                    <Button row="0" col="2"
+                    <Label row="0" col="2"
                             *ngIf="hasRoute(item)"
                             class="fa pl-inbox-read-more "
-                            [text]="'fa-chevron-right' | fonticon"></Button>
+                            [text]="'fa-chevron-right' | fonticon"></Label>
 
                 </GridLayout>
             </StackLayout>

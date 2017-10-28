@@ -29,51 +29,21 @@ import {PrivateInboxTupleProviderService} from "./private-inbox-tuple-provider.s
 
 @Injectable()
 export class PluginInboxRootService extends ComponentLifecycleEventEmitter {
-    tasks: TaskTuple[] = [];
-
-    private taskSubscription: any | null;
-    private activitiesSubscription: any | null;
+    private tasks: TaskTuple[] = [];
 
     private alertSound: Sound;
 
-    constructor(private userService: UserService,
-                private userMsgService: Ng2BalloonMsgService,
+    constructor(private balloonMsg: Ng2BalloonMsgService,
                 private titleService: TitleService,
-                vortexService: VortexService,
-                vortexStatusService: VortexStatusService,
                 private tupleService: PrivateInboxTupleProviderService) {
         super();
 
         this.alertSound = PeekModuleFactory
             .createSound('/assets/peek_plugin_inbox/alert.mp3');
 
-
-        this.userService.loggedInStatus
+        // Subscribe to the tuple events.
+        this.tupleService.taskTupleObservable()
             .takeUntil(this.onDestroyEvent)
-            .subscribe((status) => {
-                if (status)
-                    this.subscribe();
-                else
-                    this.unsubscribe();
-            }
-        );
-
-        if (this.userService.loggedIn)
-            this.subscribe();
-
-        this.onDestroyEvent.subscribe(() => this.unsubscribe());
-    }
-
-    // -------------------------
-    // Setup subscriptions when the user changes
-
-    private subscribe() {
-        this.unsubscribe();
-
-        // Load Tasks ------------------
-
-        this.taskSubscription = this.tupleService.tupleDataOfflineObserver
-            .subscribeToTupleSelector(this.taskTupleSelector)
             .subscribe((tuples: TaskTuple[]) => {
                 // Make sure we have the latest flags, to avoid notifying the user again.
                 let existingTasksById = {};
@@ -110,54 +80,13 @@ export class PluginInboxRootService extends ComponentLifecycleEventEmitter {
                 if (updateApplied) {
                     // Update the cached data
                     this.tupleService.tupleDataOfflineObserver.updateOfflineState(
-                        this.taskTupleSelector, this.tasks);
+                        this.tupleService.taskTupleSelector, this.tasks);
                 }
             });
 
-        // Load Activities ------------------
 
-        // We don't do anything with the activities, we just want to store
-        // them offline.
-        this.activitiesSubscription = this.tupleService.tupleDataOfflineObserver
-            .subscribeToTupleSelector(this.activityTupleSelector)
-            .subscribe((tuples: ActivityTuple[]) => {
-            });
     }
 
-    private unsubscribe() {
-        if (this.activitiesSubscription != null) {
-            this.activitiesSubscription.unsubscribe();
-            this.activitiesSubscription = null;
-        }
-
-        if (this.taskSubscription != null) {
-            this.taskSubscription.unsubscribe();
-            this.taskSubscription = null;
-        }
-    }
-
-    // -------------------------
-    // Properties for the UI components to use
-
-    get tupleObserverService(): TupleDataOfflineObserverService {
-        return this.tupleService.tupleDataOfflineObserver;
-    }
-
-    get tupleActionService(): TupleActionPushOfflineService {
-        return this.tupleService.tupleOfflineAction;
-    }
-
-    get taskTupleSelector(): TupleSelector {
-        return new TupleSelector(TaskTuple.tupleName, {
-            userId: this.userService.loggedInUserDetails.userId
-        });
-    }
-
-    get activityTupleSelector(): TupleSelector {
-        return new TupleSelector(ActivityTuple.tupleName, {
-            userId: this.userService.loggedInUserDetails.userId
-        });
-    }
 
 
     // -------------------------
@@ -183,7 +112,7 @@ export class PluginInboxRootService extends ComponentLifecycleEventEmitter {
 
         // Update the cached data
         this.tupleService.tupleDataOfflineObserver.updateOfflineState(
-            this.taskTupleSelector, this.tasks);
+            this.tupleService.taskTupleSelector, this.tasks);
     }
 
     /** Process Delegates and Complete
@@ -234,7 +163,7 @@ export class PluginInboxRootService extends ComponentLifecycleEventEmitter {
                     .catch(err => {
                         let e = `Failed to play alert sound\n${err}`;
                         console.log(e);
-                        this.userMsgService.showError(e);
+                        this.balloonMsg.showError(e);
                     });
             }
 
@@ -255,7 +184,7 @@ export class PluginInboxRootService extends ComponentLifecycleEventEmitter {
                     .catch(err => {
                         let e = `Inbox Dialog Error\n${err}`;
                         console.log(e);
-                        this.userMsgService.showError(e);
+                        this.balloonMsg.showError(e);
                     });
 
                 notificationSentFlags = (
@@ -309,7 +238,7 @@ export class PluginInboxRootService extends ComponentLifecycleEventEmitter {
         let desc = task.description ? task.description : "";
         let msg = `${task.title}\n\n${desc}`;
 
-        return this.userMsgService.showMessage(
+        return this.balloonMsg.showMessage(
             msg,
             level,
             type_, {
