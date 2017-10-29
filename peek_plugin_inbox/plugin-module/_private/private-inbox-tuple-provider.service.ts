@@ -99,11 +99,7 @@ export class PrivateInboxTupleProviderService extends ComponentLifecycleEventEmi
         // Load Tasks ------------------
 
         this.taskSubscription = this.tupleDataOfflineObserver
-            .subscribeToTupleSelector(
-                new TupleSelector(TaskTuple.tupleName, {
-                    userId: this.userService.loggedInUserDetails.userId
-                })
-            )
+            .subscribeToTupleSelector(this.taskTupleSelector)
             .takeUntil(this.onDestroyEvent)
             .subscribe((tuples: TaskTuple[]) => {
                     this._tasks = tuples.sort(
@@ -118,11 +114,7 @@ export class PrivateInboxTupleProviderService extends ComponentLifecycleEventEmi
         // We don't do anything with the activities, we just want to store
         // them offline.
         this.activitiesSubscription = this.tupleDataOfflineObserver
-            .subscribeToTupleSelector(
-                new TupleSelector(ActivityTuple.tupleName, {
-                    userId: this.userService.loggedInUserDetails.userId
-                })
-            )
+            .subscribeToTupleSelector(this.activityTupleSelector)
             .takeUntil(this.onDestroyEvent)
             .subscribe((tuples: ActivityTuple[]) => {
                 this._activities = tuples.sort(

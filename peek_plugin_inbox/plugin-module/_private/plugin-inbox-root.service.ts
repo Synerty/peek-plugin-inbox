@@ -159,12 +159,11 @@ export class PluginInboxRootService extends ComponentLifecycleEventEmitter {
                 notificationSentFlags = (
                     notificationSentFlags | TaskTuple.NOTIFY_BY_DEVICE_SOUND);
 
-                this.alertSound.play()
-                    .catch(err => {
-                        let e = `Failed to play alert sound\n${err}`;
-                        console.log(e);
-                        this.balloonMsg.showError(e);
-                    });
+                let optioanlPromise = this.alertSound.play();
+                if (optioanlPromise != null) {
+                    optioanlPromise
+                        .catch(err => console.log(`Failed to play alert sound\n${err}`));
+                }
             }
 
             if (task.isNotifyByPopup() && !task.isNotifiedByPopup()) {

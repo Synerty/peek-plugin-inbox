@@ -135,7 +135,7 @@ class InboxApi(InboxApiABC):
                     session.commit()
 
                 else:
-                    raise Exception("Task with uniqueId %s already exists"
+                    raise Exception("Activity with uniqueId %s already exists"
                                     % activity.uniqueId)
 
             except NoResultFound:
