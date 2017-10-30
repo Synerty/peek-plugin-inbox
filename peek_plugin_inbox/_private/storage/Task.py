@@ -42,18 +42,18 @@ class Task(Tuple, DeclarativeBase):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
 
-    uniqueId = Column(String(100), unique=True, nullable=False)
-    userId = Column(String(50), nullable=False)
+    uniqueId = Column(String, unique=True, nullable=False)
+    userId = Column(String, nullable=False)
     dateTime = Column(DateTime, nullable=False)
 
     # The display properties of the task
-    title = Column(String(100), nullable=False)
-    description = Column(String(2000))
-    iconPath = Column(String(200))
+    title = Column(String, nullable=False)
+    description = Column(String)
+    iconPath = Column(String)
 
     # The mobile-app route to open when this task is selected
-    routePath = Column(String(200))
-    routeParamJson = Column(String(200))
+    routePath = Column(String)
+    routeParamJson = Column(String)
 
     # The confirmation options
     onDeliveredPayload = Column(PeekLargeBinary)

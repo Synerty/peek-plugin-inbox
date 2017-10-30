@@ -142,8 +142,8 @@ class SettingProperty(PolymorphicVerticalProperty, Tuple, DeclarativeBase):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     settingId = Column(ForeignKey('Setting.id'), nullable=False)
-    key = Column(String(50), nullable=False)
-    type = Column(String(16))
+    key = Column(String, nullable=False)
+    type = Column(String)
 
     # add information about storage for different types
     # in the info dictionary of Columns

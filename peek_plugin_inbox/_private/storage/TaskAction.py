@@ -46,8 +46,8 @@ class TaskAction(Tuple, DeclarativeBase):
                     nullable=False)
     task = relationship("Task", uselist=False)
 
-    title = Column(String(50))
-    confirmMessage = Column(String(200))
+    title = Column(String)
+    confirmMessage = Column(String)
     onActionPayload = Column(PeekLargeBinary)
 
     __table_args__ = (
