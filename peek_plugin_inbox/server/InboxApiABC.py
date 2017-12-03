@@ -2,6 +2,7 @@ from datetime import datetime
 from typing import Optional, List
 
 from abc import ABCMeta, abstractmethod
+from twisted.internet.defer import Deferred
 
 
 class NewTask:
@@ -232,48 +233,56 @@ class NewActivity:
 
 class InboxApiABC(metaclass=ABCMeta):
     @abstractmethod
-    def addTask(self, task: NewTask) -> None:
+    def addTask(self, task: NewTask) -> Deferred:
         """ Add a New Task
 
         Add a new task to the users device.
         
         :param task: The definition of the task to add.
+        :return :code:`Deferred` firing with None
         
         """
 
     @abstractmethod
-    def completeTask(self, uniqueId: str) -> None:
+    def completeTask(self, uniqueId: str) -> Deferred:
         """ Complete a Task
         
         Mark a task as complete. NOTE, This doesn't delete it.
         
         :param uniqueId: The uniqueId provided when the task was created.
+        :return :code:`Deferred` firing with None
+
         """
 
     @abstractmethod
-    def removeTask(self, uniqueId: str) -> None:
+    def removeTask(self, uniqueId: str) -> Deferred:
         """ Remove a Task
         
         Remove a task from the users device.
         
         :param uniqueId: The uniqueId provided when the task was created.
+        :return :code:`Deferred` firing with None
+
         """
 
     @abstractmethod
-    def addActivity(self, activity: NewActivity) -> None:
+    def addActivity(self, activity: NewActivity) -> Deferred:
         """ Add a new Activity item
 
         Add a new Activity to the users device.
 
         :param activity: The definition of the activity to add.
+        :return :code:`Deferred` firing with None
 
         """
 
     @abstractmethod
-    def removeActivity(self, uniqueId: str) -> None:
+    def removeActivity(self, uniqueId: str) -> Deferred:
         """ Remove an Activity item
 
         Remove an Activity from the users device.
 
         :param uniqueId: The uniqueId provided when the activity was created.
+        :return :code:`Deferred` firing with None
+
         """

@@ -2,6 +2,7 @@ import logging
 from datetime import datetime
 
 from sqlalchemy.orm.exc import NoResultFound
+from twisted.internet import reactor
 
 from peek_plugin_inbox._private.server.controller.MainController import \
     MainController
@@ -11,20 +12,22 @@ from peek_plugin_inbox._private.storage.TaskAction import TaskAction
 from peek_plugin_inbox.server.InboxApiABC import InboxApiABC, NewTask, \
     NewActivity
 from peek_plugin_user.server.UserApiABC import UserApiABC
+from vortex.DeferUtil import deferToThreadWrapWithLogger
 
 logger = logging.getLogger(__name__)
 
 
 class InboxApi(InboxApiABC):
-    def __init__(self, ormSessionCreator, userPluginApi: UserApiABC
-                 , taskProc: MainController):
+    def __init__(self, ormSessionCreator, userPluginApi: UserApiABC,
+                 mainController: MainController):
         self._ormSessionCreator = ormSessionCreator
         self._userPluginApi = userPluginApi
-        self._taskProc = taskProc
+        self._mainController = mainController
 
     def shutdown(self):
         pass
 
+    @deferToThreadWrapWithLogger(logger)
     def addTask(self, task: NewTask) -> None:
         # Create the database task from the parameter
         dbTask = Task()
@@ -75,8 +78,9 @@ class InboxApi(InboxApiABC):
         finally:
             session.close()
 
-        self._taskProc.taskAdded(taskId, userId)
+        reactor.callLater(0, self._mainController.taskAdded, taskId, userId)
 
+    @deferToThreadWrapWithLogger(logger)
     def completeTask(self, uniqueId: str) -> None:
         session = self._ormSessionCreator()
         try:
@@ -85,7 +89,7 @@ class InboxApi(InboxApiABC):
             taskId, userId = task.id, task.userId
             session.commit()
 
-            self._taskProc.taskUpdated(taskId, userId)
+            reactor.callLater(0, self._mainController.taskUpdated, taskId, userId)
 
         except NoResultFound:
             logger.debug("Task %s has been deleted" % taskId)
@@ -93,6 +97,7 @@ class InboxApi(InboxApiABC):
         finally:
             session.close()
 
+    @deferToThreadWrapWithLogger(logger)
     def removeTask(self, uniqueId: str) -> None:
 
         session = self._ormSessionCreator()
@@ -111,8 +116,9 @@ class InboxApi(InboxApiABC):
         finally:
             session.close()
 
-        self._taskProc.taskRemoved(taskId, userId)
+        reactor.callLater(0, self._mainController.taskRemoved, taskId, userId)
 
+    @deferToThreadWrapWithLogger(logger)
     def addActivity(self, activity: NewActivity) -> None:
         # Create the database task from the parameter
         dbActivity = Activity()
@@ -148,8 +154,9 @@ class InboxApi(InboxApiABC):
         finally:
             session.close()
 
-        self._taskProc.activityAdded(taskId, userId)
+        reactor.callLater(0, self._mainController.activityAdded, taskId, userId)
 
+    @deferToThreadWrapWithLogger(logger)
     def removeActivity(self, uniqueId: str) -> None:
 
         session = self._ormSessionCreator()
@@ -169,4 +176,4 @@ class InboxApi(InboxApiABC):
         finally:
             session.close()
 
-        self._taskProc.activityRemoved(activityId, userId)
+        reactor.callLater(0, self._mainController.activityRemoved, activityId, userId)
