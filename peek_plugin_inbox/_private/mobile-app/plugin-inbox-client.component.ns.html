@@ -1,10 +1,14 @@
 <StackLayout class="pl-inbox">
 
 	<!-- >> segmentedbar-basic-html -->
-	<SegmentedBar [items]="barItems"
-                  selectedIndex="0"
-                  (selectedIndexChange)="barIndex = $event.object.selectedIndex">
-    </SegmentedBar>
+    <GridLayout class="nav nav-tabs" rows="auto" columns="auto, auto, *">
+        <Button row="0" col="0"
+                [class.active]="barIndex == 0"
+                text="Inbox" (tap)="barIndex = 0"></Button>
+        <Button row="0" col="1"
+                [class.active]="barIndex == 1"
+                text="Activity" (tap)="barIndex = 1"></Button>
+    </GridLayout>
 
     <plugin-inbox-task-list *ngIf="barIndex == 0"></plugin-inbox-task-list>
     <plugin-inbox-activity-list *ngIf="barIndex == 1"></plugin-inbox-activity-list>

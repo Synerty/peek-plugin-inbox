@@ -9,11 +9,6 @@ import {
     PrivateInboxTupleProviderService
 } from "@peek/peek_plugin_inbox/_private/private-inbox-tuple-provider.service";
 
-import {SegmentedBarItem} from "./InboxSegmentedBarDeclaration.web";
-
-// MomentJS is declared globally, because the datetime picker needs it
-declare let moment: any;
-
 @Component({
     selector: 'plugin-inbox',
     templateUrl: 'plugin-inbox-client.component.web.html',
@@ -21,16 +16,11 @@ declare let moment: any;
 })
 export class PluginInboxClientComponent extends ComponentLifecycleEventEmitter {
 
-    barItems  = [new SegmentedBarItem(), new SegmentedBarItem()];
     barIndex = 0;
 
     constructor(rootService: PluginInboxRootService,
                 private tupleService: PrivateInboxTupleProviderService) {
         super();
-
-        this.barItems[0].title = 'Tasks';
-        this.barItems[1].title = 'Activity';
-
 
     }
 
