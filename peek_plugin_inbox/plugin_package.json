@@ -18,7 +18,7 @@
     "showHomeLink": false,
     "showInTitleBar": true,
     "titleBarLeft": false,
-    "titleBarText": "Tasks",
+    "titleBarText": "Inbox",
     "appDir": "_private/mobile-app",
     "moduleDir": "plugin-module",
     "assetDir": "_private/mobile-assets",
