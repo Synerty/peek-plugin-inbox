@@ -54,7 +54,7 @@ export class ActivityListComponent extends ComponentLifecycleEventEmitter {
     }
 
     dateTime(activity: ActivityTuple) {
-        return moment(activity.dateTime).format('HH:MM DD-MMM');
+        return moment(activity.dateTime).format('HH:mm DD-MMM');
     }
 
     timePast(activity: ActivityTuple) {

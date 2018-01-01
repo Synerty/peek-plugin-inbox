@@ -44,7 +44,7 @@ class Task(Tuple, DeclarativeBase):
 
     uniqueId = Column(String, unique=True, nullable=False)
     userId = Column(String, nullable=False)
-    dateTime = Column(DateTime, nullable=False)
+    dateTime = Column(DateTime(True), nullable=False)
 
     # The display properties of the task
     title = Column(String, nullable=False)
@@ -67,7 +67,7 @@ class Task(Tuple, DeclarativeBase):
     AUTO_COMPLETE_ON_ACTION = NewTask.AUTO_COMPLETE_ON_ACTION
     AUTO_COMPLETE_ON_DIALOG = NewTask.AUTO_COMPLETE_ON_DIALOG
     autoComplete = Column(Integer, nullable=False, server_default='0')
-    autoDeleteDateTime = Column(DateTime, nullable=True)
+    autoDeleteDateTime = Column(DateTime(True), nullable=True)
 
     AUTO_DELETE_OFF = NewTask.AUTO_DELETE_OFF
     AUTO_DELETE_ON_DELIVER = NewTask.AUTO_DELETE_ON_DELIVER

@@ -2,6 +2,7 @@ import logging
 from datetime import datetime
 from typing import Optional
 
+import pytz
 from sqlalchemy.orm.exc import NoResultFound
 from twisted.internet.defer import inlineCallbacks, Deferred
 from twisted.internet.task import LoopingCall
@@ -170,13 +171,13 @@ class MainController(TupleActionProcessorDelegateABC):
             delActivityQry = (
                 session
                     .query(Activity)
-                    .filter(Activity.autoDeleteDateTime < datetime.utcnow())
+                    .filter(Activity.autoDeleteDateTime < datetime.now(pytz.utc))
             )
 
             delTaskQry = (
                 session
                     .query(Task)
-                    .filter(Task.autoDeleteDateTime < datetime.utcnow()))
+                    .filter(Task.autoDeleteDateTime < datetime.now(pytz.utc)))
 
             for activity in delActivityQry:
                 usersToNotify.add(activity.userId)

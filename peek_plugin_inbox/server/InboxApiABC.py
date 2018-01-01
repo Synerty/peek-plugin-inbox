@@ -1,6 +1,7 @@
 from datetime import datetime
 from typing import Optional, List
 
+import pytz
 from abc import ABCMeta, abstractmethod
 from twisted.internet.defer import Deferred
 
@@ -208,7 +209,7 @@ class NewActivity:
         """
         self.uniqueId = self._required(uniqueId, "uniqueId")
         self.userId = self._required(userId, "userId")
-        self.dateTime = dateTime if dateTime else datetime.utcnow()
+        self.dateTime = dateTime if dateTime else datetime.now(pytz.utc)
 
         # The display properties of the task
         self.title = self._required(title, "title")

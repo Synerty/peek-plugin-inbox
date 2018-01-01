@@ -63,7 +63,7 @@ export class TaskListComponent extends ComponentLifecycleEventEmitter {
     }
 
     dateTime(task: TaskTuple) {
-        return moment(task.dateTime).format('HH:MM DD-MMM');
+        return moment(task.dateTime).format('HH:mm DD-MMM');
     }
 
     timePast(task: TaskTuple) {

@@ -1,6 +1,7 @@
 import logging
 from datetime import datetime
 
+import pytz
 from sqlalchemy.orm.exc import NoResultFound
 from twisted.internet import reactor
 
@@ -36,7 +37,7 @@ class InboxApi(InboxApiABC):
                 setattr(dbTask, name, getattr(task, name))
 
         # Set the time of the message
-        dbTask.dateTime = datetime.utcnow()
+        dbTask.dateTime = datetime.now(pytz.utc)
 
         dbTask.actions = []
         for action in task.actions:

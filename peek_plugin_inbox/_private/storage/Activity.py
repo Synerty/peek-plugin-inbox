@@ -40,7 +40,7 @@ class Activity(Tuple, DeclarativeBase):
 
     uniqueId = Column(String, unique=True, nullable=False)
     userId = Column(String, nullable=False)
-    dateTime = Column(DateTime, nullable=False)
+    dateTime = Column(DateTime(True), nullable=False)
 
     # The display properties of the task
     title = Column(String, nullable=False)
@@ -52,4 +52,4 @@ class Activity(Tuple, DeclarativeBase):
     routeParamJson = Column(String)
 
     # Auto Delete on Time
-    autoDeleteDateTime = Column(DateTime, nullable=False)
+    autoDeleteDateTime = Column(DateTime(True), nullable=False)
