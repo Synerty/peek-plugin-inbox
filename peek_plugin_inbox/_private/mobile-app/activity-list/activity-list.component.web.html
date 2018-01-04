@@ -4,9 +4,11 @@
 
     </div>
 
-    <div class="pl-inbox-item bg-primary" *ngFor="let activity of activities"
+    <div class="pl-inbox-item bg-primary" 
+         *ngFor="let activity of activities; odd as odd; even as even"
          (click)="activityClicked(activity)">
-        <div class="pl-inbox-info">
+        <div class="pl-inbox-info"
+            [class.bg-odd]="odd" [class.bg-even]="even">
             <div class="pl-inbox-title">{{activity.title}}</div>
             <div class="pl-inbox-description">{{activity.description}}</div>
 

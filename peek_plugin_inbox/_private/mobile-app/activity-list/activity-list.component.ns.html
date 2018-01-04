@@ -7,7 +7,7 @@
               *ngIf="!noItems()">
         <ng-template let-item="item" let-i="index" let-odd="odd" let-even="even">
             <StackLayout class="pl-inbox-item bg-primary"
-                         [class.odd]="odd" [class.even]="even"
+                         [class.bg-odd]="odd" [class.bg-even]="even"
                          (tap)="activityClicked(item)">
                 <GridLayout rows="*" columns="*, auto">
 
