@@ -5,12 +5,13 @@
 
     <ListView class="pl-inbox" [items]="tasks"
               *ngIf="!noItems()">
-        <ng-template let-item="item" let-i="index">
+        <ng-template let-item="item" let-i="index" let-odd="odd" let-even="even">
             <StackLayout class="pl-inbox-item"
                          [class.bg-success]="!item.isCompleted() && item.isPrioritySuccess()"
                          [class.bg-info]="!item.isCompleted() && item.isPriorityInfo()"
                          [class.bg-warning]="!item.isCompleted() && item.isPriorityWarning()"
                          [class.bg-danger]="!item.isCompleted() && item.isPriorityDanger()"
+                         [class.bg-odd]="odd" [class.bg-even]="even"
                          (tap)="taskClicked(item)">
 
                 <GridLayout rows="auto" columns="auto, *, auto">

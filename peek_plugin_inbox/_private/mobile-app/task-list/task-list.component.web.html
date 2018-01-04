@@ -1,11 +1,13 @@
 <div class="pl-inbox">
     <div class="title" *ngIf="noItems()">There are no tasks <fa name="smile-o"></fa></div>
 
-    <div class="pl-inbox-item" *ngFor="let task of tasks" (click)="taskClicked(task)"
+    <div class="pl-inbox-item" *ngFor="let task of tasks; odd as odd; even as even"
          [class.bg-success]="!task.isCompleted() && task.isPrioritySuccess()"
          [class.bg-info]="!task.isCompleted() && task.isPriorityInfo()"
          [class.bg-warning]="!task.isCompleted() && task.isPriorityWarning()"
-         [class.bg-danger]="!task.isCompleted() && task.isPriorityDanger()">
+         [class.bg-danger]="!task.isCompleted() && task.isPriorityDanger()"
+         [class.bg-odd]="odd" [class.bg-even]="even"
+         (click)="taskClicked(task)">
 
         <fa class="pl-inbox-icon" *ngIf="task.isTask() && !task.isCompleted()"
             name="square-o"></fa>
