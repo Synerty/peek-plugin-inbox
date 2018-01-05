@@ -1,39 +1,35 @@
-<div class="pl-inbox">
+<div class="peek-tabs-section">
+    <div class="btn-group" role="group">
+        <Button class="tabs-section-btn"
+                href="#inboxTasks"
+                aria-controls="inboxTasks"
+                data-toggle="tab"
+                role="tab">
+            Inbox
+        </Button>
+        <Button class="tabs-section-btn"
+                href="#inboxActivity"
+                aria-controls="inboxActivity"
+                data-toggle="tab"
+                role="tab">
+            Activity
+        </Button>
+    </div>
 
-    <ul class="nav nav-tabs"
-        role="tablist">
-        <li class="active"
-            role="presentation">
-            <a href="#inboxTasks"
-               aria-controls="inboxTasks"
-               data-toggle="tab"
-               role="tab">
-                Inbox
+    <div class="pl-inbox peek-tabs-bar-padding">
+        <div class="tab-content">
+            <div class="tab-pane active"
+                 role="tabpanel"
+                 id="inboxTasks">
+                <plugin-inbox-task-list></plugin-inbox-task-list>
 
-            </a>
-        </li>
-        <li role="presentation">
-            <a href="#inboxActivity"
-               aria-controls="inboxActivity"
-               data-toggle="tab"
-               role="tab">
-                Activity
+            </div>
+            <div class="tab-pane"
+                 role="tabpanel"
+                 id="inboxActivity">
+                <plugin-inbox-activity-list></plugin-inbox-activity-list>
 
-            </a>
-        </li>
-    </ul>
-    <div class="tab-content">
-        <div class="tab-pane active"
-             role="tabpanel"
-             id="inboxTasks">
-            <plugin-inbox-task-list></plugin-inbox-task-list>
-
-        </div>
-        <div class="tab-pane"
-             role="tabpanel"
-             id="inboxActivity">
-            <plugin-inbox-activity-list></plugin-inbox-activity-list>
-
+            </div>
         </div>
     </div>
 </div>
