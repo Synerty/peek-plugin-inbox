@@ -1,35 +1,19 @@
 <div class="peek-tabs-section">
     <div class="btn-group" role="group">
         <Button class="tabs-section-btn"
-                href="#inboxTasks"
-                aria-controls="inboxTasks"
-                data-toggle="tab"
-                role="tab">
+                [class.active]="barIndex == 0"
+                (click)="barIndex = 0">
             Inbox
         </Button>
         <Button class="tabs-section-btn"
-                href="#inboxActivity"
-                aria-controls="inboxActivity"
-                data-toggle="tab"
-                role="tab">
+                [class.active]="barIndex == 1"
+                (click)="barIndex = 1">
             Activity
         </Button>
     </div>
+</div>
 
-    <div class="pl-inbox peek-tabs-bar-padding">
-        <div class="tab-content">
-            <div class="tab-pane active"
-                 role="tabpanel"
-                 id="inboxTasks">
-                <plugin-inbox-task-list></plugin-inbox-task-list>
-
-            </div>
-            <div class="tab-pane"
-                 role="tabpanel"
-                 id="inboxActivity">
-                <plugin-inbox-activity-list></plugin-inbox-activity-list>
-
-            </div>
-        </div>
-    </div>
+<div class="pl-inbox peek-tabs-bar-padding">
+    <plugin-inbox-task-list *ngIf="barIndex == 0"></plugin-inbox-task-list>
+    <plugin-inbox-activity-list *ngIf="barIndex == 1"></plugin-inbox-activity-list>
 </div>
