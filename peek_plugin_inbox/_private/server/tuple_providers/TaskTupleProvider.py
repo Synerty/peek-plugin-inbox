@@ -1,6 +1,7 @@
 import logging
 from typing import Union
 
+from sqlalchemy.orm import subqueryload
 from twisted.internet.defer import Deferred
 
 from peek_plugin_inbox._private.storage.Task import Task
@@ -23,7 +24,14 @@ class TaskTupleProvider(TuplesProviderABC):
 
         session = self._ormSessionCreator()
         try:
-            tasks = session.query(Task).filter(Task.userId == userId).all()
+            tasks = (
+                session.query(Task)
+                    .filter(Task.userId == userId)
+                    .options(subqueryload(Task.actions))
+                    .all()
+            )
+
+            session.expunge_all()
 
             # Remove the data we don't want in the UI
             for task in tasks:
@@ -35,6 +43,7 @@ class TaskTupleProvider(TuplesProviderABC):
 
             # Create the vortex message
             msg = Payload(filt, tuples=tasks).toVortexMsg()
+
 
         finally:
             session.close()
