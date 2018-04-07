@@ -14,7 +14,8 @@ import {
     TupleSelector
 } from "@synerty/vortexjs";
 import {UserService} from "@peek/peek_plugin_user";
-import {Subject, Observable} from "rxjs";
+import { Observable } from "rxjs/Observable";
+import { Subject } from "rxjs/Subject";
 import {TaskTuple} from "../tuples/TaskTuple";
 import {ActivityTuple} from "../tuples/ActivityTuple";
 
