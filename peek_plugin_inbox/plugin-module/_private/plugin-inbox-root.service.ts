@@ -8,7 +8,8 @@ import {
     TupleActionPushOfflineService,
     TupleDataOfflineObserverService
 } from "@synerty/vortexjs";
-import {PeekModuleFactory, Sound} from "@synerty/peek-util/index.web";
+import { Sound} from "@synerty/peek-util";
+import {PeekModuleFactory} from "@synerty/peek-util-web";
 import {TaskTuple} from "../tuples/TaskTuple";
 import {ActivityTuple} from "../tuples/ActivityTuple";
 import {Ng2BalloonMsgService, UsrMsgLevel, UsrMsgType} from "@synerty/ng2-balloon-msg";

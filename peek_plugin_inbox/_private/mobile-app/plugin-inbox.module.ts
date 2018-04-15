@@ -2,7 +2,7 @@ import {CommonModule} from "@angular/common";
 import {NgModule} from "@angular/core";
 import {PluginInboxClientComponent} from "./plugin-inbox-client.component";
 import {Routes} from "@angular/router";
-import {PeekModuleFactory} from "@synerty/peek-util/index.web";
+import {PeekModuleFactory} from "@synerty/peek-util-web";
 
 import {
     LoggedInGuard,
