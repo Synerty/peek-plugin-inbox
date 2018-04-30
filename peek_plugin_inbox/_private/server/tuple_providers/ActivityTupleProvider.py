@@ -26,7 +26,7 @@ class ActivityTupleProvider(TuplesProviderABC):
             tasks = session.query(Activity).filter(Activity.userId == userId).all()
 
             # Create the vortex message
-            msg = Payload(filt, tuples=tasks).toVortexMsg()
+            msg = Payload(filt, tuples=tasks).makePayloadEnvelope().toVortexMsg()
 
         finally:
             session.close()

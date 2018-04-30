@@ -12,13 +12,10 @@ from peek_plugin_inbox._private.server.ClientTupleDataObservable import \
 from peek_plugin_inbox._private.server.InboxApi import InboxApi
 from peek_plugin_inbox._private.server.backend.PeekAdmSettingHandler import \
     createAdminSettingsHandler
-from peek_plugin_inbox._private.server.backend.SendTestActivityHandler import \
-    createSendTestActivityHander
-from peek_plugin_inbox._private.server.backend.SendTestTaskHandler import \
-    createSendTestTaskHander
 from peek_plugin_inbox._private.server.controller.MainController import \
     MainController
 from peek_plugin_inbox._private.storage.DeclarativeBase import loadStorageTuples
+from peek_plugin_inbox._private.tuples import loadPrivateTuples
 from peek_plugin_user.server.UserApiABC import UserApiABC
 
 logger = logging.getLogger(__name__)
@@ -35,21 +32,27 @@ class PluginServerEntryHook(PluginServerEntryHookABC,
 
     def load(self) -> None:
         loadStorageTuples()
+        loadPrivateTuples()
 
         logger.debug("loaded")
 
     def start(self):
+
+        # ----------------
+        # Setup the APIs
         userPluginApi = self.platform.getOtherPluginApi("peek_plugin_user")
         assert isinstance(userPluginApi, UserApiABC), "Expected UserApiABC"
 
         emailApi = self.platform.getOtherPluginApi("peek_core_email")
         assert isinstance(emailApi, EmailApiABC), "emailApi is not EmailApiABC"
 
-        # Create the observable
+        # ---------------
+        # Tuple Observable
         tupleObserver = makeTupleDataObservableHandler(self.dbSessionCreator)
         self._runningHandlers.append(tupleObserver)
 
-        # Create the main controller
+        # ---------------
+        # MainController
         self._mainController = MainController(
             ormSessionCreator=self.dbSessionCreator,
             userPluginApi=userPluginApi,
@@ -58,19 +61,27 @@ class PluginServerEntryHook(PluginServerEntryHookABC,
         )
         self._runningHandlers.append(self._mainController)
 
-        # Create the endpoing that listens for TupleActions
+        # ---------------
+        # Tuple Action Processor
         actionProcessor = makeTupleActionProcessorHandler(self._mainController)
         self._runningHandlers.append(actionProcessor)
 
+        # ---------------
+        # Our API
         # Create the API that other plugins will use
         self._api = InboxApi(
             self.dbSessionCreator, userPluginApi, self._mainController
         )
         self._runningHandlers.append(self._api)
 
+
+        # ---------------
+        # Link API to Main Controller
+        self._mainController.setOurApi(self._api)
+
+        # ---------------
+        # Admin Handlers
         # Add the handlers for the Admin UI
-        self._runningHandlers.append(createSendTestActivityHander(self._api))
-        self._runningHandlers.append(createSendTestTaskHander(self._api))
         self._runningHandlers.append(createAdminSettingsHandler(self.dbSessionCreator))
 
         self._mainController.start()

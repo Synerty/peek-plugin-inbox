@@ -42,7 +42,7 @@ class TaskTupleProvider(TuplesProviderABC):
                     action.onActionPayload = None
 
             # Create the vortex message
-            msg = Payload(filt, tuples=tasks).toVortexMsg()
+            msg = Payload(filt, tuples=tasks).makePayloadEnvelope().toVortexMsg()
 
 
         finally:

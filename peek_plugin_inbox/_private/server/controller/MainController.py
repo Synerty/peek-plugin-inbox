@@ -8,9 +8,12 @@ from twisted.internet.defer import inlineCallbacks, Deferred
 from twisted.internet.task import LoopingCall
 
 from peek_core_email.server.EmailApiABC import EmailApiABC
+from peek_plugin_inbox._private.server.controller.AdminTestController import \
+    AdminTestController
 from peek_plugin_inbox._private.storage.Activity import Activity
 from peek_plugin_inbox._private.storage.Task import Task
 from peek_plugin_inbox._private.storage.TaskAction import TaskAction
+from peek_plugin_inbox.server.InboxApiABC import InboxApiABC
 from peek_plugin_user.server.UserApiABC import UserApiABC
 from vortex.DeferUtil import vortexLogFailure, deferToThreadWrapWithLogger
 from vortex.TupleAction import TupleGenericAction
@@ -36,12 +39,19 @@ class MainController(TupleActionProcessorDelegateABC):
 
         self._processLoopingCall = LoopingCall(self._deleteOnDateTime)
 
+        self._adminTestController: AdminTestController = None
+
+    def setOurApi(self, thisPluginsApi: InboxApiABC):
+        self._adminTestController = AdminTestController(thisPluginsApi)
+
     def start(self):
         d = self._processLoopingCall.start(self.PROCESS_PERIOD, now=False)
         d.addErrback(vortexLogFailure, logger)
 
     def shutdown(self):
         self._processLoopingCall.stop()
+        self._adminTestController.shutdown()
+        self._adminTestController = None
 
     def _notifyObserver(self, tupleName: str, userId: str) -> None:
         self._tupleObserver.notifyOfTupleUpdate(
@@ -71,6 +81,10 @@ class MainController(TupleActionProcessorDelegateABC):
 
     @inlineCallbacks
     def processTupleAction(self, tupleAction: TupleGenericAction):
+        val = yield self._adminTestController.processTupleAction(tupleAction)
+        if val is not None:
+            return val
+
         if tupleAction.key == Task.tupleName():
             yield self._processTaskUpdate(tupleAction)
             return []

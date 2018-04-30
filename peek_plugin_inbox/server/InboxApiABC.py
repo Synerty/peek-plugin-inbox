@@ -151,16 +151,16 @@ class NewTaskAction:
     """
 
     def __init__(self, title: str, confirmMessage: str,
-                 onActionPayload: Optional[bytes] = None):
+                 onActionPayloadEnvelope: Optional[bytes] = None):
         """
         :param title: The title of the action, this will appear as a menu option.
         :param confirmMessage: This is the message that will be shown to confirm the action.
-        :param onActionPayload: This payload will be delivered locally on Peek Server
+        :param onActionPayloadEnvelope: This payload will be delivered locally on Peek Server
                  When the action is performed on the user device.
         """
         self.title = self._required(title, "title")
         self.confirmMessage = self._required(confirmMessage, "confirmMessage")
-        self.onActionPayload = self._required(onActionPayload, "onActionPayload")
+        self.onActionPayloadEnvelope = self._required(onActionPayloadEnvelope, "onActionPayload")
 
     def _required(self, val, desc):
         if not val:

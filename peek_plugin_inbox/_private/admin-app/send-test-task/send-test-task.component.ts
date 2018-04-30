@@ -1,9 +1,15 @@
 import {Component} from "@angular/core";
-import {ComponentLifecycleEventEmitter, Payload, VortexService, extend} from "@synerty/vortexjs";
+import {
+    ComponentLifecycleEventEmitter,
+    extend,
+    Payload,
+    TupleActionPushService,
+    VortexService
+} from "@synerty/vortexjs";
 import {Ng2BalloonMsgService} from "@synerty/ng2-balloon-msg";
 
-
 import * as moment from "moment";
+import {AdminSendTestTaskActionTuple} from "@peek/peek_plugin_inbox/_private/tuples";
 
 @Component({
     selector: 'active-task-send-test-task',
@@ -13,35 +19,23 @@ import * as moment from "moment";
 export class SendTestTaskComponent extends ComponentLifecycleEventEmitter {
     task = {
         notificationRequiredFlags: 0,
-        notifyByPopup:false,
-        notifyBySound:false,
-        notifyBySms:false,
-        notifyByEmail:false,
-        notifyByDialog:false,
-        displayAs:0,
-        displayPriority:1,
-        autoComplete:0,
-        autoDelete:0,
+        notifyByPopup: false,
+        notifyBySound: false,
+        notifyBySms: false,
+        notifyByEmail: false,
+        notifyByDialog: false,
+        displayAs: 0,
+        displayPriority: 1,
+        autoComplete: 0,
+        autoDelete: 0,
         actions: [],
         autoDeleteDateTime: moment().add(1, 'days').format('YYYY-MM-DDTHH:mm')
     };
 
-    private readonly filt = {
-        "plugin": "peek_plugin_inbox",
-        "key": "sendTestTask"
-    };
-
-    constructor(private vortexService: VortexService, private balloonMsg: Ng2BalloonMsgService) {
+    constructor(private tupleActionPush: TupleActionPushService,
+                private balloonMsg: Ng2BalloonMsgService) {
         super();
 
-        vortexService.createEndpointObservable(this, this.filt)
-            .subscribe(payload => {
-                if (payload.result == null || payload.result === true) {
-                    balloonMsg.showSuccess("Test Task Sent Successfully");
-                } else {
-                    balloonMsg.showError("Test Task Failed : " + payload.result);
-                }
-            });
 
     }
 
@@ -63,7 +57,7 @@ export class SendTestTaskComponent extends ComponentLifecycleEventEmitter {
         if (this.task.notifyByDialog)
             this.task.notificationRequiredFlags += 16;
 
-        let taskCopy = extend({},this.task);
+        let taskCopy = extend({}, this.task);
         delete taskCopy.notifyByPopup;
         delete taskCopy.notifyBySound;
         delete taskCopy.notifyBySms;
@@ -73,7 +67,10 @@ export class SendTestTaskComponent extends ComponentLifecycleEventEmitter {
         taskCopy.displayAs = parseInt(taskCopy.displayAs);
         taskCopy.displayPriority = parseInt(taskCopy.displayPriority);
 
-
-        this.vortexService.sendPayload(new Payload(this.filt, [taskCopy]));
+        let action = new AdminSendTestTaskActionTuple();
+        action.formData = taskCopy;
+        this.tupleActionPush.pushAction(action)
+            .then(() => this.balloonMsg.showSuccess("Task created successfully"))
+            .catch(e => this.balloonMsg.showError(`Failed to create task ${e}`));
     }
 }

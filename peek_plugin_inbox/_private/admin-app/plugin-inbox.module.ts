@@ -26,6 +26,12 @@ import {AdminActivityListComponent} from "./activity-list/admin-activity-list.co
  */
 
 
+
+export function tupleActionPushNameServiceFactory() {
+    return new TupleActionPushNameService(
+        inboxActionProcessorName, inboxFilt);
+}
+
 export const pluginRoutes: Routes = [
     {
         path: '',

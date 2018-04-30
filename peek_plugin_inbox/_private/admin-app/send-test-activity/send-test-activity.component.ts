@@ -3,6 +3,7 @@ import {
     extend,
     ComponentLifecycleEventEmitter,
     Payload,
+    TupleActionPushService,
     VortexService
 } from "@synerty/vortexjs";
 import {Ng2BalloonMsgService} from "@synerty/ng2-balloon-msg";
@@ -12,6 +13,7 @@ import {Ng2BalloonMsgService} from "@synerty/ng2-balloon-msg";
 // declare let moment: any;
 
 import * as moment from "moment";
+import {AdminSendTestActivityActionTuple} from "@peek/peek_plugin_inbox/_private/tuples";
 
 @Component({
     selector: 'active-task-send-test-activity',
@@ -23,22 +25,9 @@ export class SendTestActivityComponent extends ComponentLifecycleEventEmitter {
         autoDeleteDateTime: moment().add(1, 'days').format('YYYY-MM-DDTHH:mm')
     };
 
-    private readonly filt = {
-        "plugin": "peek_plugin_inbox",
-        "key": "sendTestActivity"
-    };
-
-    constructor(private vortexService: VortexService, private balloonMsg: Ng2BalloonMsgService) {
+    constructor(private tupleActionPush: TupleActionPushService,
+                private balloonMsg: Ng2BalloonMsgService) {
         super();
-
-        vortexService.createEndpointObservable(this, this.filt)
-            .subscribe(payload => {
-                if (payload.result == null || payload.result === true) {
-                    balloonMsg.showSuccess("Test Activity Sent Successfully");
-                } else {
-                    balloonMsg.showError("Test Activity Failed : " + payload.result);
-                }
-            });
 
     }
 
@@ -46,6 +35,10 @@ export class SendTestActivityComponent extends ComponentLifecycleEventEmitter {
         let activityCopy = extend({}, this.activity);
         activityCopy.autoDeleteDateTime = moment(activityCopy.autoDeleteDateTime).toDate();
 
-        this.vortexService.sendPayload(new Payload(this.filt, [activityCopy]));
+        let action = new AdminSendTestActivityActionTuple();
+        action.formData = activityCopy;
+        this.tupleActionPush.pushAction(action)
+            .then(() => this.balloonMsg.showSuccess("Activity created successfully"))
+            .catch(e => this.balloonMsg.showError(`Failed to create activity ${e}`));
     }
 }
