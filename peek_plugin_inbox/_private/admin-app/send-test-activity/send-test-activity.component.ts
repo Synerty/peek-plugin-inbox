@@ -13,7 +13,7 @@ import {Ng2BalloonMsgService} from "@synerty/ng2-balloon-msg";
 // declare let moment: any;
 
 import * as moment from "moment";
-import {AdminSendTestActivityActionTuple} from "@peek/peek_plugin_inbox/_private/tuples";
+import {AdminSendTestActivityActionTuple} from "@peek/peek_plugin_inbox/_private";
 
 @Component({
     selector: 'active-task-send-test-activity',

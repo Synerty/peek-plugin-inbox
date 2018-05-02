@@ -9,7 +9,7 @@ import {
 import {Ng2BalloonMsgService} from "@synerty/ng2-balloon-msg";
 
 import * as moment from "moment";
-import {AdminSendTestTaskActionTuple} from "@peek/peek_plugin_inbox/_private/tuples";
+import {AdminSendTestTaskActionTuple} from "@peek/peek_plugin_inbox/_private";
 
 @Component({
     selector: 'active-task-send-test-task',
