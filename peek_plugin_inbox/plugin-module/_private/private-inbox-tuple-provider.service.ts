@@ -1,5 +1,6 @@
 import {Injectable, NgZone} from "@angular/core";
 import {
+    ComponentLifecycleEventEmitter,
     TupleActionPushNameService,
     TupleActionPushOfflineService,
     TupleActionPushOfflineSingletonService,
@@ -7,15 +8,14 @@ import {
     TupleDataOfflineObserverService,
     TupleOfflineStorageNameService,
     TupleOfflineStorageService,
+    TupleSelector,
     TupleStorageFactoryService,
     VortexService,
-    VortexStatusService,
-    ComponentLifecycleEventEmitter,
-    TupleSelector
+    VortexStatusService
 } from "@synerty/vortexjs";
 import {UserService} from "@peek/peek_plugin_user";
-import { Observable } from "rxjs/Observable";
-import { Subject } from "rxjs/Subject";
+import {Observable} from "rxjs/Observable";
+import {Subject} from "rxjs/Subject";
 import {TaskTuple} from "../tuples/TaskTuple";
 import {ActivityTuple} from "../tuples/ActivityTuple";
 
@@ -63,7 +63,6 @@ export class PrivateInboxTupleProviderService extends ComponentLifecycleEventEmi
         this.tupleDataOfflineObserver = new TupleDataOfflineObserverService(
             vortexService,
             vortexStatusService,
-            zone,
             tupleDataObservableName,
             tupleOfflineStorageService);
 
