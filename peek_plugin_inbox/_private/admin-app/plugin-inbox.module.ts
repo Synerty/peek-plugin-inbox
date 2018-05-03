@@ -9,13 +9,17 @@ import {
     TupleActionPushNameService,
     TupleActionPushService,
     TupleDataObservableNameService,
-    TupleDataObserverService
+    TupleDataObserverService,
+    TupleOfflineStorageNameService,
+    TupleOfflineStorageService,
+    TupleDataOfflineObserverService
 } from "@synerty/vortexjs";
 
 import {
     inboxActionProcessorName,
     inboxFilt,
-    inboxObservableName
+    inboxObservableName,
+    inboxTupleOfflineServiceName
 } from "@peek/peek_plugin_inbox/plugin-inbox-names";
 import {AdminSettingListComponent} from "./setting-list/admin-setting-list.component";
 import {AdminTaskListComponent} from "./task-list/admin-task-list.component";
@@ -45,6 +49,10 @@ export function tupleActionPushNameServiceFactory() {
         inboxActionProcessorName, inboxFilt);
 }
 
+export function tupleOfflineStorageNameServiceFactory() {
+    return new TupleOfflineStorageNameService(inboxTupleOfflineServiceName);
+}
+
 @NgModule({
     imports: [
         CommonModule,
@@ -52,13 +60,18 @@ export function tupleActionPushNameServiceFactory() {
         RouterModule.forChild(pluginRoutes)],
     exports: [],
     providers: [
-        TupleDataObserverService, {
-            provide: TupleDataObservableNameService,
-            useFactory: tupleDataObservableNameServiceFactory
-        }, TupleActionPushService, {
+        TupleActionPushService, {
             provide: TupleActionPushNameService,
             useFactory: tupleActionPushNameServiceFactory
-        }
+        },
+        TupleOfflineStorageService, {
+            provide: TupleOfflineStorageNameService,
+            useFactory: tupleOfflineStorageNameServiceFactory
+        },
+        TupleDataObserverService, TupleDataOfflineObserverService, {
+            provide: TupleDataObservableNameService,
+            useFactory: tupleDataObservableNameServiceFactory
+        },
     ],
     declarations: [PluginInboxAdminComponent,
         SendTestTaskComponent,
