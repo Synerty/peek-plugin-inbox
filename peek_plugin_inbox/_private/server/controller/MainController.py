@@ -4,6 +4,7 @@ from typing import Optional
 
 import pytz
 from sqlalchemy.orm.exc import NoResultFound
+from twisted.internet import reactor
 from twisted.internet.defer import inlineCallbacks, Deferred
 from twisted.internet.task import LoopingCall
 
@@ -107,7 +108,7 @@ class MainController(TupleActionProcessorDelegateABC):
         try:
             action = session.query(TaskAction).filter(TaskAction.id == actionId).one()
             # userId = action.task.userId
-            VortexFactory.sendVortexMsgLocally(action.onActionPayload)
+            self._deliverPayloadEnvelope(action.onActionPayloadEnvelope)
 
         finally:
             session.close()
@@ -128,6 +129,7 @@ class MainController(TupleActionProcessorDelegateABC):
             wasCompleted = task.stateFlags & Task.STATE_COMPLETED
             wasDialogConfirmed = task.stateFlags & Task.STATE_DIALOG_CONFIRMED
 
+            newFlags = 0
             if tupleAction.data.get("stateFlags") is not None:
                 newFlags = tupleAction.data["stateFlags"]
                 task.stateFlags = (task.stateFlags | newFlags)
@@ -141,23 +143,23 @@ class MainController(TupleActionProcessorDelegateABC):
 
             autoDelete = task.autoDelete
             stateFlags = task.stateFlags
-            onDeletedPayload = task.onDeletedPayload
+            onDeletedPayloadEnvelope = task.onDeletedPayloadEnvelope
 
             # Commit the updates.
             session.commit()
 
             newDelivery = not wasDelivered and (newFlags & Task.STATE_DELIVERED)
-            if newDelivery and task.onDeliveredPayload:
-                VortexFactory.sendVortexMsgLocally(task.onDeliveredPayload)
+            if newDelivery and task.onDeliveredPayloadEnvelope:
+                self._deliverPayloadEnvelope(task.onDeliveredPayloadEnvelope)
 
             newCompleted = not wasCompleted and (newFlags & Task.STATE_COMPLETED)
-            if newCompleted and task.onCompletedPayload:
-                VortexFactory.sendVortexMsgLocally(task.onCompletedPayload)
+            if newCompleted and task.onCompletedPayloadEnvelope:
+                self._deliverPayloadEnvelope(task.onCompletedPayloadEnvelope)
 
             newDialogConfirmed = (newFlags & Task.STATE_DIALOG_CONFIRMED)
             newDialogConfirmed &= not wasDialogConfirmed
-            if newDialogConfirmed and task.onDialogConfirmPayload:
-                VortexFactory.sendVortexMsgLocally(task.onDialogConfirmPayload)
+            if newDialogConfirmed and task.onDialogConfirmPayloadEnvelope:
+                self._deliverPayloadEnvelope(task.onDialogConfirmPayloadEnvelope)
 
             if autoDelete & stateFlags:
                 (session.query(Task)
@@ -165,8 +167,8 @@ class MainController(TupleActionProcessorDelegateABC):
                  .delete(synchronize_session=False))
                 session.commit()
 
-                if onDeletedPayload:
-                    VortexFactory.sendVortexMsgLocally(onDeletedPayload)
+                if onDeletedPayloadEnvelope:
+                    self._deliverPayloadEnvelope(onDeletedPayloadEnvelope)
 
             self._notifyObserver(Task.tupleName(), userId)
 
@@ -175,6 +177,9 @@ class MainController(TupleActionProcessorDelegateABC):
 
         finally:
             session.close()
+
+    def _deliverPayloadEnvelope(self, vortexMsg: bytes):
+        reactor.callLater(0, VortexFactory.sendVortexMsgLocally, vortexMsg)
 
     @deferToThreadWrapWithLogger(logger)
     def _deleteOnDateTime(self):

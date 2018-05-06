@@ -54,10 +54,10 @@ class NewTask:
                  autoComplete: int = AUTO_COMPLETE_OFF,
                  autoDelete: int = AUTO_DELETE_OFF,
                  autoDeleteDateTime: Optional[datetime] = None,
-                 onDeliveredPayload: Optional[bytes] = None,
-                 onCompletedPayload: Optional[bytes] = None,
-                 onDeletedPayload: Optional[bytes] = None,
-                 onDialogConfirmPayload: Optional[bytes] = None,
+                 onDeliveredPayloadEnvelope: Optional[bytes] = None,
+                 onCompletedPayloadEnvelope: Optional[bytes] = None,
+                 onDeletedPayloadEnvelope: Optional[bytes] = None,
+                 onDialogConfirmPayloadEnvelope: Optional[bytes] = None,
                  notificationRequiredFlags: int = 0,
                  actions: List['NewTaskAction'] = (),
                  overwriteExisting=False):
@@ -89,13 +89,13 @@ class NewTask:
         :param autoDeleteDateTime: The datetime when this task should automatically
                 be deleted it if still exists.
     
-        :param onDeliveredPayload: (Optional) The payload that will be delivered locally
+        :param onDeliveredPayloadEnvelope: (Optional) The payload that will be delivered locally
             on Peek Server when the task is delivered.
-        :param onCompletedPayload: (Optional) The payload that will be delivered locally
+        :param onCompletedPayloadEnvelope: (Optional) The payload that will be delivered locally
             on Peek Server when the task is completed (auto, or otherwise)
-        :param onDeletedPayload: (Optional) The payload that will be delivered locally
+        :param onDeletedPayloadEnvelope: (Optional) The payload that will be delivered locally
             on Peek Server when the task is deleted (auto, or otherwise)
-        :param onDialogConfirmPayload: (Optional) The payload that will be delivered
+        :param onDialogConfirmPayloadEnvelope: (Optional) The payload that will be delivered
             locally on Peek Server when the user clicks "OK" on the dialog.
             
         :param overwriteExisting: If a task with that uniqueId already exists, it will be
@@ -119,10 +119,10 @@ class NewTask:
         self.routeParamJson = routeParamJson
 
         # The confirmation options
-        self.onDeliveredPayload = onDeliveredPayload
-        self.onCompletedPayload = onCompletedPayload
-        self.onDeletedPayload = onDeletedPayload
-        self.onDialogConfirmPayload = onDialogConfirmPayload
+        self.onDeliveredPayloadEnvelope = onDeliveredPayloadEnvelope
+        self.onCompletedPayloadEnvelope = onCompletedPayloadEnvelope
+        self.onDeletedPayloadEnvelope = onDeletedPayloadEnvelope
+        self.onDialogConfirmPayloadEnvelope = onDialogConfirmPayloadEnvelope
 
         self.autoComplete = autoComplete
         self.autoDelete = autoDelete

@@ -54,7 +54,7 @@ class AdminTestController:
 
         """
 
-        vmsg = PayloadEnvelope().toVortexMsg()
+        vmsg = yield PayloadEnvelope().toVortexMsgDefer()
 
         from peek_plugin_inbox.server.InboxApiABC import NewTask
         newTask = NewTask(**tupleAction.formData)

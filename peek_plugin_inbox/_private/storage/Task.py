@@ -56,10 +56,10 @@ class Task(Tuple, DeclarativeBase):
     routeParamJson = Column(String)
 
     # The confirmation options
-    onDeliveredPayload = Column(PeekLargeBinary)
-    onCompletedPayload = Column(PeekLargeBinary)
-    onDeletedPayload = Column(PeekLargeBinary)
-    onDialogConfirmPayload = Column(PeekLargeBinary)
+    onDeliveredPayloadEnvelope = Column(PeekLargeBinary)
+    onCompletedPayloadEnvelope = Column(PeekLargeBinary)
+    onDeletedPayloadEnvelope = Column(PeekLargeBinary)
+    onDialogConfirmPayloadEnvelope = Column(PeekLargeBinary)
 
     AUTO_COMPLETE_OFF = NewTask.AUTO_COMPLETE_OFF
     AUTO_COMPLETE_ON_DELIVER = NewTask.AUTO_COMPLETE_ON_DELIVER
