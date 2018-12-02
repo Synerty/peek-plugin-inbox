@@ -291,6 +291,21 @@ class InboxApiABC(metaclass=ABCMeta):
         """
 
     @abstractmethod
+    def removeTasks(self, pluginName: str, uniqueIdLike: Optional[str] = None,
+                    userId: Optional[str]=None) -> Deferred:
+        """ Remove Tasks
+
+        Remove all tasks created by a plugin.
+
+        :param pluginName: The plugin that these tasks are for.
+        :param uniqueIdLike: The uniqueId provided when the task was created,
+            this is queried with the SQL ilike expression %
+        :param userId: The userId of the tasks to remove.
+        :return :code:`Deferred` firing with None
+
+        """
+
+    @abstractmethod
     def addActivity(self, activity: NewActivity) -> Deferred:
         """ Add a new Activity item
 
@@ -309,6 +324,21 @@ class InboxApiABC(metaclass=ABCMeta):
 
         :param pluginName: The plugin that this activity is for.
         :param uniqueId: The uniqueId provided when the activity was created.
+        :return :code:`Deferred` firing with None
+
+        """
+
+    @abstractmethod
+    def removeActivities(self, pluginName: str, uniqueIdLike: Optional[str] = None,
+                         userId: Optional[str]=None) -> Deferred:
+        """ Remove Tasks
+
+        Remove all activities created by a plugin.
+
+        :param pluginName: The plugin that these activities are for.
+        :param uniqueIdLike: The uniqueId provided when the task was created,
+            this is queried with the SQL ilike expression %
+        :param userId: The userId of the activities to remove.
         :return :code:`Deferred` firing with None
 
         """

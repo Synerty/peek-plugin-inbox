@@ -96,7 +96,7 @@ class InboxApi(InboxApiABC):
             taskId, userId = task.id, task.userId
             session.commit()
 
-            reactor.callLater(0, self._mainController.taskUpdated, taskId, userId)
+            reactor.callLater(0, self._mainController.taskUpdated, userId)
 
         except NoResultFound:
             logger.debug("Task %s has been deleted" % taskId)
@@ -104,29 +104,37 @@ class InboxApi(InboxApiABC):
         finally:
             session.close()
 
-    @deferToThreadWrapWithLogger(logger)
     def removeTask(self, pluginName: str, uniqueId: str) -> None:
+        return self.removeTasks(pluginName, uniqueIdLike=uniqueId)
+
+    def removeTasks(self, pluginName: str, uniqueIdLike: Optional[str] = None,
+                    userId: Optional[str] = None) -> Deferred:
 
         session = self._ormSessionCreator()
         try:
-            tasks = session.query(Task) \
-                .filter(Task.pluginName == pluginName) \
-                .filter(Task.uniqueId == uniqueId) \
-                .all()
+            qry = session.query(Task.userId) \
+                .filter(Task.pluginName == pluginName)
 
-            if tasks:
-                task = tasks[0]
-                taskId, userId = task.id, task.userId
-                session.delete(task)
-                session.commit()
+            if uniqueIdLike:
+                qry = qry.filter(Task.uniqueId.ilike(uniqueIdLike))
 
-            else:
-                raise ValueError("Task does not exist, %s " % uniqueId)
+            if userId:
+                qry = qry.filter(Task.userId == userId)
+
+            userIds = set()
+
+            for task in qry.all():
+                userIds.add(task.userId)
+
+            qry.delete(synchronize_session=False)
+
+            session.commit()
 
         finally:
             session.close()
 
-        reactor.callLater(0, self._mainController.taskRemoved, taskId, userId)
+        for userId in userIds:
+            reactor.callLater(0, self._mainController.taskRemoved, userId)
 
     @deferToThreadWrapWithLogger(logger)
     def getTasks(self, pluginName: str, uniqueIdLike: Optional[str] = None,
@@ -188,31 +196,40 @@ class InboxApi(InboxApiABC):
         finally:
             session.close()
 
-        reactor.callLater(0, self._mainController.activityAdded, taskId, userId)
+        reactor.callLater(0, self._mainController.activityAdded, userId)
+
+    def removeActivity(self, pluginName: str, uniqueId: str) -> None:
+        return self.removeActivities(pluginName, uniqueIdLike=uniqueId)
 
     @deferToThreadWrapWithLogger(logger)
-    def removeActivity(self, pluginName: str, uniqueId: str) -> None:
+    def removeActivities(self, pluginName: str, uniqueIdLike: Optional[str] = None,
+                         userId: Optional[str] = None) -> Deferred:
 
         session = self._ormSessionCreator()
         try:
-            activities = session.query(Activity) \
-                .filter(Activity.pluginName == pluginName) \
-                .filter(Activity.uniqueId == uniqueId) \
-                .all()
+            qry = session.query(Activity.userId) \
+                .filter(Activity.pluginName == pluginName)
 
-            if activities:
-                activity = activities[0]
-                activityId, userId = activity.id, activity.userId
-                session.delete(activity)
-                session.commit()
+            if uniqueIdLike:
+                qry = qry.filter(Activity.uniqueId.ilike(uniqueIdLike))
 
-            else:
-                raise ValueError("Activity %s does not exist" % uniqueId)
+            if userId:
+                qry = qry.filter(Activity.userId == userId)
+
+            userIds = set()
+
+            for activity in qry.all():
+                userIds.add(activity.userId)
+
+            qry.delete(synchronize_session=False)
+
+            session.commit()
 
         finally:
             session.close()
 
-        reactor.callLater(0, self._mainController.activityRemoved, activityId, userId)
+        for userId in userIds:
+            reactor.callLater(0, self._mainController.activityRemoved, userId)
 
     @deferToThreadWrapWithLogger(logger)
     def getActivities(self, pluginName: str, uniqueIdLike: Optional[str] = None,
