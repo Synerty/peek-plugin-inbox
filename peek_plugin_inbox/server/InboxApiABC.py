@@ -1,8 +1,8 @@
+from abc import ABCMeta, abstractmethod
 from datetime import datetime
 from typing import Optional, List
 
 import pytz
-from abc import ABCMeta, abstractmethod
 from twisted.internet.defer import Deferred
 
 
@@ -160,7 +160,8 @@ class NewTaskAction:
         """
         self.title = self._required(title, "title")
         self.confirmMessage = self._required(confirmMessage, "confirmMessage")
-        self.onActionPayloadEnvelope = self._required(onActionPayloadEnvelope, "onActionPayload")
+        self.onActionPayloadEnvelope = self._required(onActionPayloadEnvelope,
+                                                      "onActionPayload")
 
     def _required(self, val, desc):
         if not val:
@@ -256,6 +257,19 @@ class InboxApiABC(metaclass=ABCMeta):
         """
 
     @abstractmethod
+    def getTasks(self, uniqueIdLike: Optional[str], userId: Optional[str]) -> Deferred:
+        """ Get Tasks
+
+        Retrieve a list of tasks matching the criteria
+
+        :param userId:
+        :param uniqueIdLike: The uniqueId provided when the task was created,
+            this is queried with the SQL ilike expression %
+        :return :code:`Deferred` firing with a List[TaskTuple]
+
+        """
+
+    @abstractmethod
     def removeTask(self, uniqueId: str) -> Deferred:
         """ Remove a Task
         
@@ -285,5 +299,19 @@ class InboxApiABC(metaclass=ABCMeta):
 
         :param uniqueId: The uniqueId provided when the activity was created.
         :return :code:`Deferred` firing with None
+
+        """
+
+    @abstractmethod
+    def getActivities(self, uniqueIdLike: Optional[str],
+                      userId: Optional[str]) -> Deferred:
+        """ Get Activities
+
+        Retrieve a list of activities matching the criteria
+
+        :param userId:
+        :param uniqueIdLike: The uniqueId provided when the task was created,
+            this is queried with the SQL ilike expression %
+        :return :code:`Deferred` firing with a List[ActivityTuple]
 
         """

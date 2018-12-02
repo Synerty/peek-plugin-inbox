@@ -1,10 +1,8 @@
 import logging
 from datetime import datetime
+from typing import Optional
 
 import pytz
-from sqlalchemy.orm.exc import NoResultFound
-from twisted.internet import reactor
-
 from peek_plugin_inbox._private.server.controller.MainController import \
     MainController
 from peek_plugin_inbox._private.storage.Activity import Activity
@@ -12,13 +10,19 @@ from peek_plugin_inbox._private.storage.Task import Task
 from peek_plugin_inbox._private.storage.TaskAction import TaskAction
 from peek_plugin_inbox.server.InboxApiABC import InboxApiABC, NewTask, \
     NewActivity
+from peek_plugin_inbox.tuples.ActivityTuple import ActivityTuple
+from peek_plugin_inbox.tuples.TaskTuple import TaskTuple
 from peek_plugin_user.server.UserApiABC import UserApiABC
+from sqlalchemy.orm.exc import NoResultFound
+from twisted.internet import reactor
+from twisted.internet.defer import Deferred
 from vortex.DeferUtil import deferToThreadWrapWithLogger
 
 logger = logging.getLogger(__name__)
 
 
 class InboxApi(InboxApiABC):
+
     def __init__(self, ormSessionCreator, userPluginApi: UserApiABC,
                  mainController: MainController):
         self._ormSessionCreator = ormSessionCreator
@@ -120,6 +124,29 @@ class InboxApi(InboxApiABC):
         reactor.callLater(0, self._mainController.taskRemoved, taskId, userId)
 
     @deferToThreadWrapWithLogger(logger)
+    def getTasks(self, uniqueIdLike: Optional[str], userId: Optional[str]) -> Deferred:
+        session = self._ormSessionCreator()
+        try:
+            qry = session.query(Task)
+            if uniqueIdLike:
+                qry = qry.filter(Task.uniqueId.ilike(uniqueIdLike))
+
+            if userId:
+                qry = qry.filter(Task.userId == userId)
+
+            taskTuples = []
+            for task in qry.all():
+                taskTuple = TaskTuple()
+                for fieldName in taskTuple.tupleFieldNames():
+                    setattr(taskTuple, fieldName, getattr(task, fieldName))
+                taskTuples.append(taskTuple)
+
+        finally:
+            session.close()
+
+        return taskTuples
+
+    @deferToThreadWrapWithLogger(logger)
     def addActivity(self, activity: NewActivity) -> None:
         # Create the database task from the parameter
         dbActivity = Activity()
@@ -178,3 +205,26 @@ class InboxApi(InboxApiABC):
             session.close()
 
         reactor.callLater(0, self._mainController.activityRemoved, activityId, userId)
+
+    @deferToThreadWrapWithLogger(logger)
+    def getActivities(self, uniqueIdLike: Optional[str], userId: Optional[str]) -> Deferred:
+        session = self._ormSessionCreator()
+        try:
+            qry = session.query(Activity)
+            if uniqueIdLike:
+                qry = qry.filter(Activity.uniqueId.ilike(uniqueIdLike))
+
+            if userId:
+                qry = qry.filter(Activity.userId == userId)
+
+            activityTuples = []
+            for activity in qry.all():
+                activityTuple = ActivityTuple()
+                for fieldName in activityTuple.tupleFieldNames():
+                    setattr(activityTuple, fieldName, getattr(activity, fieldName))
+                activityTuples.append(activityTuple)
+
+        finally:
+            session.close()
+
+        return activityTuples

@@ -6,6 +6,7 @@ from peek_plugin_inbox._private.client.ClientFeTupleDataObservableProxy import \
     makeTupleDataObservableProxy
 from peek_plugin_inbox._private.storage.DeclarativeBase import loadStorageTuples
 from peek_plugin_base.client.PluginClientEntryHookABC import PluginClientEntryHookABC
+from peek_plugin_inbox.tuples import loadPublicTuples
 
 logger = logging.getLogger(__name__)
 
@@ -18,6 +19,7 @@ class PluginClientEntryHook(PluginClientEntryHookABC):
 
     def load(self):
         loadStorageTuples()
+        loadPublicTuples()
         logger.debug("loaded")
 
     def start(self):
