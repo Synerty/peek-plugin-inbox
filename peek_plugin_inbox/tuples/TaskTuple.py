@@ -20,6 +20,7 @@ class TaskTuple(Tuple):
     """
     __tupleType__ = inboxTuplePrefix + 'TaskTuple'
 
+    pluginName: str = TupleField()
     uniqueId: str = TupleField()
     userId: str = TupleField()
     dateTime: datetime = TupleField()

@@ -20,6 +20,7 @@ class ActivityTuple(Tuple):
     """
     __tupleType__ = inboxTuplePrefix + 'ActivityTuple'
 
+    pluginName: str = TupleField()
     uniqueId: str = TupleField()
     userId: str = TupleField()
     dateTime: datetime = TupleField()

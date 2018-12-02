@@ -10,14 +10,12 @@
 """
 import logging
 
-from sqlalchemy import Column
-from sqlalchemy import Integer, String
-from sqlalchemy.orm import relationship
-from sqlalchemy.sql.sqltypes import DateTime
-from vortex.Tuple import Tuple, addTupleType
-
 from peek_plugin_inbox._private.PluginNames import inboxTuplePrefix
 from peek_plugin_inbox._private.storage.DeclarativeBase import DeclarativeBase
+from sqlalchemy import Column, Index
+from sqlalchemy import Integer, String
+from sqlalchemy.sql.sqltypes import DateTime
+from vortex.Tuple import Tuple, addTupleType
 
 logger = logging.getLogger(__name__)
 
@@ -38,7 +36,8 @@ class Activity(Tuple, DeclarativeBase):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
 
-    uniqueId = Column(String, unique=True, nullable=False)
+    pluginName = Column(String, nullable=False)
+    uniqueId = Column(String, nullable=False)
     userId = Column(String, nullable=False)
     dateTime = Column(DateTime(True), nullable=False)
 
@@ -53,3 +52,7 @@ class Activity(Tuple, DeclarativeBase):
 
     # Auto Delete on Time
     autoDeleteDateTime = Column(DateTime(True), nullable=False)
+
+    __table_args__ = (
+        Index("idx_Activity_pluginName_uniqueId", pluginName, uniqueId, unique=True),
+    )

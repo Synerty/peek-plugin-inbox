@@ -56,12 +56,10 @@ class InboxApi(InboxApiABC):
         session = self._ormSessionCreator()
         try:
             try:
-                oldTask = (
-                    session
-                        .query(Task)
-                        .filter(Task.uniqueId == task.uniqueId)
-                        .one()
-                )
+                oldTask = session.query(Task) \
+                    .filter(Task.pluginName == task.pluginName) \
+                    .filter(Task.uniqueId == task.uniqueId) \
+                    .one()
 
                 if task.overwriteExisting:
                     session.delete(oldTask)
@@ -86,10 +84,14 @@ class InboxApi(InboxApiABC):
         reactor.callLater(0, self._mainController.taskAdded, taskId, userId)
 
     @deferToThreadWrapWithLogger(logger)
-    def completeTask(self, uniqueId: str) -> None:
+    def completeTask(self, pluginName: str, uniqueId: str) -> None:
         session = self._ormSessionCreator()
         try:
-            task = session.query(Task).filter(Task.uniqueId == uniqueId).one()
+            task = session.query(Task) \
+                .filter(Task.pluginName == pluginName) \
+                .filter(Task.uniqueId == uniqueId) \
+                .one()
+
             task.stateFlags = task.stateFlags | Task.STATE_COMPLETED
             taskId, userId = task.id, task.userId
             session.commit()
@@ -103,11 +105,14 @@ class InboxApi(InboxApiABC):
             session.close()
 
     @deferToThreadWrapWithLogger(logger)
-    def removeTask(self, uniqueId: str) -> None:
+    def removeTask(self, pluginName: str, uniqueId: str) -> None:
 
         session = self._ormSessionCreator()
         try:
-            tasks = session.query(Task).filter(Task.uniqueId == uniqueId).all()
+            tasks = session.query(Task) \
+                .filter(Task.pluginName == pluginName) \
+                .filter(Task.uniqueId == uniqueId) \
+                .all()
 
             if tasks:
                 task = tasks[0]
@@ -124,10 +129,13 @@ class InboxApi(InboxApiABC):
         reactor.callLater(0, self._mainController.taskRemoved, taskId, userId)
 
     @deferToThreadWrapWithLogger(logger)
-    def getTasks(self, uniqueIdLike: Optional[str], userId: Optional[str]) -> Deferred:
+    def getTasks(self, pluginName: str, uniqueIdLike: Optional[str] = None,
+                 userId: Optional[str] = None) -> Deferred:
         session = self._ormSessionCreator()
         try:
-            qry = session.query(Task)
+            qry = session.query(Task) \
+                .filter(Task.pluginName == pluginName)
+
             if uniqueIdLike:
                 qry = qry.filter(Task.uniqueId.ilike(uniqueIdLike))
 
@@ -141,10 +149,10 @@ class InboxApi(InboxApiABC):
                     setattr(taskTuple, fieldName, getattr(task, fieldName))
                 taskTuples.append(taskTuple)
 
+            return taskTuples
+
         finally:
             session.close()
-
-        return taskTuples
 
     @deferToThreadWrapWithLogger(logger)
     def addActivity(self, activity: NewActivity) -> None:
@@ -157,12 +165,10 @@ class InboxApi(InboxApiABC):
         session = self._ormSessionCreator()
         try:
             try:
-                oldActivity = (
-                    session
-                        .query(Activity)
-                        .filter(Activity.uniqueId == activity.uniqueId)
-                        .one()
-                )
+                oldActivity = session.query(Activity) \
+                    .filter(Activity.pluginName == activity.pluginName) \
+                    .filter(Activity.uniqueId == activity.uniqueId) \
+                    .one()
 
                 if activity.overwriteExisting:
                     session.delete(oldActivity)
@@ -185,12 +191,14 @@ class InboxApi(InboxApiABC):
         reactor.callLater(0, self._mainController.activityAdded, taskId, userId)
 
     @deferToThreadWrapWithLogger(logger)
-    def removeActivity(self, uniqueId: str) -> None:
+    def removeActivity(self, pluginName: str, uniqueId: str) -> None:
 
         session = self._ormSessionCreator()
         try:
-            activities = session.query(Activity).filter(
-                Activity.uniqueId == uniqueId).all()
+            activities = session.query(Activity) \
+                .filter(Activity.pluginName == pluginName) \
+                .filter(Activity.uniqueId == uniqueId) \
+                .all()
 
             if activities:
                 activity = activities[0]
@@ -207,10 +215,13 @@ class InboxApi(InboxApiABC):
         reactor.callLater(0, self._mainController.activityRemoved, activityId, userId)
 
     @deferToThreadWrapWithLogger(logger)
-    def getActivities(self, uniqueIdLike: Optional[str], userId: Optional[str]) -> Deferred:
+    def getActivities(self, pluginName: str, uniqueIdLike: Optional[str] = None,
+                      userId: Optional[str] = None) -> Deferred:
         session = self._ormSessionCreator()
         try:
-            qry = session.query(Activity)
+            qry = session.query(Activity) \
+                .filter(Activity.pluginName == pluginName)
+
             if uniqueIdLike:
                 qry = qry.filter(Activity.uniqueId.ilike(uniqueIdLike))
 
@@ -224,7 +235,7 @@ class InboxApi(InboxApiABC):
                     setattr(activityTuple, fieldName, getattr(activity, fieldName))
                 activityTuples.append(activityTuple)
 
+            return activityTuples
+
         finally:
             session.close()
-
-        return activityTuples

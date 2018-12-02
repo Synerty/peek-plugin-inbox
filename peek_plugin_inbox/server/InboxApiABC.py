@@ -46,7 +46,7 @@ class NewTask:
     PRIORITY_WARNING = 3
     PRIORITY_DANGER = 4
 
-    def __init__(self, uniqueId: str, userId: str, title: str,
+    def __init__(self, pluginName: str, uniqueId: str, userId: str, title: str,
                  description: Optional[str] = None, iconPath: Optional[str] = None,
                  displayAs: int = DISPLAY_AS_TASK,
                  displayPriority: int = PRIORITY_SUCCESS,
@@ -62,6 +62,8 @@ class NewTask:
                  actions: List['NewTaskAction'] = (),
                  overwriteExisting=False):
         """
+        :param pluginName: The name of the plugin creating this activity.
+
         :param uniqueId: A unique identifier provided when this task was created.
             The initiating plugin may use this later to cancel the task.
             HINT : Ensure you prefix the uniqueId with your plugin name.
@@ -101,6 +103,7 @@ class NewTask:
         :param overwriteExisting: If a task with that uniqueId already exists, it will be
             deleted.
         """
+        self.pluginName = self._required(pluginName, "pluginName")
         self.uniqueId = self._required(uniqueId, "uniqueId")
         self.userId = self._required(userId, "userId")
 
@@ -178,7 +181,7 @@ class NewActivity:
 
     """
 
-    def __init__(self, uniqueId: str, userId: str, title: str,
+    def __init__(self, pluginName: str, uniqueId: str, userId: str, title: str,
                  autoDeleteDateTime: datetime,
                  dateTime: Optional[datetime] = None,
                  description: Optional[str] = None, iconPath: Optional[str] = None,
@@ -186,18 +189,20 @@ class NewActivity:
                  overwriteExisting=False):
         """
 
-        :param uniqueId: A unique identifier provided when this task was created.
-            The initiating plugin may use this later to cancel the task.
+        :param pluginName: The name of the plugin creating this activity.
+        
+        :param uniqueId: A unique identifier provided when this activity was created.
+            The initiating plugin may use this later to cancel the activity.
             HINT : Ensure you prefix the uniqueId with your plugin name.
     
         :param userId: A string representing the unique ID of the user. This must match the
             users plugin.
     
-        :param title: The title to display in the task.
-        :param description: The long text that is displayed under the title for this task.
+        :param title: The title to display in the activity.
+        :param description: The long text that is displayed under the title for this activity.
         :param iconPath: The URL for the icon, if any.
     
-        :param routePath: If this route path is defined, then selecting the task
+        :param routePath: If this route path is defined, then selecting the activity
             will cause the peek client fe to change routes to a new page.
         :param routeParamJson: If the route path is defined, this route param json 
             will be passed along when the route is swtiched.
@@ -208,6 +213,7 @@ class NewActivity:
             it will be deleted.
         
         """
+        self.pluginName = self._required(pluginName, "pluginName")
         self.uniqueId = self._required(uniqueId, "uniqueId")
         self.userId = self._required(userId, "userId")
         self.dateTime = dateTime if dateTime else datetime.now(pytz.utc)
@@ -246,23 +252,26 @@ class InboxApiABC(metaclass=ABCMeta):
         """
 
     @abstractmethod
-    def completeTask(self, uniqueId: str) -> Deferred:
+    def completeTask(self, pluginName: str, uniqueId: str) -> Deferred:
         """ Complete a Task
         
         Mark a task as complete. NOTE, This doesn't delete it.
-        
+
+        :param pluginName: The plugin that this task is for.
         :param uniqueId: The uniqueId provided when the task was created.
         :return :code:`Deferred` firing with None
 
         """
 
     @abstractmethod
-    def getTasks(self, uniqueIdLike: Optional[str], userId: Optional[str]) -> Deferred:
+    def getTasks(self, pluginName: str, uniqueIdLike: Optional[str] = None,
+                 userId: Optional[str] = None) -> Deferred:
         """ Get Tasks
 
         Retrieve a list of tasks matching the criteria
 
-        :param userId:
+        :param pluginName: The plugin that this task is for.
+        :param userId: The userId of the task.
         :param uniqueIdLike: The uniqueId provided when the task was created,
             this is queried with the SQL ilike expression %
         :return :code:`Deferred` firing with a List[TaskTuple]
@@ -270,11 +279,12 @@ class InboxApiABC(metaclass=ABCMeta):
         """
 
     @abstractmethod
-    def removeTask(self, uniqueId: str) -> Deferred:
+    def removeTask(self, pluginName: str, uniqueId: str) -> Deferred:
         """ Remove a Task
         
         Remove a task from the users device.
-        
+
+        :param pluginName: The plugin that this task is for.
         :param uniqueId: The uniqueId provided when the task was created.
         :return :code:`Deferred` firing with None
 
@@ -292,24 +302,26 @@ class InboxApiABC(metaclass=ABCMeta):
         """
 
     @abstractmethod
-    def removeActivity(self, uniqueId: str) -> Deferred:
+    def removeActivity(self, pluginName: str, uniqueId: str) -> Deferred:
         """ Remove an Activity item
 
         Remove an Activity from the users device.
 
+        :param pluginName: The plugin that this activity is for.
         :param uniqueId: The uniqueId provided when the activity was created.
         :return :code:`Deferred` firing with None
 
         """
 
     @abstractmethod
-    def getActivities(self, uniqueIdLike: Optional[str],
-                      userId: Optional[str]) -> Deferred:
+    def getActivities(self, pluginName: str, uniqueIdLike: Optional[str] = None,
+                      userId: Optional[str] = None) -> Deferred:
         """ Get Activities
 
         Retrieve a list of activities matching the criteria
 
-        :param userId:
+        :param pluginName: The plugin that this activity is for.
+        :param userId: The userId of the task.
         :param uniqueIdLike: The uniqueId provided when the task was created,
             this is queried with the SQL ilike expression %
         :return :code:`Deferred` firing with a List[ActivityTuple]
