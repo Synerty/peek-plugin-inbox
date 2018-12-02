@@ -10,6 +10,7 @@ export class TaskTuple extends Tuple {
 
     id: number;
 
+    pluginName: string;
     uniqueId: string;
     userId: string;
     dateTime: Date;

@@ -16,6 +16,7 @@ from peek_plugin_inbox._private.server.controller.MainController import \
     MainController
 from peek_plugin_inbox._private.storage.DeclarativeBase import loadStorageTuples
 from peek_plugin_inbox._private.tuples import loadPrivateTuples
+from peek_plugin_inbox.tuples import loadPublicTuples
 from peek_plugin_user.server.UserApiABC import UserApiABC
 
 logger = logging.getLogger(__name__)
@@ -33,6 +34,7 @@ class PluginServerEntryHook(PluginServerEntryHookABC,
     def load(self) -> None:
         loadStorageTuples()
         loadPrivateTuples()
+        loadPublicTuples()
 
         logger.debug("loaded")
 

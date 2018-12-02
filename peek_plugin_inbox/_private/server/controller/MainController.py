@@ -3,11 +3,6 @@ from datetime import datetime
 from typing import Optional
 
 import pytz
-from sqlalchemy.orm.exc import NoResultFound
-from twisted.internet import reactor
-from twisted.internet.defer import inlineCallbacks, Deferred
-from twisted.internet.task import LoopingCall
-
 from peek_core_email.server.EmailApiABC import EmailApiABC
 from peek_plugin_inbox._private.server.controller.AdminTestController import \
     AdminTestController
@@ -16,6 +11,10 @@ from peek_plugin_inbox._private.storage.Task import Task
 from peek_plugin_inbox._private.storage.TaskAction import TaskAction
 from peek_plugin_inbox.server.InboxApiABC import InboxApiABC
 from peek_plugin_user.server.UserApiABC import UserApiABC
+from sqlalchemy.orm.exc import NoResultFound
+from twisted.internet import reactor
+from twisted.internet.defer import inlineCallbacks, Deferred
+from twisted.internet.task import LoopingCall
 from vortex.DeferUtil import vortexLogFailure, deferToThreadWrapWithLogger
 from vortex.TupleAction import TupleGenericAction
 from vortex.TupleSelector import TupleSelector
@@ -68,16 +67,16 @@ class MainController(TupleActionProcessorDelegateABC):
 
         self._notifyObserver(Task.tupleName(), userId)
 
-    def taskUpdated(self, taskId: int, userId: str):
+    def taskUpdated(self, userId: str):
         self._notifyObserver(Task.tupleName(), userId)
 
-    def taskRemoved(self, taskId: int, userId: str):
+    def taskRemoved(self, userId: str):
         self._notifyObserver(Task.tupleName(), userId)
 
-    def activityRemoved(self, activityId, userId):
+    def activityAdded(self, userId):
         self._notifyObserver(Activity.tupleName(), userId)
 
-    def activityAdded(self, taskId, userId):
+    def activityRemoved(self, userId):
         self._notifyObserver(Activity.tupleName(), userId)
 
     @inlineCallbacks
