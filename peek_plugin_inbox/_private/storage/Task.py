@@ -10,16 +10,15 @@
 """
 import logging
 
+from peek_plugin_base.storage.TypeDecorators import PeekLargeBinary
 from peek_plugin_inbox._private.PluginNames import inboxTuplePrefix
 from peek_plugin_inbox._private.storage.DeclarativeBase import DeclarativeBase
 from peek_plugin_inbox.server.InboxApiABC import NewTask
-from sqlalchemy import Column
+from sqlalchemy import Column, Index
 from sqlalchemy import Integer, String
 from sqlalchemy.orm import relationship
-from sqlalchemy.sql.sqltypes import DateTime, LargeBinary
+from sqlalchemy.sql.sqltypes import DateTime
 from vortex.Tuple import Tuple, addTupleType
-
-from peek_plugin_base.storage.TypeDecorators import PeekLargeBinary
 
 logger = logging.getLogger(__name__)
 
@@ -42,7 +41,8 @@ class Task(Tuple, DeclarativeBase):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
 
-    uniqueId = Column(String, unique=True, nullable=False)
+    pluginName = Column(String, nullable=False)
+    uniqueId = Column(String, nullable=False)
     userId = Column(String, nullable=False)
     dateTime = Column(DateTime(True), nullable=False)
 
@@ -82,7 +82,7 @@ class Task(Tuple, DeclarativeBase):
     STATE_SELECTED = 2
     STATE_ACTIONED = 4
     STATE_COMPLETED = 8
-    STATE_DIALOG_CONFIRMED = 16 # The dialog was achnowledged
+    STATE_DIALOG_CONFIRMED = 16  # The dialog was achnowledged
     stateFlags = Column(Integer, nullable=False, server_default='0')
 
     NOTIFY_BY_DEVICE_POPUP = NewTask.NOTIFY_BY_DEVICE_POPUP
@@ -105,3 +105,7 @@ class Task(Tuple, DeclarativeBase):
 
     # The actions for this Task.
     actions = relationship("TaskAction")
+
+    __table_args__ = (
+        Index("idx_Task_pluginName_uniqueId", pluginName, uniqueId, unique=True),
+    )

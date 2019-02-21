@@ -1,12 +1,17 @@
 import logging
-from datetime import datetime
-from typing import Optional
-
 import pytz
+from datetime import datetime
 from sqlalchemy.orm.exc import NoResultFound
 from twisted.internet import reactor
 from twisted.internet.defer import inlineCallbacks, Deferred
 from twisted.internet.task import LoopingCall
+from typing import Optional
+from vortex.DeferUtil import vortexLogFailure, deferToThreadWrapWithLogger
+from vortex.TupleAction import TupleGenericAction
+from vortex.TupleSelector import TupleSelector
+from vortex.VortexFactory import VortexFactory
+from vortex.handler.TupleActionProcessor import TupleActionProcessorDelegateABC
+from vortex.handler.TupleDataObservableHandler import TupleDataObservableHandler
 
 from peek_core_email.server.EmailApiABC import EmailApiABC
 from peek_plugin_inbox._private.server.controller.AdminTestController import \
@@ -16,12 +21,6 @@ from peek_plugin_inbox._private.storage.Task import Task
 from peek_plugin_inbox._private.storage.TaskAction import TaskAction
 from peek_plugin_inbox.server.InboxApiABC import InboxApiABC
 from peek_plugin_user.server.UserApiABC import UserApiABC
-from vortex.DeferUtil import vortexLogFailure, deferToThreadWrapWithLogger
-from vortex.TupleAction import TupleGenericAction
-from vortex.TupleSelector import TupleSelector
-from vortex.VortexFactory import VortexFactory
-from vortex.handler.TupleActionProcessor import TupleActionProcessorDelegateABC
-from vortex.handler.TupleDataObservableHandler import TupleDataObservableHandler
 
 logger = logging.getLogger(__name__)
 
@@ -68,16 +67,16 @@ class MainController(TupleActionProcessorDelegateABC):
 
         self._notifyObserver(Task.tupleName(), userId)
 
-    def taskUpdated(self, taskId: int, userId: str):
+    def taskUpdated(self, userId: str):
         self._notifyObserver(Task.tupleName(), userId)
 
-    def taskRemoved(self, taskId: int, userId: str):
+    def taskRemoved(self, userId: str):
         self._notifyObserver(Task.tupleName(), userId)
 
-    def activityRemoved(self, activityId, userId):
+    def activityAdded(self, userId):
         self._notifyObserver(Activity.tupleName(), userId)
 
-    def activityAdded(self, taskId, userId):
+    def activityRemoved(self, userId):
         self._notifyObserver(Activity.tupleName(), userId)
 
     @inlineCallbacks
@@ -184,7 +183,6 @@ class MainController(TupleActionProcessorDelegateABC):
     @deferToThreadWrapWithLogger(logger)
     def _deleteOnDateTime(self):
         session = self._ormSessionCreator()
-        usersToNotify = set()
 
         try:
             delActivityQry = (
@@ -196,13 +194,11 @@ class MainController(TupleActionProcessorDelegateABC):
             delTaskQry = (
                 session
                     .query(Task)
-                    .filter(Task.autoDeleteDateTime < datetime.now(pytz.utc)))
+                    .filter(Task.autoDeleteDateTime < datetime.now(pytz.utc))
+            )
 
-            for activity in delActivityQry:
-                usersToNotify.add(activity.userId)
-
-            for task in delTaskQry:
-                usersToNotify.add(task.userId)
+            userActivityToNotify = set([a.userId for a in delActivityQry])
+            userTaskToNotify = set([a.userId for a in delTaskQry])
 
             delActivityQry.delete(synchronize_session=False)
             delTaskQry.delete(synchronize_session=False)
@@ -212,7 +208,10 @@ class MainController(TupleActionProcessorDelegateABC):
         finally:
             session.close()
 
-        for userId in usersToNotify:
+        for userId in userTaskToNotify:
+            self._notifyObserver(Task.tupleName(), userId)
+
+        for userId in userActivityToNotify:
             self._notifyObserver(Activity.tupleName(), userId)
 
     @inlineCallbacks
