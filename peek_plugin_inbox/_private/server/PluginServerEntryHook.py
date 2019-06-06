@@ -17,7 +17,7 @@ from peek_plugin_inbox._private.server.controller.MainController import \
 from peek_plugin_inbox._private.storage.DeclarativeBase import loadStorageTuples
 from peek_plugin_inbox._private.tuples import loadPrivateTuples
 from peek_plugin_inbox.tuples import loadPublicTuples
-from peek_plugin_user.server.UserApiABC import UserApiABC
+from peek_core_user.server.UserApiABC import UserApiABC
 
 logger = logging.getLogger(__name__)
 
@@ -42,7 +42,7 @@ class PluginServerEntryHook(PluginServerEntryHookABC,
 
         # ----------------
         # Setup the APIs
-        userPluginApi = self.platform.getOtherPluginApi("peek_plugin_user")
+        userPluginApi = self.platform.getOtherPluginApi("peek_core_user")
         assert isinstance(userPluginApi, UserApiABC), "Expected UserApiABC"
 
         emailApi = self.platform.getOtherPluginApi("peek_core_email")

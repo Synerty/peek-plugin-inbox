@@ -20,7 +20,7 @@ import {
     PrivateInboxTupleProviderService
 } from "@peek/peek_plugin_inbox/_private/private-inbox-tuple-provider.service";
 
-import {UserService} from "@peek/peek_plugin_user";
+import {UserService} from "@peek/peek_core_user";
 
 import * as moment from "moment";
 

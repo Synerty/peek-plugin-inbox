@@ -13,7 +13,7 @@ import {PeekModuleFactory} from "@synerty/peek-util-web";
 import {TaskTuple} from "../tuples/TaskTuple";
 import {ActivityTuple} from "../tuples/ActivityTuple";
 import {Ng2BalloonMsgService, UsrMsgLevel, UsrMsgType} from "@synerty/ng2-balloon-msg";
-import {UserService} from "@peek/peek_plugin_user";
+import {UserService} from "@peek/peek_core_user";
 import {TitleService} from "@synerty/peek-util";
 
 import {inboxPluginName} from "../plugin-inbox-names";

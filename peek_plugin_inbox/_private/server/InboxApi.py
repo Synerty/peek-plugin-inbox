@@ -12,7 +12,7 @@ from peek_plugin_inbox.server.InboxApiABC import InboxApiABC, NewTask, \
     NewActivity
 from peek_plugin_inbox.tuples.ActivityTuple import ActivityTuple
 from peek_plugin_inbox.tuples.TaskTuple import TaskTuple
-from peek_plugin_user.server.UserApiABC import UserApiABC
+from peek_core_user.server.UserApiABC import UserApiABC
 from sqlalchemy.orm.exc import NoResultFound
 from twisted.internet import reactor
 from twisted.internet.defer import Deferred

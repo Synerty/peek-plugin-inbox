@@ -20,7 +20,7 @@ from peek_plugin_inbox._private.storage.Activity import Activity
 from peek_plugin_inbox._private.storage.Task import Task
 from peek_plugin_inbox._private.storage.TaskAction import TaskAction
 from peek_plugin_inbox.server.InboxApiABC import InboxApiABC
-from peek_plugin_user.server.UserApiABC import UserApiABC
+from peek_core_user.server.UserApiABC import UserApiABC
 
 logger = logging.getLogger(__name__)
 
