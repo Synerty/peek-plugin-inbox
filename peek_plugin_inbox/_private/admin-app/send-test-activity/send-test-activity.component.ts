@@ -22,6 +22,13 @@ import {AdminSendTestActivityActionTuple} from "@peek/peek_plugin_inbox/_private
 })
 export class SendTestActivityComponent extends ComponentLifecycleEventEmitter {
     activity = {
+        uniqueId: null,
+        userId: null,
+        title: null,
+        iconPath: null,
+        description: null,
+        routePath: null,
+        routeParamJson: null,
         autoDeleteDateTime: moment().add(1, 'days').format('YYYY-MM-DDTHH:mm')
     };
 

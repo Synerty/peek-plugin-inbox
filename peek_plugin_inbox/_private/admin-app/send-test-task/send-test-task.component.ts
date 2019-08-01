@@ -18,6 +18,13 @@ import {AdminSendTestTaskActionTuple} from "@peek/peek_plugin_inbox/_private";
 })
 export class SendTestTaskComponent extends ComponentLifecycleEventEmitter {
     task = {
+        uniqueId: null,
+        userId: null,
+        title: null,
+        iconPath: null,
+        description: null,
+        routePath: null,
+        routeParamJson: null,
         notificationRequiredFlags: 0,
         notifyByPopup: false,
         notifyBySound: false,
