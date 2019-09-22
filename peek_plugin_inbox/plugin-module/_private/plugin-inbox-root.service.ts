@@ -39,8 +39,13 @@ export class PluginInboxRootService extends ComponentLifecycleEventEmitter {
                 private tupleService: PrivateInboxTupleProviderService) {
         super();
 
-        this.alertSound = PeekModuleFactory
-            .createSound('/assets/peek_plugin_inbox/alert.mp3');
+        try {
+            this.alertSound = PeekModuleFactory
+                .createSound('/assets/peek_plugin_inbox/alert.mp3');
+        } catch (e) {
+            console.log(`Failed to load sound : ${e}`);
+            this.alertSound = null;
+        }
 
         // Subscribe to the tuple events.
         this.tupleService.taskTupleObservable()
@@ -128,7 +133,7 @@ export class PluginInboxRootService extends ComponentLifecycleEventEmitter {
         for (let task of tasksSnapshot) {
 
             let autoComplete = task.autoComplete & task.stateFlags;
-            let isAlreadyCompleted = TaskTuple.STATE_COMPLETED & task.stateFlags
+            let isAlreadyCompleted = TaskTuple.STATE_COMPLETED & task.stateFlags;
             if (autoComplete && !isAlreadyCompleted) {
                 task.stateFlags = (TaskTuple.STATE_COMPLETED | task.stateFlags);
                 updateApplied = true
@@ -160,10 +165,16 @@ export class PluginInboxRootService extends ComponentLifecycleEventEmitter {
                 notificationSentFlags = (
                     notificationSentFlags | TaskTuple.NOTIFY_BY_DEVICE_SOUND);
 
-                let optioanlPromise = this.alertSound.play();
-                if (optioanlPromise != null) {
-                    optioanlPromise
-                        .catch(err => console.log(`Failed to play alert sound\n${err}`));
+                try {
+                    const optionalPromise = this.alertSound && this.alertSound.play();
+                    if (optionalPromise != null) {
+                        optionalPromise
+                            .catch(err =>  {
+                                console.log(`Failed to play alert sound\n${err}`);
+                            });
+                    }
+                } catch (e) {
+                    console.log(`Error playing sound: ${e.toString()}`);
                 }
             }
 
@@ -262,7 +273,6 @@ export class PluginInboxRootService extends ComponentLifecycleEventEmitter {
         };
         this.tupleService.tupleOfflineAction.pushAction(action)
             .catch(err => alert(err));
-
 
         if (stateFlags != null) {
             task.stateFlags = (task.stateFlags | stateFlags);
