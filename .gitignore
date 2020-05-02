@@ -97,3 +97,4 @@ ENV/
 # Ignore pycharm project files
 .idea/
 
+.scannerwork/
