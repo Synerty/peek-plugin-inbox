@@ -1,46 +1,47 @@
-import {CommonModule} from "@angular/common";
-import {NgModule} from "@angular/core";
-import {PluginInboxClientComponent} from "./plugin-inbox-client.component";
-import {Routes} from "@angular/router";
-import {PeekModuleFactory} from "@synerty/peek-util-web";
-
+import { CommonModule } from "@angular/common";
+import { HttpClientModule } from "@angular/common/http";
+import { NgModule } from "@angular/core";
+import { PluginInboxClientComponent } from "./plugin-inbox-client.component";
+import { Routes } from "@angular/router";
+import { FormsModule } from "@angular/forms";
+import { NzIconModule } from "ng-zorro-antd/icon";
+import { RouterModule } from "@angular/router";
 import {
     LoggedInGuard,
     LoggedOutGuard,
     ProfileService,
-    UserService
+    UserService,
 } from "@peek/peek_core_user";
-
-import {ActivityListComponent} from "./activity-list/activity-list.component";
-import {TaskListComponent} from "./task-list/task-list.component";
-
+import { ActivityListComponent } from "./activity-list/activity-list.component";
+import { TaskListComponent } from "./task-list/task-list.component";
 
 export const pluginRoutes: Routes = [
     {
-        path: '',
+        path: "",
         component: PluginInboxClientComponent,
-        canActivate: [LoggedInGuard]
+        canActivate: [LoggedInGuard],
     },
     {
-        path: '**',
+        path: "**",
         component: PluginInboxClientComponent,
-        canActivate: [LoggedInGuard]
-    }
-
+        canActivate: [LoggedInGuard],
+    },
 ];
 
 @NgModule({
     imports: [
         CommonModule,
-        PeekModuleFactory.RouterModule.forChild(pluginRoutes),
-        ...PeekModuleFactory.FormsModules
+        HttpClientModule,
+        RouterModule.forChild(pluginRoutes),
+        FormsModule,
+        NzIconModule,
     ],
     exports: [],
     providers: [],
-    declarations: [PluginInboxClientComponent,
+    declarations: [
+        PluginInboxClientComponent,
         TaskListComponent,
-        ActivityListComponent
-    ]
+        ActivityListComponent,
+    ],
 })
-export class PluginInboxClientModule {
-}
+export class PluginInboxClientModule {}
