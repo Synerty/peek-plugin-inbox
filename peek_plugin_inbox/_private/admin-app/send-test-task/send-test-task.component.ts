@@ -6,7 +6,7 @@ import {
     TupleActionPushService,
     VortexService
 } from "@synerty/vortexjs";
-import {Ng2BalloonMsgService} from "@synerty/ng2-balloon-msg";
+import { BalloonMsgService } from "@synerty/peek-plugin-base-js"
 
 import * as moment from "moment";
 import {AdminSendTestTaskActionTuple} from "@peek/peek_plugin_inbox/_private";
@@ -40,7 +40,7 @@ export class SendTestTaskComponent extends ComponentLifecycleEventEmitter {
     };
 
     constructor(private tupleActionPush: TupleActionPushService,
-                private balloonMsg: Ng2BalloonMsgService) {
+                private balloonMsg: BalloonMsgService) {
         super();
 
 

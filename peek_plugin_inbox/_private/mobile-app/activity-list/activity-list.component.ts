@@ -3,7 +3,7 @@ import {
     ComponentLifecycleEventEmitter
 } from "@synerty/vortexjs";
 import {Router} from "@angular/router";
-import {TitleService} from "@synerty/peek-util";
+import { TitleService } from "@synerty/peek-plugin-base-js"
 import {
     ActivityTuple,
     PluginInboxRootService

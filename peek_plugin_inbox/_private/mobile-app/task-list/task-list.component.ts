@@ -5,7 +5,7 @@ import {
     TupleGenericAction,
     TupleSelector,
 } from "@synerty/vortexjs";
-import { TitleService } from "@synerty/peek-util";
+import { TitleService } from "@synerty/peek-plugin-base-js";
 import { Router } from "@angular/router";
 import { TaskActionTuple, TaskTuple } from "@peek/peek_plugin_inbox";
 import { PluginInboxRootService } from "@peek/peek_plugin_inbox/_private/plugin-inbox-root.service";
