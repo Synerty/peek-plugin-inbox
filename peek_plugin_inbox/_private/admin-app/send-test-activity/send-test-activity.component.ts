@@ -1,26 +1,15 @@
-import {Component} from "@angular/core";
-import {
-    extend,
-    ComponentLifecycleEventEmitter,
-    Payload,
-    TupleActionPushService,
-    VortexService
-} from "@synerty/vortexjs";
-import { BalloonMsgService } from "@synerty/peek-plugin-base-js"
-
-
-// MomentJS is declared globally, because the datetime picker needs it
-// declare let moment: any;
-
-import * as moment from "moment";
-import {AdminSendTestActivityActionTuple} from "@peek/peek_plugin_inbox/_private";
+import { Component } from "@angular/core"
+import { extend, TupleActionPushService } from "@synerty/vortexjs"
+import { BalloonMsgService, NgLifeCycleEvents } from "@synerty/peek-plugin-base-js"
+import * as moment from "moment"
+import { AdminSendTestActivityActionTuple } from "@peek/peek_plugin_inbox/_private"
 
 @Component({
-    selector: 'active-task-send-test-activity',
-    templateUrl: 'send-test-activity.component.html',
-    styleUrls: ['send-test-activity.component.css']
+    selector: "active-task-send-test-activity",
+    templateUrl: "send-test-activity.component.html",
+    styleUrls: ["send-test-activity.component.css"]
 })
-export class SendTestActivityComponent extends ComponentLifecycleEventEmitter {
+export class SendTestActivityComponent extends NgLifeCycleEvents {
     activity = {
         uniqueId: null,
         userId: null,
@@ -29,23 +18,27 @@ export class SendTestActivityComponent extends ComponentLifecycleEventEmitter {
         description: null,
         routePath: null,
         routeParamJson: null,
-        autoDeleteDateTime: moment().add(1, 'days').format('YYYY-MM-DDTHH:mm')
-    };
-
-    constructor(private tupleActionPush: TupleActionPushService,
-                private balloonMsg: BalloonMsgService) {
-        super();
-
+        autoDeleteDateTime: moment()
+            .add(1, "days")
+            .format("YYYY-MM-DDTHH:mm")
     }
-
+    
+    constructor(
+        private tupleActionPush: TupleActionPushService,
+        private balloonMsg: BalloonMsgService
+    ) {
+        super()
+    }
+    
     send() {
-        let activityCopy = extend({}, this.activity);
-        activityCopy.autoDeleteDateTime = moment(activityCopy.autoDeleteDateTime).toDate();
-
-        let action = new AdminSendTestActivityActionTuple();
-        action.formData = activityCopy;
+        let activityCopy = extend({}, this.activity)
+        activityCopy.autoDeleteDateTime = moment(activityCopy.autoDeleteDateTime)
+            .toDate()
+        
+        let action = new AdminSendTestActivityActionTuple()
+        action.formData = activityCopy
         this.tupleActionPush.pushAction(action)
             .then(() => this.balloonMsg.showSuccess("Activity created successfully"))
-            .catch(e => this.balloonMsg.showError(`Failed to create activity ${e}`));
+            .catch(e => this.balloonMsg.showError(`Failed to create activity ${e}`))
     }
 }

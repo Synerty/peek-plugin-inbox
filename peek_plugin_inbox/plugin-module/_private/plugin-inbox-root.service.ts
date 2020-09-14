@@ -1,12 +1,13 @@
 import { Injectable } from "@angular/core"
-import { ComponentLifecycleEventEmitter, TupleGenericAction } from "@synerty/vortexjs"
+import { TupleGenericAction } from "@synerty/vortexjs"
 import {
-    BalloonMsgService,
-    Sound,
-    ISound,
-    TitleService,
     BalloonMsgLevel,
-    BalloonMsgType
+    BalloonMsgService,
+    BalloonMsgType,
+    NgLifeCycleEvents,
+    ISound,
+    Sound,
+    TitleService,
 } from "@synerty/peek-plugin-base-js"
 import { TaskTuple } from "../tuples/TaskTuple"
 import { inboxPluginName } from "../plugin-inbox-names"
@@ -20,7 +21,7 @@ import { PrivateInboxTupleProviderService } from "./private-inbox-tuple-provider
  * Configure this in plugin_package.json
  */
 @Injectable()
-export class PluginInboxRootService extends ComponentLifecycleEventEmitter {
+export class PluginInboxRootService extends NgLifeCycleEvents {
     private tasks: TaskTuple[] = []
     private alertSound: ISound
     
@@ -81,7 +82,6 @@ export class PluginInboxRootService extends ComponentLifecycleEventEmitter {
                         this.tupleService.taskTupleSelector, this.tasks)
                 }
             })
-        
     }
     
     // -------------------------
