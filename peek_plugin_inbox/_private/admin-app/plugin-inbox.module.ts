@@ -20,7 +20,7 @@ import {
     inboxFilt,
     inboxObservableName,
     inboxTupleOfflineServiceName
-} from "@peek/peek_plugin_inbox/plugin-inbox-names";
+} from "@_peek/peek_plugin_inbox/plugin-inbox-names";
 import {AdminSettingListComponent} from "./setting-list/admin-setting-list.component";
 import {AdminTaskListComponent} from "./task-list/admin-task-list.component";
 import {AdminActivityListComponent} from "./activity-list/admin-activity-list.component";

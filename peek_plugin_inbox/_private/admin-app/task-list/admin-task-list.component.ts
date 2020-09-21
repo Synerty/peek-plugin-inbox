@@ -1,5 +1,5 @@
 import { TupleDataObserverService, TupleSelector } from "@synerty/vortexjs"
-import { TaskTuple } from "@peek/peek_plugin_inbox/tuples/TaskTuple"
+import { TaskTuple } from "@_peek/peek_plugin_inbox/tuples/TaskTuple"
 import { Component } from "@angular/core"
 import { NgLifeCycleEvents } from "@synerty/peek-plugin-base-js"
 

@@ -1,7 +1,7 @@
 import { Component } from "@angular/core"
 import { extend, Tuple, TupleLoader, VortexService } from "@synerty/vortexjs"
 import { NgLifeCycleEvents } from "@synerty/peek-plugin-base-js"
-import { inboxFilt } from "@peek/peek_plugin_inbox/plugin-inbox-names"
+import { inboxFilt } from "@_peek/peek_plugin_inbox/plugin-inbox-names"
 
 class SettingProperty extends Tuple {
     id: number

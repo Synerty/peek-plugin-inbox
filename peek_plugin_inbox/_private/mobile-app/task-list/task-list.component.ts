@@ -2,9 +2,9 @@ import { Component } from "@angular/core"
 import { NgLifeCycleEvents, TitleService } from "@synerty/peek-plugin-base-js"
 import { TupleGenericAction, } from "@synerty/vortexjs"
 import { Router } from "@angular/router"
-import { TaskActionTuple, TaskTuple } from "@peek/peek_plugin_inbox"
-import { PluginInboxRootService } from "@peek/peek_plugin_inbox/_private/plugin-inbox-root.service"
-import { PrivateInboxTupleProviderService } from "@peek/peek_plugin_inbox/_private/private-inbox-tuple-provider.service"
+import { TaskActionTuple, TaskTuple } from "@_peek/peek_plugin_inbox"
+import { PluginInboxRootService } from "@_peek/peek_plugin_inbox/_private/plugin-inbox-root.service"
+import { PrivateInboxTupleProviderService } from "@_peek/peek_plugin_inbox/_private/private-inbox-tuple-provider.service"
 import * as moment from "moment"
 
 @Component({
