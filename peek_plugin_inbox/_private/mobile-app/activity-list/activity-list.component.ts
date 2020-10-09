@@ -1,8 +1,8 @@
 import { Component } from "@angular/core"
 import { NgLifeCycleEvents, TitleService } from "@synerty/peek-plugin-base-js"
 import { Router } from "@angular/router"
-import { ActivityTuple, PluginInboxRootService } from "@_peek/peek_plugin_inbox"
-import { PrivateInboxTupleProviderService } from "@_peek/peek_plugin_inbox/_private/private-inbox-tuple-provider.service"
+import { ActivityTuple, PluginInboxRootService } from "@peek/peek_plugin_inbox"
+import { PrivateInboxTupleProviderService } from "@peek/peek_plugin_inbox/_private/private-inbox-tuple-provider.service"
 import * as moment from "moment"
 
 @Component({

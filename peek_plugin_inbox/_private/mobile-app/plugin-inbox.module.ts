@@ -11,7 +11,7 @@ import {
     LoggedOutGuard,
     ProfileService,
     UserService,
-} from "@_peek/peek_core_user";
+} from "@peek/peek_core_user";
 import { ActivityListComponent } from "./activity-list/activity-list.component";
 import { TaskListComponent } from "./task-list/task-list.component";
 
