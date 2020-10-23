@@ -1,5 +1,5 @@
 import { Component } from "@angular/core"
-import { NgLifeCycleEvents, TitleService } from "@synerty/peek-plugin-base-js"
+import { NgLifeCycleEvents, HeaderService } from "@synerty/peek-plugin-base-js"
 import { TupleGenericAction, } from "@synerty/vortexjs"
 import { Router } from "@angular/router"
 import { TaskActionTuple, TaskTuple } from "@peek/peek_plugin_inbox"
@@ -16,14 +16,14 @@ export class TaskListComponent extends NgLifeCycleEvents {
     tasks: TaskTuple[] = []
     
     constructor(
-        titleService: TitleService,
+        headerService: HeaderService,
         private rootService: PluginInboxRootService,
         private router: Router,
         private tupleService: PrivateInboxTupleProviderService
     ) {
         super()
         
-        titleService.setTitle("My Tasks")
+        headerService.setTitle("My Tasks")
         
         // Load Tasks ------------------
         

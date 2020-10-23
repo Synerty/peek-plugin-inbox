@@ -1,5 +1,5 @@
 import { Component } from "@angular/core"
-import { NgLifeCycleEvents, TitleService } from "@synerty/peek-plugin-base-js"
+import { NgLifeCycleEvents, HeaderService } from "@synerty/peek-plugin-base-js"
 import { Router } from "@angular/router"
 import { ActivityTuple, PluginInboxRootService } from "@peek/peek_plugin_inbox"
 import { PrivateInboxTupleProviderService } from "@peek/peek_plugin_inbox/_private/private-inbox-tuple-provider.service"
@@ -14,14 +14,14 @@ export class ActivityListComponent extends NgLifeCycleEvents {
     activities: ActivityTuple[] = []
     
     constructor(
-        titleService: TitleService,
+        headerService: HeaderService,
         private rootService: PluginInboxRootService,
         private router: Router,
         private tupleService: PrivateInboxTupleProviderService
     ) {
         
         super()
-        titleService.setTitle("My Activity")
+        headerService.setTitle("My Activity")
         
         // Load Activities ------------------
         
