@@ -8,6 +8,7 @@ import {
     ISound,
     Sound,
     HeaderService,
+    NotificationService,
 } from "@synerty/peek-plugin-base-js"
 import { TaskTuple } from "../tuples/TaskTuple"
 import { inboxPluginName } from "../plugin-inbox-names"
@@ -28,6 +29,7 @@ export class PluginInboxRootService extends NgLifeCycleEvents {
     constructor(
         private balloonMsg: BalloonMsgService,
         private headerService: HeaderService,
+        private notificationService: NotificationService,
         private tupleService: PrivateInboxTupleProviderService
     ) {
         super()
@@ -72,6 +74,8 @@ export class PluginInboxRootService extends NgLifeCycleEvents {
                 
                 this.headerService.updateButtonBadgeCount(inboxPluginName,
                     notCompletedCount === 0 ? null : notCompletedCount)
+                
+                this.notificationService.inboxCount = notCompletedCount
                 
                 let updateApplied = this.processNotifications()
                     || this.processDeletesAndCompletes()
