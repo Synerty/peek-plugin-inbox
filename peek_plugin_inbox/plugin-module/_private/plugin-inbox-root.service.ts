@@ -72,9 +72,6 @@ export class PluginInboxRootService extends NgLifeCycleEvents {
                     notCompletedCount += task.isCompleted() ? 0 : 1
                 }
                 
-                this.headerService.updateButtonBadgeCount(inboxPluginName,
-                    notCompletedCount === 0 ? null : notCompletedCount)
-                
                 this.notificationService.inboxCount = notCompletedCount
                 
                 let updateApplied = this.processNotifications()
