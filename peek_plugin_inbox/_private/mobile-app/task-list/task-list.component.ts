@@ -10,7 +10,6 @@ import * as moment from "moment"
 @Component({
     selector: "plugin-inbox-task-list",
     templateUrl: "task-list.component.web.html",
-    moduleId: module.id,
 })
 export class TaskListComponent extends NgLifeCycleEvents {
     tasks: TaskTuple[] = []

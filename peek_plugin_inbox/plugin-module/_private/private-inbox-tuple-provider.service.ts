@@ -13,7 +13,7 @@ import {
     VortexStatusService
 } from "@synerty/vortexjs"
 import { UserService } from "@peek/peek_core_user"
-import { Observable } from "rxjs/Observable"
+import { Observable } from "rxjs"
 import { Subject } from "rxjs"
 import { TaskTuple } from "../tuples/TaskTuple"
 import { ActivityTuple } from "../tuples/ActivityTuple"

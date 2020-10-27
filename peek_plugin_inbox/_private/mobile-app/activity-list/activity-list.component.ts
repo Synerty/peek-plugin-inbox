@@ -7,8 +7,7 @@ import * as moment from "moment"
 
 @Component({
     selector: "plugin-inbox-activity-list",
-    templateUrl: "activity-list.component.web.html",
-    moduleId: module.id
+    templateUrl: "activity-list.component.web.html"
 })
 export class ActivityListComponent extends NgLifeCycleEvents {
     activities: ActivityTuple[] = []

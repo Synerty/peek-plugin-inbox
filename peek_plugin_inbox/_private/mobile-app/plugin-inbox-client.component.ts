@@ -5,8 +5,7 @@ import { PrivateInboxTupleProviderService } from "@peek/peek_plugin_inbox/_priva
 
 @Component({
     selector: "plugin-inbox",
-    templateUrl: "plugin-inbox-client.component.web.html",
-    moduleId: module.id
+    templateUrl: "plugin-inbox-client.component.web.html"
 })
 export class PluginInboxClientComponent extends NgLifeCycleEvents {
     barIndex = 0
