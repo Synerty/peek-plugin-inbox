@@ -14,7 +14,7 @@ import {
 } from "@synerty/vortexjs"
 import { UserService } from "@peek/peek_core_user"
 import { Observable } from "rxjs/Observable"
-import { Subject } from "rxjs/Subject"
+import { Subject } from "rxjs"
 import { TaskTuple } from "../tuples/TaskTuple"
 import { ActivityTuple } from "../tuples/ActivityTuple"
 import { NgLifeCycleEvents } from "@synerty/peek-plugin-base-js"
