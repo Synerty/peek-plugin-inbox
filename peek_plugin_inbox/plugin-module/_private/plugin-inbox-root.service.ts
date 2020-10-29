@@ -16,7 +16,7 @@ import { PrivateInboxTupleProviderService } from "./private-inbox-tuple-provider
 
 /**  Root Service
  *
- * This service will be loaded by peek-mobile when the app loads.
+ * This service will be loaded by peek-field-app when the app loads.
  * There will be one instance of it, and it be around for the life of the app.
  *
  * Configure this in plugin_package.json
