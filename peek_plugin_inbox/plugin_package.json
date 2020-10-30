@@ -10,9 +10,9 @@
     },
     "requiresServices": [
         "server",
-        "client",
+        "field",
+        "office",
         "storage",
-        "mobile",
         "doc-dev",
         "doc-admin",
         "doc-user"
@@ -30,7 +30,7 @@
         "docDir": "doc-user",
         "docRst": "index.rst"
     },
-    "mobile": {
+    "field": {
         "showHomeLink": false,
         "showInTitleBar": true,
         "titleBarLeft": false,
@@ -59,8 +59,7 @@
     },
     "server": {
     },
-    "client": {
-    },
+
     "storage": {
         "alembicDir": "_private/alembic"
     }
