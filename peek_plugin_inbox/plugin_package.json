@@ -9,7 +9,7 @@
         "website": "www.synerty.com"
     },
     "requiresServices": [
-        "server",
+        "logic",
         "field",
         "office",
         "storage",
@@ -57,7 +57,7 @@
         "appDir": "_private/admin-app",
         "appModule": "plugin-inbox.module#PluginInboxAdminModule"
     },
-    "server": {
+    "logic": {
     },
 
     "storage": {

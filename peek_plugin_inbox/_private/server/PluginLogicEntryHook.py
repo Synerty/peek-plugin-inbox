@@ -2,7 +2,7 @@ import logging
 from typing import Optional
 
 from peek_core_email.server.EmailApiABC import EmailApiABC
-from peek_plugin_base.server.PluginServerEntryHookABC import PluginServerEntryHookABC
+from peek_plugin_base.server.PluginLogicEntryHookABC import PluginLogicEntryHookABC
 from peek_plugin_base.server.PluginServerStorageEntryHookABC import \
     PluginServerStorageEntryHookABC
 from peek_plugin_inbox._private.server.ClientTupleActionProcessor import \
@@ -22,10 +22,10 @@ from peek_core_user.server.UserApiABC import UserApiABC
 logger = logging.getLogger(__name__)
 
 
-class PluginServerEntryHook(PluginServerEntryHookABC,
+class PluginLogicEntryHook(PluginLogicEntryHookABC,
                             PluginServerStorageEntryHookABC):
     def __init__(self, *args, **kwargs):
-        PluginServerEntryHookABC.__init__(self, *args, **kwargs)
+        PluginLogicEntryHookABC.__init__(self, *args, **kwargs)
         self._api = None
         self._mainController = None
 

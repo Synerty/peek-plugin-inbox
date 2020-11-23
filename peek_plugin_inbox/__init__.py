@@ -1,15 +1,15 @@
 from typing import Type
 
 from peek_plugin_base.client.PluginClientEntryHookABC import PluginClientEntryHookABC
-from peek_plugin_base.server.PluginServerEntryHookABC import PluginServerEntryHookABC
+from peek_plugin_base.server.PluginLogicEntryHookABC import PluginLogicEntryHookABC
 
 __version__ = '0.0.0'
 
 
-def peekServerEntryHook() -> Type[PluginServerEntryHookABC]:
-    from peek_plugin_inbox._private.server.PluginServerEntryHook import \
-        PluginServerEntryHook
-    return PluginServerEntryHook
+def peekLogicEntryHook() -> Type[PluginLogicEntryHookABC]:
+    from peek_plugin_inbox._private.server.PluginLogicEntryHook import \
+        PluginLogicEntryHook
+    return PluginLogicEntryHook
 
 
 def peekClientEntryHook() -> Type[PluginClientEntryHookABC]:
