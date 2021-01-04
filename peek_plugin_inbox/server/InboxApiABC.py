@@ -7,7 +7,7 @@ from twisted.internet.defer import Deferred
 
 
 class NewTask:
-    """ TaskTuple
+    """TaskTuple
 
     A TaskTuple represents the feature rich mechanism for notifications, alerts and messages
      sent from initiator plugins to mobile devices.
@@ -46,42 +46,50 @@ class NewTask:
     PRIORITY_WARNING = 3
     PRIORITY_DANGER = 4
 
-    def __init__(self, pluginName: str, uniqueId: str, userId: str, title: str,
-                 description: Optional[str] = None, iconPath: Optional[str] = None,
-                 displayAs: int = DISPLAY_AS_TASK,
-                 displayPriority: int = PRIORITY_SUCCESS,
-                 routePath: Optional[str] = None, routeParamJson: Optional[dict] = None,
-                 autoComplete: int = AUTO_COMPLETE_OFF,
-                 autoDelete: int = AUTO_DELETE_OFF,
-                 autoDeleteDateTime: Optional[datetime] = None,
-                 onDeliveredPayloadEnvelope: Optional[bytes] = None,
-                 onCompletedPayloadEnvelope: Optional[bytes] = None,
-                 onDeletedPayloadEnvelope: Optional[bytes] = None,
-                 onDialogConfirmPayloadEnvelope: Optional[bytes] = None,
-                 notificationRequiredFlags: int = 0,
-                 actions: List['NewTaskAction'] = (),
-                 overwriteExisting=False):
+    def __init__(
+        self,
+        pluginName: str,
+        uniqueId: str,
+        userId: str,
+        title: str,
+        description: Optional[str] = None,
+        iconPath: Optional[str] = None,
+        displayAs: int = DISPLAY_AS_TASK,
+        displayPriority: int = PRIORITY_SUCCESS,
+        routePath: Optional[str] = None,
+        routeParamJson: Optional[dict] = None,
+        autoComplete: int = AUTO_COMPLETE_OFF,
+        autoDelete: int = AUTO_DELETE_OFF,
+        autoDeleteDateTime: Optional[datetime] = None,
+        onDeliveredPayloadEnvelope: Optional[bytes] = None,
+        onCompletedPayloadEnvelope: Optional[bytes] = None,
+        onDeletedPayloadEnvelope: Optional[bytes] = None,
+        onDialogConfirmPayloadEnvelope: Optional[bytes] = None,
+        notificationRequiredFlags: int = 0,
+        actions: List["NewTaskAction"] = (),
+        overwriteExisting=False,
+    ):
         """
         :param pluginName: The name of the plugin creating this activity.
 
         :param uniqueId: A unique identifier provided when this task was created.
             The initiating plugin may use this later to cancel the task.
             HINT : Ensure you prefix the uniqueId with your plugin name.
-    
+
         :param userId: A string representing the unique ID of the user. This must match the
             users plugin.
-    
+
         :param title: The title to display in the task.
         :param description: The long text that is displayed under the title for this task.
         :param iconPath: The URL for the icon, if any.
         :param displayAs: Should this task be displayed as a message or task?
         :param displayPriority: What priority should the task display as?
-    
+
         :param routePath: If this route path is defined, then selecting the task
             will cause the peek client fe to change routes to a new page.
-        :param routeParamJson: If the route path is defined, this route param json 
+        :param routeParamJson: If the route path is defined, this route param json
             will be passed along when the route is switched..
-    
+
         :param autoComplete: Should this task auto complete?
                 This parameter defines what state it will auto complete in.
                 See the AUTO_COMPLETE... class constants
@@ -90,7 +98,7 @@ class NewTask:
                 See the AUTO_DELETE... class constants
         :param autoDeleteDateTime: The datetime when this task should automatically
                 be deleted it if still exists.
-    
+
         :param onDeliveredPayloadEnvelope: (Optional) The payload that will be delivered locally
             on Peek Server when the task is delivered.
         :param onCompletedPayloadEnvelope: (Optional) The payload that will be delivered locally
@@ -99,7 +107,7 @@ class NewTask:
             on Peek Server when the task is deleted (auto, or otherwise)
         :param onDialogConfirmPayloadEnvelope: (Optional) The payload that will be delivered
             locally on Peek Server when the user clicks "OK" on the dialog.
-            
+
         :param overwriteExisting: If a task with that uniqueId already exists, it will be
             deleted.
         """
@@ -145,7 +153,7 @@ class NewTask:
 
 
 class NewTaskAction:
-    """ TaskTuple Action
+    """TaskTuple Action
 
     This object represents the TaskTuple Actions.
     Tasks have zero or more actions that can be performed by the user when they
@@ -153,8 +161,12 @@ class NewTaskAction:
 
     """
 
-    def __init__(self, title: str, confirmMessage: str,
-                 onActionPayloadEnvelope: Optional[bytes] = None):
+    def __init__(
+        self,
+        title: str,
+        confirmMessage: str,
+        onActionPayloadEnvelope: Optional[bytes] = None,
+    ):
         """
         :param title: The title of the action, this will appear as a menu option.
         :param confirmMessage: This is the message that will be shown to confirm the action.
@@ -163,8 +175,9 @@ class NewTaskAction:
         """
         self.title = self._required(title, "title")
         self.confirmMessage = self._required(confirmMessage, "confirmMessage")
-        self.onActionPayloadEnvelope = self._required(onActionPayloadEnvelope,
-                                                      "onActionPayload")
+        self.onActionPayloadEnvelope = self._required(
+            onActionPayloadEnvelope, "onActionPayload"
+        )
 
     def _required(self, val, desc):
         if not val:
@@ -174,44 +187,52 @@ class NewTaskAction:
 
 
 class NewActivity:
-    """ TaskTuple
+    """TaskTuple
 
     A TaskTuple represents the feature rich mechanism for notifications, alerts and messages
      sent from initiator plugins to mobile devices.
 
     """
 
-    def __init__(self, pluginName: str, uniqueId: str, userId: str, title: str,
-                 autoDeleteDateTime: datetime,
-                 dateTime: Optional[datetime] = None,
-                 description: Optional[str] = None, iconPath: Optional[str] = None,
-                 routePath: Optional[str] = None, routeParamJson: Optional[dict] = None,
-                 overwriteExisting=False):
+    def __init__(
+        self,
+        pluginName: str,
+        uniqueId: str,
+        userId: str,
+        title: str,
+        autoDeleteDateTime: datetime,
+        dateTime: Optional[datetime] = None,
+        description: Optional[str] = None,
+        iconPath: Optional[str] = None,
+        routePath: Optional[str] = None,
+        routeParamJson: Optional[dict] = None,
+        overwriteExisting=False,
+    ):
         """
 
         :param pluginName: The name of the plugin creating this activity.
-        
+
         :param uniqueId: A unique identifier provided when this activity was created.
             The initiating plugin may use this later to cancel the activity.
             HINT : Ensure you prefix the uniqueId with your plugin name.
-    
+
         :param userId: A string representing the unique ID of the user. This must match the
             users plugin.
-    
+
         :param title: The title to display in the activity.
         :param description: The long text that is displayed under the title for this activity.
         :param iconPath: The URL for the icon, if any.
-    
+
         :param routePath: If this route path is defined, then selecting the activity
             will cause the peek client fe to change routes to a new page.
-        :param routeParamJson: If the route path is defined, this route param json 
+        :param routeParamJson: If the route path is defined, this route param json
             will be passed along when the route is swtiched.
-            
+
         :param autoDeleteDateTime: The time and date when this activity will be deleted.
-            
+
         :param overwriteExisting: If an activity with that uniqueId already exists,
             it will be deleted.
-        
+
         """
         self.pluginName = self._required(pluginName, "pluginName")
         self.uniqueId = self._required(uniqueId, "uniqueId")
@@ -242,19 +263,19 @@ class NewActivity:
 class InboxApiABC(metaclass=ABCMeta):
     @abstractmethod
     def addTask(self, task: NewTask) -> Deferred:
-        """ Add a New Task
+        """Add a New Task
 
         Add a new task to the users device.
-        
+
         :param task: The definition of the task to add.
         :return :code:`Deferred` firing with None
-        
+
         """
 
     @abstractmethod
     def completeTask(self, pluginName: str, uniqueId: str) -> Deferred:
-        """ Complete a Task
-        
+        """Complete a Task
+
         Mark a task as complete. NOTE, This doesn't delete it.
 
         :param pluginName: The plugin that this task is for.
@@ -264,9 +285,13 @@ class InboxApiABC(metaclass=ABCMeta):
         """
 
     @abstractmethod
-    def getTasks(self, pluginName: str, uniqueIdLike: Optional[str] = None,
-                 userId: Optional[str] = None) -> Deferred:
-        """ Get Tasks
+    def getTasks(
+        self,
+        pluginName: str,
+        uniqueIdLike: Optional[str] = None,
+        userId: Optional[str] = None,
+    ) -> Deferred:
+        """Get Tasks
 
         Retrieve a list of tasks matching the criteria
 
@@ -280,8 +305,8 @@ class InboxApiABC(metaclass=ABCMeta):
 
     @abstractmethod
     def removeTask(self, pluginName: str, uniqueId: str) -> Deferred:
-        """ Remove a Task
-        
+        """Remove a Task
+
         Remove a task from the users device.
 
         :param pluginName: The plugin that this task is for.
@@ -291,9 +316,13 @@ class InboxApiABC(metaclass=ABCMeta):
         """
 
     @abstractmethod
-    def removeTasks(self, pluginName: str, uniqueIdLike: Optional[str] = None,
-                    userId: Optional[str]=None) -> Deferred:
-        """ Remove Tasks
+    def removeTasks(
+        self,
+        pluginName: str,
+        uniqueIdLike: Optional[str] = None,
+        userId: Optional[str] = None,
+    ) -> Deferred:
+        """Remove Tasks
 
         Remove all tasks created by a plugin.
 
@@ -307,7 +336,7 @@ class InboxApiABC(metaclass=ABCMeta):
 
     @abstractmethod
     def addActivity(self, activity: NewActivity) -> Deferred:
-        """ Add a new Activity item
+        """Add a new Activity item
 
         Add a new Activity to the users device.
 
@@ -318,7 +347,7 @@ class InboxApiABC(metaclass=ABCMeta):
 
     @abstractmethod
     def removeActivity(self, pluginName: str, uniqueId: str) -> Deferred:
-        """ Remove an Activity item
+        """Remove an Activity item
 
         Remove an Activity from the users device.
 
@@ -329,9 +358,13 @@ class InboxApiABC(metaclass=ABCMeta):
         """
 
     @abstractmethod
-    def removeActivities(self, pluginName: str, uniqueIdLike: Optional[str] = None,
-                         userId: Optional[str]=None) -> Deferred:
-        """ Remove Tasks
+    def removeActivities(
+        self,
+        pluginName: str,
+        uniqueIdLike: Optional[str] = None,
+        userId: Optional[str] = None,
+    ) -> Deferred:
+        """Remove Tasks
 
         Remove all activities created by a plugin.
 
@@ -344,9 +377,13 @@ class InboxApiABC(metaclass=ABCMeta):
         """
 
     @abstractmethod
-    def getActivities(self, pluginName: str, uniqueIdLike: Optional[str] = None,
-                      userId: Optional[str] = None) -> Deferred:
-        """ Get Activities
+    def getActivities(
+        self,
+        pluginName: str,
+        uniqueIdLike: Optional[str] = None,
+        userId: Optional[str] = None,
+    ) -> Deferred:
+        """Get Activities
 
         Retrieve a list of activities matching the criteria
 

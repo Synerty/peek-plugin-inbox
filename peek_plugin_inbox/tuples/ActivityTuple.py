@@ -9,16 +9,17 @@ logger = logging.getLogger(__name__)
 
 @addTupleType
 class ActivityTuple(Tuple):
-    """ Activity Tuple
+    """Activity Tuple
 
     An Activity represents an item in the activity screen
     This is a screen that is intended to show actions that have been performed recently
         or events that plugins want in this list.
-    
+
     see InboxAbiABC.NewActivity for documentation.
-        
+
     """
-    __tupleType__ = inboxTuplePrefix + 'ActivityTuple'
+
+    __tupleType__ = inboxTuplePrefix + "ActivityTuple"
 
     pluginName: str = TupleField()
     uniqueId: str = TupleField()

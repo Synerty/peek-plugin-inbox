@@ -82,7 +82,7 @@ export class PrivateInboxTupleProviderService extends NgLifeCycleEvents {
         
         this.onDestroyEvent.subscribe(() => this.unsubscribe())
     }
-
+    
     private _tasks: TaskTuple[] = []
     
     get tasks(): TaskTuple[] {

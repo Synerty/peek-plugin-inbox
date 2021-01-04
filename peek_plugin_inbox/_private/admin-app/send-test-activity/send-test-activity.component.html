@@ -4,55 +4,79 @@
         <div class="row">
             <div class="form-group col-md-6">
                 <label for="uniqueId">uniqueId</label>
-                <input type="text" class="form-control" id="uniqueId"
-                       [(ngModel)]="activity.uniqueId">
+                <input
+                    [(ngModel)]="activity.uniqueId" class="form-control"
+                    id="uniqueId"
+                    type="text"
+                >
             </div>
             <div class="form-group col-md-6">
                 <label for="userId">userId</label>
-                <input type="text" class="form-control" id="userId"
-                       [(ngModel)]="activity.userId">
+                <input
+                    [(ngModel)]="activity.userId" class="form-control"
+                    id="userId"
+                    type="text"
+                >
             </div>
         </div>
         <div class="row">
             <div class="form-group col-md-6">
                 <label for="title">title</label>
-                <input type="text" class="form-control" id="title"
-                       [(ngModel)]="activity.title">
+                <input
+                    [(ngModel)]="activity.title" class="form-control" id="title"
+                    type="text"
+                >
             </div>
             <div class="form-group col-md-6">
                 <label for="iconPath">iconPath</label>
-                <input type="text" class="form-control" id="iconPath"
-                       [(ngModel)]="activity.iconPath">
+                <input
+                    [(ngModel)]="activity.iconPath" class="form-control"
+                    id="iconPath"
+                    type="text"
+                >
             </div>
         </div>
         <div class="row">
             <div class="form-group col-md-12">
                 <label for="description">description</label>
-                <input type="text" class="form-control" id="description"
-                       [(ngModel)]="activity.description">
+                <input
+                    [(ngModel)]="activity.description" class="form-control"
+                    id="description"
+                    type="text"
+                >
             </div>
         </div>
         <div class="row">
             <div class="form-group col-md-6">
                 <label for="routePath">routePath</label>
-                <input type="text" class="form-control" id="routePath"
-                       [(ngModel)]="activity.routePath">
+                <input
+                    [(ngModel)]="activity.routePath" class="form-control"
+                    id="routePath"
+                    type="text"
+                >
             </div>
             <div class="form-group col-md-6">
                 <label for="routeParamJson">routeParamJson</label>
-                <input type="text" class="form-control" id="routeParamJson"
-                       [(ngModel)]="activity.routeParamJson">
+                <input
+                    [(ngModel)]="activity.routeParamJson" class="form-control"
+                    id="routeParamJson"
+                    type="text"
+                >
             </div>
         </div>
         <div class="row">
             <div class="form-group col-md-6">
                 <label for="autoDeleteDateTime">autoDeleteDateTime</label>
-                <input type="datetime-local" class="form-control" id="autoDeleteDateTime"
-                       [(ngModel)]="activity.autoDeleteDateTime">
+                <input
+                    [(ngModel)]="activity.autoDeleteDateTime"
+                    class="form-control"
+                    id="autoDeleteDateTime"
+                    type="datetime-local"
+                >
             </div>
         </div>
-
-        <button class="btn btn-default" (click)="send()">Send</button>
-
+        
+        <button (click)="send()" class="btn btn-default">Send</button>
+    
     </div>
 </div>

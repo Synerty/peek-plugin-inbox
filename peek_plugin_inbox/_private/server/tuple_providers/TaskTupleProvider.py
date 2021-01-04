@@ -18,17 +18,18 @@ class TaskTupleProvider(TuplesProviderABC):
         self._ormSessionCreator = ormSessionCreator
 
     @deferToThreadWrapWithLogger(logger)
-    def makeVortexMsg(self, filt: dict,
-                      tupleSelector: TupleSelector) -> Union[Deferred, bytes]:
+    def makeVortexMsg(
+        self, filt: dict, tupleSelector: TupleSelector
+    ) -> Union[Deferred, bytes]:
         userId = tupleSelector.selector["userId"]
 
         session = self._ormSessionCreator()
         try:
             tasks = (
                 session.query(Task)
-                    .filter(Task.userId == userId)
-                    .options(subqueryload(Task.actions))
-                    .all()
+                .filter(Task.userId == userId)
+                .options(subqueryload(Task.actions))
+                .all()
             )
 
             session.expunge_all()
@@ -44,7 +45,6 @@ class TaskTupleProvider(TuplesProviderABC):
 
             # Create the vortex message
             msg = Payload(filt, tuples=tasks).makePayloadEnvelope().toVortexMsg()
-
 
         finally:
             session.close()

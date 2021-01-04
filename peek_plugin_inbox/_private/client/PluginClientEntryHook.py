@@ -1,9 +1,11 @@
 import logging
 
-from peek_plugin_inbox._private.client.ClientFeTupleActionProcessorProxy import \
-    makeTupleActionProcessorProxy
-from peek_plugin_inbox._private.client.ClientFeTupleDataObservableProxy import \
-    makeTupleDataObservableProxy
+from peek_plugin_inbox._private.client.ClientFeTupleActionProcessorProxy import (
+    makeTupleActionProcessorProxy,
+)
+from peek_plugin_inbox._private.client.ClientFeTupleDataObservableProxy import (
+    makeTupleDataObservableProxy,
+)
 from peek_plugin_inbox._private.storage.DeclarativeBase import loadStorageTuples
 from peek_plugin_base.client.PluginClientEntryHookABC import PluginClientEntryHookABC
 from peek_plugin_inbox.tuples import loadPublicTuples

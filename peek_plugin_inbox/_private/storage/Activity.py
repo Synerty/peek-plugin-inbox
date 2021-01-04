@@ -22,17 +22,18 @@ logger = logging.getLogger(__name__)
 
 @addTupleType
 class Activity(Tuple, DeclarativeBase):
-    """ Activity
+    """Activity
 
     An Activity represents an item in the activity screen
     This is a screen that is intended to show actions that have been performed recently
         or events that plugins want in this list.
-    
+
     see InboxAbiABC.NewActivity for documentation.
-        
+
     """
-    __tupleType__ = inboxTuplePrefix + 'Activity'
-    __tablename__ = 'Activity'
+
+    __tupleType__ = inboxTuplePrefix + "Activity"
+    __tablename__ = "Activity"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
 

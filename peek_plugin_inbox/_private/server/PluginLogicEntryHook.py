@@ -3,17 +3,20 @@ from typing import Optional
 
 from peek_core_email.server.EmailApiABC import EmailApiABC
 from peek_plugin_base.server.PluginLogicEntryHookABC import PluginLogicEntryHookABC
-from peek_plugin_base.server.PluginServerStorageEntryHookABC import \
-    PluginServerStorageEntryHookABC
-from peek_plugin_inbox._private.server.ClientTupleActionProcessor import \
-    makeTupleActionProcessorHandler
-from peek_plugin_inbox._private.server.ClientTupleDataObservable import \
-    makeTupleDataObservableHandler
+from peek_plugin_base.server.PluginServerStorageEntryHookABC import (
+    PluginServerStorageEntryHookABC,
+)
+from peek_plugin_inbox._private.server.ClientTupleActionProcessor import (
+    makeTupleActionProcessorHandler,
+)
+from peek_plugin_inbox._private.server.ClientTupleDataObservable import (
+    makeTupleDataObservableHandler,
+)
 from peek_plugin_inbox._private.server.InboxApi import InboxApi
-from peek_plugin_inbox._private.server.backend.PeekAdmSettingHandler import \
-    createAdminSettingsHandler
-from peek_plugin_inbox._private.server.controller.MainController import \
-    MainController
+from peek_plugin_inbox._private.server.backend.PeekAdmSettingHandler import (
+    createAdminSettingsHandler,
+)
+from peek_plugin_inbox._private.server.controller.MainController import MainController
 from peek_plugin_inbox._private.storage.DeclarativeBase import loadStorageTuples
 from peek_plugin_inbox._private.tuples import loadPrivateTuples
 from peek_plugin_inbox.tuples import loadPublicTuples
@@ -22,8 +25,7 @@ from peek_core_user.server.UserApiABC import UserApiABC
 logger = logging.getLogger(__name__)
 
 
-class PluginLogicEntryHook(PluginLogicEntryHookABC,
-                            PluginServerStorageEntryHookABC):
+class PluginLogicEntryHook(PluginLogicEntryHookABC, PluginServerStorageEntryHookABC):
     def __init__(self, *args, **kwargs):
         PluginLogicEntryHookABC.__init__(self, *args, **kwargs)
         self._api = None
@@ -39,7 +41,6 @@ class PluginLogicEntryHook(PluginLogicEntryHookABC,
         logger.debug("loaded")
 
     def start(self):
-
         # ----------------
         # Setup the APIs
         userPluginApi = self.platform.getOtherPluginApi("peek_core_user")
@@ -59,7 +60,7 @@ class PluginLogicEntryHook(PluginLogicEntryHookABC,
             ormSessionCreator=self.dbSessionCreator,
             userPluginApi=userPluginApi,
             emailApi=emailApi,
-            tupleObserver=tupleObserver
+            tupleObserver=tupleObserver,
         )
         self._runningHandlers.append(self._mainController)
 
@@ -71,11 +72,8 @@ class PluginLogicEntryHook(PluginLogicEntryHookABC,
         # ---------------
         # Our API
         # Create the API that other plugins will use
-        self._api = InboxApi(
-            self.dbSessionCreator, userPluginApi, self._mainController
-        )
+        self._api = InboxApi(self.dbSessionCreator, userPluginApi, self._mainController)
         self._runningHandlers.append(self._api)
-
 
         # ---------------
         # Link API to Main Controller
@@ -106,6 +104,7 @@ class PluginLogicEntryHook(PluginLogicEntryHookABC,
     @property
     def dbMetadata(self):
         from peek_plugin_inbox._private.storage import DeclarativeBase
+
         return DeclarativeBase.metadata
 
     ###### Publish our API

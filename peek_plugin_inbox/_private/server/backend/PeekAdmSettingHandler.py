@@ -1,8 +1,8 @@
-'''
+"""
 Created on 09/07/2014
 
 @author: synerty
-'''
+"""
 import txhttputil
 from peek_plugin_inbox._private.PluginNames import inboxFilt
 

@@ -25,16 +25,17 @@ logger = logging.getLogger(__name__)
 
 @addTupleType
 class Task(Tuple, DeclarativeBase):
-    """ Task
+    """Task
 
-    A Task represents the feature rich messages that can be sent from initiator 
+    A Task represents the feature rich messages that can be sent from initiator
     plugins to mobile devices.
-    
+
     see InboxAbiABC.NewTask for documentation.
-        
+
     """
-    __tupleType__ = inboxTuplePrefix + 'Task'
-    __tablename__ = 'Task'
+
+    __tupleType__ = inboxTuplePrefix + "Task"
+    __tablename__ = "Task"
 
     # Ensure that the actions are serialised
     __fieldNames__ = ["actions"]
@@ -66,7 +67,7 @@ class Task(Tuple, DeclarativeBase):
     AUTO_COMPLETE_ON_SELECT = NewTask.AUTO_COMPLETE_ON_SELECT
     AUTO_COMPLETE_ON_ACTION = NewTask.AUTO_COMPLETE_ON_ACTION
     AUTO_COMPLETE_ON_DIALOG = NewTask.AUTO_COMPLETE_ON_DIALOG
-    autoComplete = Column(Integer, nullable=False, server_default='0')
+    autoComplete = Column(Integer, nullable=False, server_default="0")
     autoDeleteDateTime = Column(DateTime(True), nullable=True)
 
     AUTO_DELETE_OFF = NewTask.AUTO_DELETE_OFF
@@ -75,7 +76,7 @@ class Task(Tuple, DeclarativeBase):
     AUTO_DELETE_ON_ACTION = NewTask.AUTO_DELETE_ON_ACTION
     AUTO_DELETE_ON_COMPLETE = NewTask.AUTO_DELETE_ON_COMPLETE
     AUTO_DELETE_ON_DIALOG = NewTask.AUTO_DELETE_ON_DIALOG
-    autoDelete = Column(Integer, nullable=False, server_default='0')
+    autoDelete = Column(Integer, nullable=False, server_default="0")
 
     # The state of this action
     STATE_DELIVERED = 1
@@ -83,25 +84,25 @@ class Task(Tuple, DeclarativeBase):
     STATE_ACTIONED = 4
     STATE_COMPLETED = 8
     STATE_DIALOG_CONFIRMED = 16  # The dialog was achnowledged
-    stateFlags = Column(Integer, nullable=False, server_default='0')
+    stateFlags = Column(Integer, nullable=False, server_default="0")
 
     NOTIFY_BY_DEVICE_POPUP = NewTask.NOTIFY_BY_DEVICE_POPUP
     NOTIFY_BY_DEVICE_SOUND = NewTask.NOTIFY_BY_DEVICE_SOUND
     NOTIFY_BY_SMS = NewTask.NOTIFY_BY_SMS
     NOTIFY_BY_EMAIL = NewTask.NOTIFY_BY_EMAIL
     NOTIFY_BY_DEVICE_DIALOG = NewTask.NOTIFY_BY_DEVICE_DIALOG
-    notificationRequiredFlags = Column(Integer, nullable=False, server_default='0')
-    notificationSentFlags = Column(Integer, nullable=False, server_default='0')
+    notificationRequiredFlags = Column(Integer, nullable=False, server_default="0")
+    notificationSentFlags = Column(Integer, nullable=False, server_default="0")
 
     DISPLAY_AS_TASK = NewTask.PRIORITY_SUCCESS
     DISPLAY_AS_MESSAGE = NewTask.PRIORITY_SUCCESS
-    displayAs = Column(Integer, nullable=False, server_default='0')
+    displayAs = Column(Integer, nullable=False, server_default="0")
 
     PRIORITY_SUCCESS = NewTask.PRIORITY_SUCCESS
     PRIORITY_INFO = NewTask.PRIORITY_INFO
     PRIORITY_WARNING = NewTask.PRIORITY_WARNING
     PRIORITY_DANGER = NewTask.PRIORITY_DANGER
-    displayPriority = Column(Integer, nullable=False, server_default='0')
+    displayPriority = Column(Integer, nullable=False, server_default="0")
 
     # The actions for this Task.
     actions = relationship("TaskAction")

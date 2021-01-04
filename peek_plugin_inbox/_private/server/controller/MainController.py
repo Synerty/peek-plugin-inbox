@@ -14,8 +14,9 @@ from vortex.handler.TupleActionProcessor import TupleActionProcessorDelegateABC
 from vortex.handler.TupleDataObservableHandler import TupleDataObservableHandler
 
 from peek_core_email.server.EmailApiABC import EmailApiABC
-from peek_plugin_inbox._private.server.controller.AdminTestController import \
-    AdminTestController
+from peek_plugin_inbox._private.server.controller.AdminTestController import (
+    AdminTestController,
+)
 from peek_plugin_inbox._private.storage.Activity import Activity
 from peek_plugin_inbox._private.storage.Task import Task
 from peek_plugin_inbox._private.storage.TaskAction import TaskAction
@@ -28,10 +29,13 @@ logger = logging.getLogger(__name__)
 class MainController(TupleActionProcessorDelegateABC):
     PROCESS_PERIOD = 60.0  # Every minutes
 
-    def __init__(self, ormSessionCreator,
-                 userPluginApi: UserApiABC,
-                 emailApi: EmailApiABC,
-                 tupleObserver: TupleDataObservableHandler):
+    def __init__(
+        self,
+        ormSessionCreator,
+        userPluginApi: UserApiABC,
+        emailApi: EmailApiABC,
+        tupleObserver: TupleDataObservableHandler,
+    ):
         self._ormSessionCreator = ormSessionCreator
         self._userPluginApi = userPluginApi
         self._emailApi = emailApi
@@ -97,8 +101,8 @@ class MainController(TupleActionProcessorDelegateABC):
 
     @deferToThreadWrapWithLogger(logger)
     def _processTaskActionUpdate(self, tupleAction: TupleGenericAction):
-        """ Process Task Action Update
-        
+        """Process Task Action Update
+
         This method locally delivers the payload action that was provided when
          the task was created.
         """
@@ -114,10 +118,10 @@ class MainController(TupleActionProcessorDelegateABC):
 
     @deferToThreadWrapWithLogger(logger)
     def _processTaskUpdate(self, tupleAction: TupleGenericAction):
-        """ Process Task Update
-        
+        """Process Task Update
+
         Process updates to the task from the UI.
-        
+
         """
         taskId = tupleAction.data["id"]
         session = self._ormSessionCreator()
@@ -131,14 +135,14 @@ class MainController(TupleActionProcessorDelegateABC):
             newFlags = 0
             if tupleAction.data.get("stateFlags") is not None:
                 newFlags = tupleAction.data["stateFlags"]
-                task.stateFlags = (task.stateFlags | newFlags)
+                task.stateFlags = task.stateFlags | newFlags
 
             if tupleAction.data.get("notificationSentFlags") is not None:
                 mask = tupleAction.data["notificationSentFlags"]
-                task.notificationSentFlags = (task.notificationSentFlags | mask)
+                task.notificationSentFlags = task.notificationSentFlags | mask
 
             if task.autoComplete & task.stateFlags:
-                task.stateFlags = (task.stateFlags | Task.STATE_COMPLETED)
+                task.stateFlags = task.stateFlags | Task.STATE_COMPLETED
 
             autoDelete = task.autoDelete
             stateFlags = task.stateFlags
@@ -155,15 +159,17 @@ class MainController(TupleActionProcessorDelegateABC):
             if newCompleted and task.onCompletedPayloadEnvelope:
                 self._deliverPayloadEnvelope(task.onCompletedPayloadEnvelope)
 
-            newDialogConfirmed = (newFlags & Task.STATE_DIALOG_CONFIRMED)
+            newDialogConfirmed = newFlags & Task.STATE_DIALOG_CONFIRMED
             newDialogConfirmed &= not wasDialogConfirmed
             if newDialogConfirmed and task.onDialogConfirmPayloadEnvelope:
                 self._deliverPayloadEnvelope(task.onDialogConfirmPayloadEnvelope)
 
             if autoDelete & stateFlags:
-                (session.query(Task)
-                 .filter(Task.id == taskId)
-                 .delete(synchronize_session=False))
+                (
+                    session.query(Task)
+                    .filter(Task.id == taskId)
+                    .delete(synchronize_session=False)
+                )
                 session.commit()
 
                 if onDeletedPayloadEnvelope:
@@ -185,16 +191,12 @@ class MainController(TupleActionProcessorDelegateABC):
         session = self._ormSessionCreator()
 
         try:
-            delActivityQry = (
-                session
-                    .query(Activity)
-                    .filter(Activity.autoDeleteDateTime < datetime.now(pytz.utc))
+            delActivityQry = session.query(Activity).filter(
+                Activity.autoDeleteDateTime < datetime.now(pytz.utc)
             )
 
-            delTaskQry = (
-                session
-                    .query(Task)
-                    .filter(Task.autoDeleteDateTime < datetime.now(pytz.utc))
+            delTaskQry = session.query(Task).filter(
+                Task.autoDeleteDateTime < datetime.now(pytz.utc)
             )
 
             userActivityToNotify = set([a.userId for a in delActivityQry])
@@ -236,8 +238,7 @@ class MainController(TupleActionProcessorDelegateABC):
         desc = task.description if task.description else ""
 
         yield self._emailApi.sendSms(
-            contents="%s\n%s" % (task.title, desc),
-            mobile=user.mobile
+            contents="%s\n%s" % (task.title, desc), mobile=user.mobile
         )
 
         yield self._addNotificationSentFlags(taskId, Task.NOTIFY_BY_SMS)
@@ -267,7 +268,7 @@ class MainController(TupleActionProcessorDelegateABC):
             contents="%s\n%s" % (task.title, desc),
             subject=task.title,
             addresses=[user.email],
-            isHtml=False
+            isHtml=False,
         )
 
         yield self._addNotificationSentFlags(taskId, Task.NOTIFY_BY_EMAIL)

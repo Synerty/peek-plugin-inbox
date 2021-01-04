@@ -10,15 +10,16 @@ logger = logging.getLogger(__name__)
 
 @addTupleType
 class TaskTuple(Tuple):
-    """ Task Tuple
+    """Task Tuple
 
-    A Task represents the feature rich messages that can be sent from initiator 
+    A Task represents the feature rich messages that can be sent from initiator
     plugins to mobile devices.
-    
+
     see InboxAbiABC.NewTask for documentation.
-        
+
     """
-    __tupleType__ = inboxTuplePrefix + 'TaskTuple'
+
+    __tupleType__ = inboxTuplePrefix + "TaskTuple"
 
     pluginName: str = TupleField()
     uniqueId: str = TupleField()

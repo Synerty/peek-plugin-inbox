@@ -1,6 +1,9 @@
 import { Component } from "@angular/core"
 import { extend, TupleActionPushService } from "@synerty/vortexjs"
-import { BalloonMsgService, NgLifeCycleEvents } from "@synerty/peek-plugin-base-js"
+import {
+    BalloonMsgService,
+    NgLifeCycleEvents
+} from "@synerty/peek-plugin-base-js"
 import * as moment from "moment"
 import { AdminSendTestActivityActionTuple } from "@peek/peek_plugin_inbox/_private"
 

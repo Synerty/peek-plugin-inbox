@@ -25,31 +25,28 @@ logger = logging.getLogger(__name__)
 
 @addTupleType
 class TaskAction(Tuple, DeclarativeBase):
-    """ Task Action
+    """Task Action
 
     This table stores the Task Actions.
     Tasks have zero or more actions that can be performed by the user when they
     receive a task.
-    
+
     :member title: The title of the action, this will appear as a menu option.
     :member confirmMessage: This is the message that will be shown to confirm the action.
     :member actionedPayload: This payload will be delivered locally on Peek Server
         When the action is performed on the user device.
 
     """
-    __tupleType__ = inboxTuplePrefix + 'TaskAction'
-    __tablename__ = 'TaskAction'
+
+    __tupleType__ = inboxTuplePrefix + "TaskAction"
+    __tablename__ = "TaskAction"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    taskId = Column(Integer,
-                    ForeignKey("Task.id", ondelete="CASCADE"),
-                    nullable=False)
+    taskId = Column(Integer, ForeignKey("Task.id", ondelete="CASCADE"), nullable=False)
     task = relationship("Task", uselist=False)
 
     title = Column(String)
     confirmMessage = Column(String)
     onActionPayloadEnvelope = Column(PeekLargeBinary)
 
-    __table_args__ = (
-        Index("idx_TaskAction_taskId", taskId, unique=False),
-    )
+    __table_args__ = (Index("idx_TaskAction_taskId", taskId, unique=False),)

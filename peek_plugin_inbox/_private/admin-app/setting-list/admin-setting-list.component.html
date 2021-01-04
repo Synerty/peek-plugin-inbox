@@ -1,8 +1,8 @@
 <div class="panel panel-default">
-
+    
     <!-- Default panel contents -->
     <div class="panel-body">
-
+        
         <form autocomplete="off" novalidate>
             <table class="table">
                 <tr>
@@ -12,30 +12,34 @@
                 <tr *ngFor="let item of items">
                     <td>{{item.key}}</td>
                     <td *ngIf="item.key.endsWith('pass')">
-                        <input [(ngModel)]="item.char_value"
-                               [name]="item.key"
-                               type="password"
-                               class="form-control input-sm"/>
+                        <input
+                            [(ngModel)]="item.char_value"
+                            [name]="item.key"
+                            class="form-control input-sm"
+                            type="password"
+                        />
                     </td>
                     <td *ngIf="!item.key.endsWith('pass')">
-                        <input [(ngModel)]="item.char_value"
-                               [name]="item.key"
-                               class="form-control input-sm"/>
+                        <input
+                            [(ngModel)]="item.char_value"
+                            [name]="item.key"
+                            class="form-control input-sm"
+                        />
                     </td>
                 </tr>
             </table>
-
+            
             <div class="btn-toolbar">
                 <div class="btn-group">
-                    <div class="btn btn-default" (click)='loader.save()'>
+                    <div (click)="loader.save()" class="btn btn-default">
                         Save
                     </div>
-                    <div class="btn btn-default" (click)='loader.load()'>
+                    <div (click)="loader.load()" class="btn btn-default">
                         Reset
                     </div>
                 </div>
             </div>
         </form>
-
+    
     </div>
 </div>

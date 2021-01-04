@@ -1,13 +1,16 @@
-
 <div class="row">
     <div class="form-group col-md-6">
         <label for="taskUserId">User ID</label>
-
+        
         <div class="input-group">
-            <input type="text" class="form-control" id="taskUserId"
-                 [(ngModel)]="userId">
+            <input
+                [(ngModel)]="userId" class="form-control" id="taskUserId"
+                type="text"
+            >
             <span class="input-group-btn">
-                <button class="btn btn-default" (click)="update()">Update</button>
+                <button
+                    (click)="update()" class="btn btn-default"
+                >Update</button>
             </span>
         </div>
     </div>
@@ -15,7 +18,7 @@
 
 <h1 *ngIf="tasks.length === 0">There are no tasks.</h1>
 
-<table class="table table-striped" *ngIf="tasks.length !== 0">
+<table *ngIf="tasks.length !== 0" class="table table-striped">
     <thead>
     <tr>
         <td>Date</td>
@@ -24,7 +27,7 @@
     </tr>
     </thead>
     <tbody>
-    <tr *ngFor="let task of tasks" (click)="taskClicked(task)">
+    <tr (click)="taskClicked(task)" *ngFor="let task of tasks">
         <td>{{task.dateTime}}</td>
         <td>{{task.title}}</td>
         <td>{{task.description}}</td>
