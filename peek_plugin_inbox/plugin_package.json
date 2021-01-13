@@ -33,7 +33,7 @@
     "field": {
         "showHomeLink": false,
         "showInTitleBar": true,
-        "titleBarLeft": false,
+        "antIcon": "mail",
         "titleBarText": "Inbox",
         "appDir": "_private/mobile-app",
         "moduleDir": "plugin-module",
