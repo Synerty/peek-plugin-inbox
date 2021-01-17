@@ -1,7 +1,10 @@
-import { TupleDataObserverService, TupleSelector } from "@synerty/vortexjs"
+import {
+    NgLifeCycleEvents,
+    TupleDataObserverService,
+    TupleSelector
+} from "@synerty/vortexjs"
 import { TaskTuple } from "@peek/peek_plugin_inbox/tuples/TaskTuple"
 import { Component } from "@angular/core"
-import { NgLifeCycleEvents } from "@synerty/peek-plugin-base-js"
 
 @Component({
     selector: "admin-inbox-task-list",

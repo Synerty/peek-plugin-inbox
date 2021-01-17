@@ -1,6 +1,11 @@
 import { Component } from "@angular/core"
-import { extend, Tuple, TupleLoader, VortexService } from "@synerty/vortexjs"
-import { NgLifeCycleEvents } from "@synerty/peek-plugin-base-js"
+import {
+    extend,
+    NgLifeCycleEvents,
+    Tuple,
+    TupleLoader,
+    VortexService
+} from "@synerty/vortexjs"
 import { inboxFilt } from "@peek/peek_plugin_inbox/plugin-inbox-names"
 
 class SettingProperty extends Tuple {

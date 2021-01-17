@@ -1,5 +1,6 @@
 import { Component } from "@angular/core"
-import { NgLifeCycleEvents, HeaderService } from "@synerty/peek-plugin-base-js"
+import { HeaderService } from "@synerty/peek-plugin-base-js"
+import { NgLifeCycleEvents } from "@synerty/vortexjs"
 import { Router } from "@angular/router"
 import { ActivityTuple, PluginInboxRootService } from "@peek/peek_plugin_inbox"
 import { PrivateInboxTupleProviderService } from "@peek/peek_plugin_inbox/_private/private-inbox-tuple-provider.service"
