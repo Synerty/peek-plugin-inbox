@@ -1,10 +1,9 @@
 import { Injectable } from "@angular/core"
-import { TupleGenericAction } from "@synerty/vortexjs"
+import { TupleGenericAction, NgLifeCycleEvents } from "@synerty/vortexjs"
 import {
     BalloonMsgLevel,
     BalloonMsgService,
     BalloonMsgType,
-    NgLifeCycleEvents,
     ISound,
     Sound,
     HeaderService,
