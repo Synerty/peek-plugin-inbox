@@ -1,16 +1,21 @@
 import { Injectable } from "@angular/core"
-import { TupleGenericAction, NgLifeCycleEvents } from "@synerty/vortexjs"
+import { NgLifeCycleEvents, TupleGenericAction } from "@synerty/vortexjs"
 import {
     BalloonMsgLevel,
     BalloonMsgService,
     BalloonMsgType,
+    HeaderService,
     ISound,
     Sound,
-    HeaderService,
 } from "@synerty/peek-plugin-base-js"
 import { TaskTuple } from "../tuples/TaskTuple"
 import { inboxPluginName } from "../plugin-inbox-names"
 import { PrivateInboxTupleProviderService } from "./private-inbox-tuple-provider.service"
+import { PermissionType, Plugins } from "@capacitor/core"
+import { DeviceEnrolmentService } from "@peek/peek_core_device"
+import { first } from "rxjs/operators"
+
+const {LocalNotifications, Permissions, Modals} = Plugins
 
 /**  Root Service
  *
@@ -27,7 +32,8 @@ export class PluginInboxRootService extends NgLifeCycleEvents {
     constructor(
         private balloonMsg: BalloonMsgService,
         private headerService: HeaderService,
-        private tupleService: PrivateInboxTupleProviderService
+        private tupleService: PrivateInboxTupleProviderService,
+        private deviceService: DeviceEnrolmentService,
     ) {
         super()
         
@@ -35,30 +41,40 @@ export class PluginInboxRootService extends NgLifeCycleEvents {
             this.alertSound = new Sound("/assets/peek_plugin_inbox/alert.mp3")
         }
         catch (e) {
-            console.log(`Failed to load sound : ${e}`)
+            console.log(`Failed to load sound: ${e}`)
             this.alertSound = null
         }
+        
+        // Check notification permissions when deviceInfo is available
+        this.deviceService.deviceInfoObservable()
+            .pipe(first())
+            .subscribe((deviceInfo) => {
+                if (!this.deviceService.deviceInfo.isWeb) {
+                    this.checkNotificationSettings()
+                }
+            })
         
         // Subscribe to the tuple events.
         this.tupleService.taskTupleObservable()
             .takeUntil(this.onDestroyEvent)
             .subscribe((tuples: TaskTuple[]) => {
                 // Make sure we have the latest flags, to avoid notifying the user again.
-                let existingTasksById = {}
+                const existingTasksById = {}
                 
-                for (let task of this.tasks) {
+                for (const task of this.tasks) {
                     existingTasksById[task.id] = task
                 }
                 
                 for (let task of tuples) {
-                    let existingTask = existingTasksById[task.id]
+                    const existingTask = existingTasksById[task.id]
                     if (existingTask == null)
                         continue
                     
                     task.stateFlags = (task.stateFlags | existingTask.stateFlags)
                     
-                    task.notificationSentFlags =
-                        (task.notificationSentFlags | existingTask.notificationSentFlags)
+                    task.notificationSentFlags = (
+                        task.notificationSentFlags | existingTask.notificationSentFlags
+                    )
                 }
                 
                 // Now we can set the tasks
@@ -71,19 +87,19 @@ export class PluginInboxRootService extends NgLifeCycleEvents {
                 
                 this.headerService.updateBadgeCount(inboxPluginName, notCompletedCount)
                 
-                let updateApplied = this.processNotifications()
+                const updateApplied = this.processNotifications()
                     || this.processDeletesAndCompletes()
                 
                 if (updateApplied) {
                     // Update the cached data
                     this.tupleService.tupleDataOfflineObserver.updateOfflineState(
-                        this.tupleService.taskTupleSelector, this.tasks)
+                        this.tupleService.taskTupleSelector,
+                        this.tasks
+                    )
                 }
             })
     }
     
-    // -------------------------
-    // State update methods from UI
     public taskSelected(taskId: number) {
         this.addTaskStateFlag(taskId, TaskTuple.STATE_SELECTED)
     }
@@ -92,23 +108,51 @@ export class PluginInboxRootService extends NgLifeCycleEvents {
         this.addTaskStateFlag(taskId, TaskTuple.STATE_ACTIONED)
     }
     
+    private async checkNotificationSettings(): Promise<void> {
+        const permission = await Permissions.query({name: PermissionType.Notifications})
+        
+        if (permission.state === "prompt") {
+            LocalNotifications.requestPermission()
+            return
+        }
+        if (permission.state === "denied") {
+            const confirmed = await Modals.confirm({
+                title: "Notifications Required",
+                message: "Peek requires notifications to be enabled.\n"
+                    + "Would you like to enable them now?"
+            })
+            
+            // Open notification settings
+            if (confirmed) {
+                (window as any)?.cordova?.plugins?.settings?.open(
+                    "notification_id",
+                    () => console.log("Opened settings."),
+                    () => console.log("Failed to open settings.")
+                )
+            }
+            return
+        }
+    }
+    
     private addTaskStateFlag(
         taskId: number,
         stateFlag: number
     ) {
-        let filtered = this.tasks.filter(t => t.id === taskId)
+        const filtered = this.tasks.filter(t => t.id === taskId)
         if (filtered.length === 0) {
             // This should never happen
             return
         }
         
-        let thisTask = filtered[0]
+        const thisTask = filtered[0]
         this.sendStateUpdate(thisTask, stateFlag, null)
         this.processDeletesAndCompletes()
         
         // Update the cached data
         this.tupleService.tupleDataOfflineObserver.updateOfflineState(
-            this.tupleService.taskTupleSelector, this.tasks)
+            this.tupleService.taskTupleSelector,
+            this.tasks
+        )
     }
     
     /** Process Delegates and Complete
@@ -119,11 +163,11 @@ export class PluginInboxRootService extends NgLifeCycleEvents {
     private processDeletesAndCompletes(): boolean {
         let updateApplied = false
         
-        let tasksSnapshot = this.tasks.slice()
+        const tasksSnapshot = this.tasks.slice()
         for (let task of tasksSnapshot) {
             
-            let autoComplete = task.autoComplete & task.stateFlags
-            let isAlreadyCompleted = TaskTuple.STATE_COMPLETED & task.stateFlags
+            const autoComplete = task.autoComplete & task.stateFlags
+            const isAlreadyCompleted = TaskTuple.STATE_COMPLETED & task.stateFlags
             if (autoComplete && !isAlreadyCompleted) {
                 task.stateFlags = (TaskTuple.STATE_COMPLETED | task.stateFlags)
                 updateApplied = true
@@ -132,7 +176,7 @@ export class PluginInboxRootService extends NgLifeCycleEvents {
             // If we're in the state where we should delete, then remove it
             // from our tasks.
             if (task.autoDelete & task.stateFlags) {
-                let index = this.tasks.indexOf(task)
+                const index = this.tasks.indexOf(task)
                 if (index > -1) {
                     this.tasks.splice(index, 1)
                 }
@@ -146,14 +190,15 @@ export class PluginInboxRootService extends NgLifeCycleEvents {
     private processNotifications(): boolean {
         let updateApplied = false
         
-        for (let task of this.tasks) {
+        for (const task of this.tasks) {
             let notificationSentFlags = 0
             let newStateMask = 0
             
             if (task.isNotifyBySound() && !task.isNotifiedBySound()) {
                 
                 notificationSentFlags = (
-                    notificationSentFlags | TaskTuple.NOTIFY_BY_DEVICE_SOUND)
+                    notificationSentFlags | TaskTuple.NOTIFY_BY_DEVICE_SOUND
+                )
                 
                 try {
                     const optionalPromise = this.alertSound && this.alertSound.play()
@@ -172,7 +217,8 @@ export class PluginInboxRootService extends NgLifeCycleEvents {
             if (task.isNotifyByPopup() && !task.isNotifiedByPopup()) {
                 this.showMessage(BalloonMsgType.Fleeting, task)
                 notificationSentFlags = (
-                    notificationSentFlags | TaskTuple.NOTIFY_BY_DEVICE_POPUP)
+                    notificationSentFlags | TaskTuple.NOTIFY_BY_DEVICE_POPUP
+                )
             }
             
             if (task.isNotifyByDialog() && !task.isNotifiedByDialog()) {
@@ -184,7 +230,7 @@ export class PluginInboxRootService extends NgLifeCycleEvents {
                         )
                     })
                     .catch(err => {
-                        let e = `Inbox Dialog Error\n${err}`
+                        const e = `Inbox Dialog Error\n${err}`
                         console.log(e)
                         this.balloonMsg.showError(e)
                     })
@@ -200,7 +246,8 @@ export class PluginInboxRootService extends NgLifeCycleEvents {
             if (notificationSentFlags || newStateMask) {
                 updateApplied = true
                 
-                this.sendStateUpdate(task,
+                this.sendStateUpdate(
+                    task,
                     newStateMask,
                     notificationSentFlags
                 )
@@ -235,21 +282,50 @@ export class PluginInboxRootService extends NgLifeCycleEvents {
             
             default:
                 throw new Error(`Unknown priority ${task.displayPriority}`)
-            
         }
         
-        let dialogTitle = `New ${task.displayAsText()}`
-        let desc = task.description ? task.description : ""
-        let msg = `${task.title}\n\n${desc}`
+        const dialogTitle = `New ${task.displayAsText()}`
+        const desc = task.description ? task.description : ""
+        const msg = `${task.title}\n\n${desc}`
+        
+        // Send local notification
+        if (
+            !this.deviceService.deviceInfo.isWeb
+            && this.deviceService.deviceInfo.isBackgrounded
+        ) {
+            this.sendLocalNotification(dialogTitle, desc, 5)
+        }
         
         return this.balloonMsg.showMessage(
             msg,
             level,
-            type_, {
-                "confirmText": "Ok",
-                "dialogTitle": dialogTitle,
-                "routePath": task.routePath
+            type_,
+            {
+                confirmText: "Ok",
+                dialogTitle,
+                routePath: task.routePath
             })
+    }
+    
+    private sendLocalNotification(
+        title: string,
+        body: string,
+        seconds: number
+    ): void {
+        LocalNotifications.schedule({
+            notifications: [
+                {
+                    title,
+                    body,
+                    id: new Date().getTime(),
+                    schedule: {at: new Date(Date.now() + 1000 * seconds)},
+                    sound: null,
+                    attachments: null,
+                    actionTypeId: "",
+                    extra: null
+                }
+            ]
+        })
     }
     
     private sendStateUpdate(
@@ -257,7 +333,7 @@ export class PluginInboxRootService extends NgLifeCycleEvents {
         stateFlags: number | null,
         notificationSentFlags: number | null
     ) {
-        let action = new TupleGenericAction()
+        const action = new TupleGenericAction()
         action.key = TaskTuple.tupleName
         action.data = {
             id: task.id,
@@ -272,8 +348,9 @@ export class PluginInboxRootService extends NgLifeCycleEvents {
         }
         
         if (notificationSentFlags != null) {
-            task.notificationSentFlags =
-                (task.notificationSentFlags | notificationSentFlags)
+            task.notificationSentFlags = (
+                task.notificationSentFlags | notificationSentFlags
+            )
         }
     }
 }
