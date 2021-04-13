@@ -11,9 +11,8 @@ import {
 import { TaskTuple } from "../tuples/TaskTuple"
 import { inboxPluginName } from "../plugin-inbox-names"
 import { PrivateInboxTupleProviderService } from "./private-inbox-tuple-provider.service"
-import { PermissionType, Plugins } from "@capacitor/core"
+import { Capacitor, PermissionType, Plugins } from "@capacitor/core"
 import { DeviceEnrolmentService } from "@peek/peek_core_device"
-import { first } from "rxjs/operators"
 
 const {LocalNotifications, Permissions, Modals} = Plugins
 
@@ -46,13 +45,9 @@ export class PluginInboxRootService extends NgLifeCycleEvents {
         }
         
         // Check notification permissions when deviceInfo is available
-        this.deviceService.deviceInfoObservable()
-            .pipe(first())
-            .subscribe((deviceInfo) => {
-                if (!this.deviceService.deviceInfo.isWeb) {
-                    this.checkNotificationSettings()
-                }
-            })
+        if (Capacitor.isNative) {
+            this.checkNotificationSettings()
+        }
         
         // Subscribe to the tuple events.
         this.tupleService.taskTupleObservable()
@@ -290,7 +285,7 @@ export class PluginInboxRootService extends NgLifeCycleEvents {
         
         // Send local notification
         if (
-            !this.deviceService.deviceInfo.isWeb
+            Capacitor.isNative
             && this.deviceService.deviceInfo.isBackgrounded
         ) {
             this.sendLocalNotification(dialogTitle, desc, 5)
