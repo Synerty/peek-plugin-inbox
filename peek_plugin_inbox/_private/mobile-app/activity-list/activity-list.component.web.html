@@ -1,8 +1,6 @@
 <div class="pl-inbox">
-    <div *ngIf="noItems()" class="title">
-        There is no recent activity.
-    </div>
-    
+    <div *ngIf="noItems()" class="title">There is no recent activity.</div>
+
     <div
         (click)="activityClicked(activity)"
         *ngFor="let activity of activities; odd as odd; even as even"
@@ -24,7 +22,7 @@
                 {{timePast(activity)}} ago {{dateTime(activity)}}
             </div>
         </div>
-        
+
         <img *ngIf="activity.imagePath" [src]="activity.imagePath" />
     </div>
 </div>

@@ -1,6 +1,2 @@
-export {
-    AdminSendTestTaskActionTuple
-} from "./tuples/AdminSendTestTaskActionTuple"
-export {
-    AdminSendTestActivityActionTuple
-} from "./tuples/AdminSendTestActivityActionTuple"
+export { AdminSendTestTaskActionTuple } from "./tuples/AdminSendTestTaskActionTuple";
+export { AdminSendTestActivityActionTuple } from "./tuples/AdminSendTestActivityActionTuple";

@@ -1,8 +1,6 @@
 <div class="panel panel-default">
-    
     <!-- Default panel contents -->
     <div class="panel-body">
-        
         <form autocomplete="off" novalidate>
             <table class="table">
                 <tr>
@@ -10,7 +8,7 @@
                     <th>Value</th>
                 </tr>
                 <tr *ngFor="let item of items">
-                    <td>{{item.key}}</td>
+                    <td>{{ item.key }}</td>
                     <td *ngIf="item.key.endsWith('pass')">
                         <input
                             [(ngModel)]="item.char_value"
@@ -28,7 +26,7 @@
                     </td>
                 </tr>
             </table>
-            
+
             <div class="btn-toolbar">
                 <div class="btn-group">
                     <div (click)="loader.save()" class="btn btn-default">
@@ -40,6 +38,5 @@
                 </div>
             </div>
         </form>
-    
     </div>
 </div>

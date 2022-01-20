@@ -5,22 +5,26 @@
             <div class="form-group col-md-3">
                 <label for="uniqueId">uniqueId</label>
                 <input
-                    [(ngModel)]="task.uniqueId" class="form-control"
+                    [(ngModel)]="task.uniqueId"
+                    class="form-control"
                     id="uniqueId"
                     type="text"
-                >
+                />
             </div>
             <div class="form-group col-md-3">
                 <label for="userId">userId</label>
                 <input
-                    [(ngModel)]="task.userId" class="form-control" id="userId"
+                    [(ngModel)]="task.userId"
+                    class="form-control"
+                    id="userId"
                     type="text"
-                >
+                />
             </div>
             <div class="form-group col-md-3">
                 <label for="displayAs">displayAs</label>
                 <select
-                    [(ngModel)]="task.displayAs" class="form-control"
+                    [(ngModel)]="task.displayAs"
+                    class="form-control"
                     id="displayAs"
                 >
                     <option value="0">DISPLAY_AS_TASK</option>
@@ -30,7 +34,8 @@
             <div class="form-group col-md-3">
                 <label for="displayPriority">displayPriority</label>
                 <select
-                    [(ngModel)]="task.displayPriority" class="form-control"
+                    [(ngModel)]="task.displayPriority"
+                    class="form-control"
                     id="displayPriority"
                 >
                     <option value="1">PRIORITY_SUCCESS</option>
@@ -44,52 +49,59 @@
             <div class="form-group col-md-6">
                 <label for="title">title</label>
                 <input
-                    [(ngModel)]="task.title" class="form-control" id="title"
+                    [(ngModel)]="task.title"
+                    class="form-control"
+                    id="title"
                     type="text"
-                >
+                />
             </div>
             <div class="form-group col-md-6">
                 <label for="iconPath">iconPath</label>
                 <input
-                    [(ngModel)]="task.iconPath" class="form-control"
+                    [(ngModel)]="task.iconPath"
+                    class="form-control"
                     id="iconPath"
                     type="text"
-                >
+                />
             </div>
         </div>
         <div class="row">
             <div class="form-group col-md-12">
                 <label for="description">description</label>
                 <input
-                    [(ngModel)]="task.description" class="form-control"
+                    [(ngModel)]="task.description"
+                    class="form-control"
                     id="description"
                     type="text"
-                >
+                />
             </div>
         </div>
         <div class="row">
             <div class="form-group col-md-6">
                 <label for="routePath">routePath</label>
                 <input
-                    [(ngModel)]="task.routePath" class="form-control"
+                    [(ngModel)]="task.routePath"
+                    class="form-control"
                     id="routePath"
                     type="text"
-                >
+                />
             </div>
             <div class="form-group col-md-6">
                 <label for="routeParamJson">routeParamJson</label>
                 <input
-                    [(ngModel)]="task.routeParamJson" class="form-control"
+                    [(ngModel)]="task.routeParamJson"
+                    class="form-control"
                     id="routeParamJson"
                     type="text"
-                >
+                />
             </div>
         </div>
         <div class="row">
             <div class="form-group col-md-6">
                 <label for="autoComplete">autoComplete</label>
                 <select
-                    [(ngModel)]="task.autoComplete" class="form-control"
+                    [(ngModel)]="task.autoComplete"
+                    class="form-control"
                     id="autoComplete"
                 >
                     <option value="0">AUTO_COMPLETE_OFF</option>
@@ -102,7 +114,8 @@
             <div class="form-group col-md-6">
                 <label for="autoDelete">autoDelete</label>
                 <select
-                    [(ngModel)]="task.autoDelete" class="form-control"
+                    [(ngModel)]="task.autoDelete"
+                    class="form-control"
                     id="autoDelete"
                 >
                     <option value="0">AUTO_DELETE_OFF</option>
@@ -118,13 +131,14 @@
             <div class="form-group col-md-6">
                 <label for="autoDeleteDateTime">autoDeleteDateTime</label>
                 <input
-                    [(ngModel)]="task.autoDeleteDateTime" class="form-control"
+                    [(ngModel)]="task.autoDeleteDateTime"
+                    class="form-control"
                     id="autoDeleteDateTime"
                     type="datetime-local"
-                >
+                />
             </div>
         </div>
-        
+
         <h4>Notification Methods</h4>
         <div class="row">
             <div class="form-group col-md-2">
@@ -168,17 +182,17 @@
                 Email
             </div>
         </div>
-        
+
         <div class="row">
             <div class="col-md-12">
-                <button (click)="addAction()" class="btn btn-default">Add
-                                                                      Action
+                <button (click)="addAction()" class="btn btn-default">
+                    Add Action
                 </button>
                 <table>
                     <tr *ngFor="let action of task.actions; let i = index">
                         <td>
-                            <h2>Action {{i}}</h2>
-                            
+                            <h2>Action {{ i }}</h2>
+
                             <div class="row">
                                 <div class="form-group col-md-6">
                                     <label for="actionTitle">actionTitle</label>
@@ -187,16 +201,18 @@
                                         class="form-control"
                                         id="actionTitle"
                                         type="text"
-                                    >
+                                    />
                                 </div>
                                 <div class="form-group col-md-6">
-                                    <label for="actionConfirmMessage">actionConfirmMessage</label>
+                                    <label for="actionConfirmMessage"
+                                        >actionConfirmMessage</label
+                                    >
                                     <input
                                         [(ngModel)]="action.confirmMessage"
                                         class="form-control"
                                         id="actionConfirmMessage"
                                         type="text"
-                                    >
+                                    />
                                 </div>
                             </div>
                         </td>
@@ -205,6 +221,5 @@
             </div>
         </div>
         <button (click)="send()" class="btn btn-default">Send</button>
-    
     </div>
 </div>

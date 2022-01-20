@@ -57,8 +57,7 @@
         "appDir": "_private/admin-app",
         "appModule": "plugin-inbox.module#PluginInboxAdminModule"
     },
-    "logic": {
-    },
+    "logic": {},
     "storage": {
         "alembicDir": "_private/alembic"
     }
