@@ -1,3 +1,4 @@
+import { takeUntil } from "rxjs/operators";
 import { Injectable } from "@angular/core";
 import { NgLifeCycleEvents, TupleGenericAction } from "@synerty/vortexjs";
 import {
@@ -51,7 +52,7 @@ export class PluginInboxRootService extends NgLifeCycleEvents {
         // Subscribe to the tuple events.
         this.tupleService
             .taskTupleObservable()
-            .takeUntil(this.onDestroyEvent)
+            .pipe(takeUntil(this.onDestroyEvent))
             .subscribe((tuples: TaskTuple[]) => {
                 // Make sure we have the latest flags, to avoid notifying the user again.
                 const existingTasksById = {};

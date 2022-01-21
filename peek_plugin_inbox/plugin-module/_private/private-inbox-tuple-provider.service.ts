@@ -1,3 +1,5 @@
+import { Observable, Subject } from "rxjs";
+import { takeUntil } from "rxjs/operators";
 import { Injectable, NgZone } from "@angular/core";
 import {
     NgLifeCycleEvents,
@@ -14,7 +16,6 @@ import {
     VortexStatusService,
 } from "@synerty/vortexjs";
 import { UserService } from "@peek/peek_core_user";
-import { Observable, Subject } from "rxjs";
 import { TaskTuple } from "../tuples/TaskTuple";
 import { ActivityTuple } from "../tuples/ActivityTuple";
 import {
@@ -76,7 +77,7 @@ export class PrivateInboxTupleProviderService extends NgLifeCycleEvents {
         );
 
         this.userService.loggedInStatus
-            .takeUntil(this.onDestroyEvent)
+            .pipe(takeUntil(this.onDestroyEvent))
             .subscribe((status) => {
                 if (status) this.subscribe();
                 else this.unsubscribe();
@@ -132,7 +133,7 @@ export class PrivateInboxTupleProviderService extends NgLifeCycleEvents {
 
         this.taskSubscription = this.tupleDataOfflineObserver
             .subscribeToTupleSelector(this.taskTupleSelector)
-            .takeUntil(this.onDestroyEvent)
+            .pipe(takeUntil(this.onDestroyEvent))
             .subscribe((tuples: TaskTuple[]) => {
                 this._tasks = tuples.sort(
                     (o1, o2) => o2.dateTime.getTime() - o1.dateTime.getTime()
@@ -146,7 +147,7 @@ export class PrivateInboxTupleProviderService extends NgLifeCycleEvents {
         // them offline.
         this.activitiesSubscription = this.tupleDataOfflineObserver
             .subscribeToTupleSelector(this.activityTupleSelector)
-            .takeUntil(this.onDestroyEvent)
+            .pipe(takeUntil(this.onDestroyEvent))
             .subscribe((tuples: ActivityTuple[]) => {
                 this._activities = tuples.sort(
                     (o1, o2) => o2.dateTime.getTime() - o1.dateTime.getTime()

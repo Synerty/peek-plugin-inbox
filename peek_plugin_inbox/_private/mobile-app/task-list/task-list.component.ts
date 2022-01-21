@@ -1,3 +1,4 @@
+import { takeUntil } from "rxjs/operators";
 import { Component } from "@angular/core";
 import { HeaderService } from "@synerty/peek-plugin-base-js";
 import { NgLifeCycleEvents, TupleGenericAction } from "@synerty/vortexjs";
@@ -29,7 +30,7 @@ export class TaskListComponent extends NgLifeCycleEvents {
         this.tasks = this.tupleService.tasks;
         this.tupleService
             .taskTupleObservable()
-            .takeUntil(this.onDestroyEvent)
+            .pipe(takeUntil(this.onDestroyEvent))
             .subscribe((tuples: TaskTuple[]) => (this.tasks = tuples));
     }
 
