@@ -6,16 +6,14 @@ import {
     BalloonMsgService,
     BalloonMsgType,
     HeaderService,
-    ISound,
-    Sound,
 } from "@synerty/peek-plugin-base-js";
 import { TaskTuple } from "../tuples/TaskTuple";
 import { inboxPluginName } from "../plugin-inbox-names";
 import { PrivateInboxTupleProviderService } from "./private-inbox-tuple-provider.service";
-import { Capacitor, PermissionType, Plugins } from "@capacitor/core";
+import { Capacitor } from "@capacitor/core";
 import { DeviceEnrolmentService } from "@peek/peek_core_device";
-
-const { LocalNotifications, Permissions, Modals } = Plugins;
+import { NativeNotifier } from "./notifiers/native-notifier";
+import { WebNotifier } from "./notifiers/web-notifier";
 
 /**  Root Service
  *
@@ -27,7 +25,18 @@ const { LocalNotifications, Permissions, Modals } = Plugins;
 @Injectable()
 export class PluginInboxRootService extends NgLifeCycleEvents {
     private tasks: TaskTuple[] = [];
-    private alertSound: ISound;
+    private nativeNotifier = new NativeNotifier();
+    private webNotifier = new WebNotifier();
+    private alarmBasePath: string = "assets/peek_plugin_inbox/alert.mp3";
+
+    get alarmWebFullPath(): string {
+        return `/${this.alarmBasePath}`;
+    }
+
+    get alarmNativeRelativePath(): string {
+        // relative path to <App>/public folder
+        return this.alarmBasePath;
+    }
 
     constructor(
         private balloonMsg: BalloonMsgService,
@@ -37,16 +46,15 @@ export class PluginInboxRootService extends NgLifeCycleEvents {
     ) {
         super();
 
-        try {
-            this.alertSound = new Sound("/assets/peek_plugin_inbox/alert.mp3");
-        } catch (e) {
-            console.log(`Failed to load sound: ${e}`);
-            this.alertSound = null;
+        if (Capacitor.isNative) {
+            this.nativeNotifier.loadSound(this.alarmNativeRelativePath);
+        } else {
+            this.webNotifier.loadSound(this.alarmWebFullPath);
         }
 
         // Check notification permissions when deviceInfo is available
         if (Capacitor.isNative) {
-            this.checkNotificationSettings();
+            this.nativeNotifier.checkNotificationSettings();
         }
 
         // Subscribe to the tuple events.
@@ -105,35 +113,6 @@ export class PluginInboxRootService extends NgLifeCycleEvents {
 
     public taskActioned(taskId: number) {
         this.addTaskStateFlag(taskId, TaskTuple.STATE_ACTIONED);
-    }
-
-    private async checkNotificationSettings(): Promise<void> {
-        const permission = await Permissions.query({
-            name: PermissionType.Notifications,
-        });
-
-        if (permission.state === "prompt") {
-            LocalNotifications.requestPermission();
-            return;
-        }
-        if (permission.state === "denied") {
-            const confirmed = await Modals.confirm({
-                title: "Notifications Required",
-                message:
-                    "Peek requires notifications to be enabled.\n" +
-                    "Would you like to enable them now?",
-            });
-
-            // Open notification settings
-            if (confirmed) {
-                (window as any)?.cordova?.plugins?.settings?.open(
-                    "notification_id",
-                    () => console.log("Opened settings."),
-                    () => console.log("Failed to open settings.")
-                );
-            }
-            return;
-        }
     }
 
     private addTaskStateFlag(taskId: number, stateFlag: number) {
@@ -197,16 +176,10 @@ export class PluginInboxRootService extends NgLifeCycleEvents {
                 notificationSentFlags =
                     notificationSentFlags | TaskTuple.NOTIFY_BY_DEVICE_SOUND;
 
-                try {
-                    const optionalPromise =
-                        this.alertSound && this.alertSound.play();
-                    if (optionalPromise != null) {
-                        optionalPromise.catch((err) => {
-                            console.log(`Failed to play alert sound\n${err}`);
-                        });
-                    }
-                } catch (e) {
-                    console.log(`Error playing sound: ${e.toString()}`);
+                if (Capacitor.isNative) {
+                    this.nativeNotifier.playSound();
+                } else {
+                    this.webNotifier.playSound();
                 }
             }
 
@@ -282,34 +255,13 @@ export class PluginInboxRootService extends NgLifeCycleEvents {
             Capacitor.isNative &&
             this.deviceService.deviceInfo.isBackgrounded
         ) {
-            this.sendLocalNotification(dialogTitle, desc, 5);
+            this.nativeNotifier.sendLocalNotification(dialogTitle, desc);
         }
 
         return this.balloonMsg.showMessage(msg, level, type_, {
             confirmText: "Ok",
             dialogTitle,
             routePath: task.routePath,
-        });
-    }
-
-    private sendLocalNotification(
-        title: string,
-        body: string,
-        seconds: number
-    ): void {
-        LocalNotifications.schedule({
-            notifications: [
-                {
-                    title,
-                    body,
-                    id: new Date().getTime(),
-                    schedule: { at: new Date(Date.now() + 1000 * seconds) },
-                    sound: null,
-                    attachments: null,
-                    actionTypeId: "",
-                    extra: null,
-                },
-            ],
         });
     }
 
