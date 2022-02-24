@@ -3,6 +3,7 @@ import { NativeAudio } from "@awesome-cordova-plugins/native-audio/ngx";
 //  reference: https://ionicframework.com/docs/native/native-audio
 // $ npm install cordova-plugin-nativeaudio
 // $ npm install @awesome-cordova-plugins/native-audio
+// $ npm install @awesome-cordova-plugins/core
 // $ npx cap sync
 import { PermissionType, Plugins } from "@capacitor/core";
 import { NotifierI } from "./notifier.interface";
