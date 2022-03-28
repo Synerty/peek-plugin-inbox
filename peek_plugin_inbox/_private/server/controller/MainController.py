@@ -14,6 +14,8 @@ from vortex.handler.TupleActionProcessor import TupleActionProcessorDelegateABC
 from vortex.handler.TupleDataObservableHandler import TupleDataObservableHandler
 
 from peek_core_email.server.EmailApiABC import EmailApiABC
+
+from peek_plugin_base.LoopingCallUtil import peekCatchErrbackWithLogger
 from peek_plugin_inbox._private.server.controller.AdminTestController import (
     AdminTestController,
 )
@@ -109,7 +111,11 @@ class MainController(TupleActionProcessorDelegateABC):
         actionId = tupleAction.data["id"]
         session = self._ormSessionCreator()
         try:
-            action = session.query(TaskAction).filter(TaskAction.id == actionId).one()
+            action = (
+                session.query(TaskAction)
+                .filter(TaskAction.id == actionId)
+                .one()
+            )
             # userId = action.task.userId
             self._deliverPayloadEnvelope(action.onActionPayloadEnvelope)
 
@@ -155,14 +161,18 @@ class MainController(TupleActionProcessorDelegateABC):
             if newDelivery and task.onDeliveredPayloadEnvelope:
                 self._deliverPayloadEnvelope(task.onDeliveredPayloadEnvelope)
 
-            newCompleted = not wasCompleted and (newFlags & Task.STATE_COMPLETED)
+            newCompleted = not wasCompleted and (
+                newFlags & Task.STATE_COMPLETED
+            )
             if newCompleted and task.onCompletedPayloadEnvelope:
                 self._deliverPayloadEnvelope(task.onCompletedPayloadEnvelope)
 
             newDialogConfirmed = newFlags & Task.STATE_DIALOG_CONFIRMED
             newDialogConfirmed &= not wasDialogConfirmed
             if newDialogConfirmed and task.onDialogConfirmPayloadEnvelope:
-                self._deliverPayloadEnvelope(task.onDialogConfirmPayloadEnvelope)
+                self._deliverPayloadEnvelope(
+                    task.onDialogConfirmPayloadEnvelope
+                )
 
             if autoDelete & stateFlags:
                 (
@@ -178,7 +188,9 @@ class MainController(TupleActionProcessorDelegateABC):
             self._notifyObserver(Task.tupleName(), userId)
 
         except NoResultFound:
-            logger.debug("_processTaskUpdate Task %s has already been deleted" % taskId)
+            logger.debug(
+                "_processTaskUpdate Task %s has already been deleted" % taskId
+            )
 
         finally:
             session.close()
@@ -186,6 +198,7 @@ class MainController(TupleActionProcessorDelegateABC):
     def _deliverPayloadEnvelope(self, vortexMsg: bytes):
         reactor.callLater(0, VortexFactory.sendVortexMsgLocally, vortexMsg)
 
+    @peekCatchErrbackWithLogger(logger)
     @deferToThreadWrapWithLogger(logger)
     def _deleteOnDateTime(self):
         session = self._ormSessionCreator()
@@ -283,7 +296,9 @@ class MainController(TupleActionProcessorDelegateABC):
             return task
 
         except NoResultFound:
-            logger.debug("_processTaskUpdate Task %s has already been deleted" % taskId)
+            logger.debug(
+                "_processTaskUpdate Task %s has already been deleted" % taskId
+            )
             return None
 
         finally:
@@ -299,7 +314,9 @@ class MainController(TupleActionProcessorDelegateABC):
             session.commit()
 
         except NoResultFound:
-            logger.debug("_processTaskUpdate Task %s has already been deleted" % taskId)
+            logger.debug(
+                "_processTaskUpdate Task %s has already been deleted" % taskId
+            )
 
         finally:
             session.close()
