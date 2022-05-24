@@ -1,13 +1,7 @@
 import { NativeAudio } from "@awesome-cordova-plugins/native-audio/ngx";
-// install native audio in peek-field-app
-//  reference: https://ionicframework.com/docs/native/native-audio
-// $ npm install cordova-plugin-nativeaudio
-// $ npm install @awesome-cordova-plugins/native-audio
-// $ npm install @awesome-cordova-plugins/core
-// $ npx cap sync
-import { PermissionType, Plugins } from "@capacitor/core";
 import { NotifierI } from "./notifier.interface";
-const { LocalNotifications, Permissions, Modals } = Plugins;
+import { LocalNotifications } from "@capacitor/local-notifications";
+import { Dialog } from "@capacitor/dialog";
 
 export class NativeNotifier implements NotifierI {
     private nativeAudio = new NativeAudio();
@@ -58,16 +52,16 @@ export class NativeNotifier implements NotifierI {
 
     async checkNotificationSettings(): Promise<void> {
         console.log("NATIVE NOTIFIER checking iOS permissions");
-        const permission = await Permissions.query({
-            name: PermissionType.Notifications,
-        });
+        let permissionState: PermissionState =
+            await LocalNotifications.checkPermissions();
 
-        if (permission.state === "prompt") {
-            LocalNotifications.requestPermission();
+        if (permissionState === "prompt") {
+            permissionState = await LocalNotifications.requestPermission();
             return;
         }
-        if (permission.state === "denied") {
-            const confirmed = await Modals.confirm({
+
+        if (permissionState === "denied") {
+            const confirmed = await Dialog.confirm({
                 title: "Notifications Required",
                 message:
                     "Peek requires notifications to be enabled.\n" +
