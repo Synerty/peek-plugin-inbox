@@ -74,6 +74,10 @@ export class TaskTuple extends Tuple {
         return !!(this.stateFlags & TaskTuple.STATE_DELIVERED);
     }
 
+    isSelected(): boolean {
+        return !!(this.stateFlags & TaskTuple.STATE_SELECTED);
+    }
+
     // ------------------------------
     // Notifications Required properties
     isNotifyBySound(): boolean {
