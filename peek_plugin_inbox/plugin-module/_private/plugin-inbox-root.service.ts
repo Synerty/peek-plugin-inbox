@@ -232,7 +232,10 @@ export class PluginInboxRootService extends NgLifeCycleEvents {
         return updateApplied;
     }
 
-    private showMessage(type_: BalloonMsgType, task: TaskTuple): Promise<null> {
+    private showMessage(
+        type_: BalloonMsgType,
+        task: TaskTuple
+    ): Promise<BalloonMsgClickType> {
         let level: BalloonMsgLevel | null = null;
 
         switch (task.displayPriority) {
