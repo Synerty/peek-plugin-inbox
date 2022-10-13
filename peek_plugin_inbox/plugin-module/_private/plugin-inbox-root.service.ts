@@ -5,6 +5,7 @@ import {
     BalloonMsgLevel,
     BalloonMsgService,
     BalloonMsgType,
+    BalloonMsgClickType,
     HeaderService,
 } from "@synerty/peek-plugin-base-js";
 import { TaskTuple } from "../tuples/TaskTuple";
@@ -85,7 +86,8 @@ export class PluginInboxRootService extends NgLifeCycleEvents {
 
                 let notCompletedCount = 0;
                 for (let task of this.tasks) {
-                    notCompletedCount += task.isCompleted() ? 0 : 1;
+                    notCompletedCount +=
+                        task.isCompleted() || task.isSelected() ? 0 : 1;
                 }
 
                 this.headerService.updateBadgeCount(
@@ -184,14 +186,22 @@ export class PluginInboxRootService extends NgLifeCycleEvents {
             }
 
             if (task.isNotifyByPopup() && !task.isNotifiedByPopup()) {
-                this.showMessage(BalloonMsgType.Fleeting, task);
+                this.showMessage(BalloonMsgType.Fleeting, task)
+                    .then((balloonMsgClickType: BalloonMsgClickType) => {
+                        this.sendStateUpdate(task, TaskTuple.STATE_SELECTED, 0);
+                    })
+                    .catch((err) => {
+                        const e = `Inbox Dialog Error\n${err}`;
+                        console.log(e);
+                        this.balloonMsg.showError(e);
+                    });
                 notificationSentFlags =
                     notificationSentFlags | TaskTuple.NOTIFY_BY_DEVICE_POPUP;
             }
 
             if (task.isNotifyByDialog() && !task.isNotifiedByDialog()) {
                 this.showMessage(BalloonMsgType.Confirm, task)
-                    .then(() => {
+                    .then((balloonMsgClickType: BalloonMsgClickType) => {
                         this.sendStateUpdate(
                             task,
                             TaskTuple.STATE_DIALOG_CONFIRMED,
