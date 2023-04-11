@@ -52,15 +52,14 @@ export class NativeNotifier implements NotifierI {
 
     async checkNotificationSettings(): Promise<void> {
         console.log("NATIVE NOTIFIER checking iOS permissions");
-        let permissionState: PermissionState =
-            await LocalNotifications.checkPermissions();
+        let permissionStatus = await LocalNotifications.checkPermissions();
 
-        if (permissionState === "prompt") {
-            permissionState = await LocalNotifications.requestPermission();
+        if (permissionStatus.display === "prompt") {
+            permissionStatus = await LocalNotifications.requestPermissions();
             return;
         }
 
-        if (permissionState === "denied") {
+        if (permissionStatus.display === "denied") {
             const confirmed = await Dialog.confirm({
                 title: "Notifications Required",
                 message:
