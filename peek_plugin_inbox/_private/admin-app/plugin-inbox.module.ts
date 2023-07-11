@@ -2,7 +2,7 @@ import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { NgModule } from "@angular/core";
 import { PluginInboxAdminComponent } from "./plugin-inbox-admin.component";
-import { RouterModule, Routes } from "@angular/router";
+import { RouterModule, Route, Routes } from "@angular/router";
 import { SendTestTaskComponent } from "./send-test-task/send-test-task.component";
 import { SendTestActivityComponent } from "./send-test-activity/send-test-activity.component";
 import {
