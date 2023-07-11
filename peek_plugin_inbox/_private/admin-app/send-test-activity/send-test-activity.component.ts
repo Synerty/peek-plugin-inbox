@@ -1,9 +1,5 @@
 import { Component } from "@angular/core";
-import {
-    extend,
-    NgLifeCycleEvents,
-    TupleActionPushService,
-} from "@synerty/vortexjs";
+import { NgLifeCycleEvents, TupleActionPushService } from "@synerty/vortexjs";
 import { BalloonMsgService } from "@synerty/peek-plugin-base-js";
 import * as moment from "moment";
 import { AdminSendTestActivityActionTuple } from "@peek/peek_plugin_inbox/_private";
@@ -33,7 +29,7 @@ export class SendTestActivityComponent extends NgLifeCycleEvents {
     }
 
     send() {
-        let activityCopy = extend({}, this.activity);
+        let activityCopy = Object.assign({}, this.activity);
         activityCopy.autoDeleteDateTime = moment(
             activityCopy.autoDeleteDateTime
         ).toDate();

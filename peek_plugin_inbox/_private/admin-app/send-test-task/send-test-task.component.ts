@@ -1,9 +1,5 @@
 import { Component } from "@angular/core";
-import {
-    extend,
-    NgLifeCycleEvents,
-    TupleActionPushService,
-} from "@synerty/vortexjs";
+import { NgLifeCycleEvents, TupleActionPushService } from "@synerty/vortexjs";
 import { BalloonMsgService } from "@synerty/peek-plugin-base-js";
 import * as moment from "moment";
 import { AdminSendTestTaskActionTuple } from "@peek/peek_plugin_inbox/_private";
@@ -56,7 +52,7 @@ export class SendTestTaskComponent extends NgLifeCycleEvents {
         if (this.task.notifyByEmail) this.task.notificationRequiredFlags += 8;
         if (this.task.notifyByDialog) this.task.notificationRequiredFlags += 16;
 
-        let taskCopy = extend({}, this.task);
+        let taskCopy = Object.assign({}, this.task);
         delete taskCopy.notifyByPopup;
         delete taskCopy.notifyBySound;
         delete taskCopy.notifyBySms;

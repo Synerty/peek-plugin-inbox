@@ -1,6 +1,5 @@
 import { Component } from "@angular/core";
 import {
-    extend,
     NgLifeCycleEvents,
     Tuple,
     TupleLoader,
@@ -29,7 +28,7 @@ class SettingProperty extends Tuple {
 export class AdminSettingListComponent extends NgLifeCycleEvents {
     items: SettingProperty[] = [];
     loader: TupleLoader;
-    private readonly filt = extend(
+    private readonly filt = Object.assign(
         {
             key: "server.setting.data",
         },
