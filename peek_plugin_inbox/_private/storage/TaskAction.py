@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 
 
 @addTupleType
-class TaskAction(Tuple, DeclarativeBase):
+class TaskAction(DeclarativeBase, Tuple):
     """Task Action
 
     This table stores the Task Actions.
