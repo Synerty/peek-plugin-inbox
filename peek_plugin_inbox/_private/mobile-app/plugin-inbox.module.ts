@@ -2,10 +2,10 @@ import { CommonModule } from "@angular/common";
 import { HttpClientModule } from "@angular/common/http";
 import { NgModule } from "@angular/core";
 import { PluginInboxClientComponent } from "./plugin-inbox-client.component";
-import { RouterModule, Routes } from "@angular/router";
+import { RouterModule, Route, Routes } from "@angular/router";
 import { FormsModule } from "@angular/forms";
 import { NzIconModule } from "ng-zorro-antd/icon";
-import { LoggedInGuard, } from "@peek/peek_core_user";
+import { LoggedInGuard } from "@peek/peek_core_user";
 import { ActivityListComponent } from "./activity-list/activity-list.component";
 import { TaskListComponent } from "./task-list/task-list.component";
 

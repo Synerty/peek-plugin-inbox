@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 
 
 @addTupleType
-class Task(Tuple, DeclarativeBase):
+class Task(DeclarativeBase, Tuple):
     """Task
 
     A Task represents the feature rich messages that can be sent from initiator

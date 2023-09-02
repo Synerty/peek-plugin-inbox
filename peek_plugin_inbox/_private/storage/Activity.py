@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 
 
 @addTupleType
-class Activity(Tuple, DeclarativeBase):
+class Activity(DeclarativeBase, Tuple):
     """Activity
 
     An Activity represents an item in the activity screen
